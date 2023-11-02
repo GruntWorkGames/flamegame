@@ -1,6 +1,6 @@
 import 'package:flame/game.dart';
+import 'package:flame_game/rogue_shooter_game.dart';
 import 'package:flutter/widgets.dart';
-import 'package:topdown/rogue_shooter_game.dart';
 
 class RogueShooterWidget extends StatelessWidget {
   const RogueShooterWidget({super.key});

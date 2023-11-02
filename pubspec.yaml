@@ -1,4 +1,4 @@
-name: topdown
+name: flame_game
 publish_to: 'none'
 
 version: 0.1.0
@@ -8,8 +8,8 @@ environment:
   flutter: ">=3.3.0"
 
 dependencies:
-  bonfire: ^3.0.4
   flame: ^1.10.0
+  flame_tiled: ^1.15.0
   flutter:
     sdk: flutter
   vector_math: ^2.1.4
@@ -19,4 +19,5 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/images/rogue_shooter/
+    - assets/tiles/
+    - assets/images/

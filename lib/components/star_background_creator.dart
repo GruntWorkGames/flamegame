@@ -1,8 +1,7 @@
 import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
-import 'package:topdown/components/star_component.dart';
+import 'package:flame_game/components/star_component.dart';
 
 class StarBackGroundCreator extends Component with HasGameRef {
   final gapSize = 12;

@@ -1,12 +1,10 @@
 import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/input.dart';
+import 'package:flame_game/components/bullet_component.dart';
+import 'package:flame_game/components/enemy_component.dart';
+import 'package:flame_game/components/explosion_component.dart';
 import 'package:flutter/services.dart';
-import 'package:topdown/components/bullet_component.dart';
-import 'package:topdown/components/enemy_component.dart';
-import 'package:topdown/components/explosion_component.dart';
 import 'package:vector_math/vector_math.dart' as math;
 
 class PlayerComponent extends SpriteAnimationComponent

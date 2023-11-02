@@ -1,11 +1,11 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame_game/components/enemy_creator.dart';
+import 'package:flame_game/components/player_component.dart';
+import 'package:flame_game/components/star_background_creator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:topdown/components/enemy_creator.dart';
-import 'package:topdown/components/player_component.dart';
-import 'package:topdown/components/star_background_creator.dart';
 
 class RogueShooterGame extends FlameGame
     with

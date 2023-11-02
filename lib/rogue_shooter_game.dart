@@ -3,9 +3,9 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rogue_shooter/components/enemy_creator.dart';
-import 'package:rogue_shooter/components/player_component.dart';
-import 'package:rogue_shooter/components/star_background_creator.dart';
+import 'package:topdown/components/enemy_creator.dart';
+import 'package:topdown/components/player_component.dart';
+import 'package:topdown/components/star_background_creator.dart';
 
 class RogueShooterGame extends FlameGame
     with
@@ -69,23 +69,23 @@ class RogueShooterGame extends FlameGame
 
   @override
   void onPanStart(DragStartInfo info) {
-    player.beginFire();
-    player.onPanStart(info);
+    // player.beginFire();
+    // player.onPanStart(info);
   }
 
   @override
   void onPanEnd(_) {
-    player.stopFire();
+    // player.stopFire();
   }
 
   @override
   void onPanCancel() {
-    player.stopFire();
+    // player.stopFire();
   }
 
   @override
   void onPanUpdate(DragUpdateInfo info) {
-    player.onPanUpdate(info);
+    // player.onPanUpdate(info);
   }
 
   void increaseScore() {
@@ -94,7 +94,9 @@ class RogueShooterGame extends FlameGame
 
   @override
   KeyEventResult onKeyEvent(
-      RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
     super.onKeyEvent(event, keysPressed);
     player.onKeyEvent(event, keysPressed);
     return KeyEventResult.handled;
@@ -102,6 +104,6 @@ class RogueShooterGame extends FlameGame
 
   @override
   void onMouseMove(PointerHoverInfo info) {
-    player.onMouseMove(info);
+    // player.onMouseMove(info);
   }
 }

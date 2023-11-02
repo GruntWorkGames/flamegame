@@ -2,17 +2,12 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/src/gestures/events.dart';
-import 'package:flutter/material.dart';
-// import 'package:flutter/src/services/keyboard_key.g.dart';
-import 'package:flutter/src/services/raw_keyboard.dart';
-import 'package:rogue_shooter/components/bullet_component.dart';
-import 'package:rogue_shooter/components/enemy_component.dart';
-import 'package:rogue_shooter/components/explosion_component.dart';
-import 'package:rogue_shooter/rogue_shooter_game.dart';
-
-// enum to define mouse and pan state
-enum AimType { mouse, pan }
+import 'package:flame/input.dart';
+import 'package:flutter/services.dart';
+import 'package:topdown/components/bullet_component.dart';
+import 'package:topdown/components/enemy_component.dart';
+import 'package:topdown/components/explosion_component.dart';
+import 'package:vector_math/vector_math.dart' as math;
 
 class PlayerComponent extends SpriteAnimationComponent
     with HasGameRef, CollisionCallbacks {
@@ -50,7 +45,6 @@ class PlayerComponent extends SpriteAnimationComponent
     );
   }
 
-  final _bulletAngles = [0.5, 0.3, 0.0, -0.5, -0.3];
   void _createBullet() {
     const offset = 1.5708;
     final direction = position - mousePosition;
@@ -58,14 +52,29 @@ class PlayerComponent extends SpriteAnimationComponent
     const barrelDist = -50.0;
     final x = barrelDist * cos(radians + offset);
     final y = barrelDist * sin(radians + offset);
+    final bulletAngles = <double>[];
+
+    for (var i = 0; i < 4; i++) {
+      var angle = Random().nextDouble() * 50;
+      final sign = Random().nextBool();
+      if (!sign) {
+        angle *= -1;
+      }
+
+      bulletAngles.add(math.radians(angle));
+    }
 
     gameRef.addAll(
-      _bulletAngles.map((angle) {
-        final bullet = BulletComponent(
-            position: position + Vector2(x - 4, y), angle: radians + angle);
-        bullet.priority = -1;
-        return bullet;
-      }),
+      bulletAngles.map(
+        (angle) {
+          final bullet = BulletComponent(
+            position: position + Vector2(x - 4, y),
+            angle: radians + angle,
+          );
+          bullet.priority = -1;
+          return bullet;
+        },
+      ),
     );
   }
 
@@ -125,18 +134,18 @@ class PlayerComponent extends SpriteAnimationComponent
     transform.angle = radians - offset;
   }
 
-  void onMouseMove(PointerHoverInfo info) {
-    final pos = info.eventPosition.game;
-    mousePosition.setFrom(pos);
-  }
+  // void onMouseMove(PointerHoverInfo info) {
+  //   final pos = info.eventPosition.game;
+  //   mousePosition.setFrom(pos);
+  // }
 
-  void onPanStart(DragStartInfo info) {
-    final pos = info.eventPosition.game;
-    mousePosition.setFrom(pos);
-  }
+  // void onPanStart(DragStartInfo info) {
+  //   final pos = info.eventPosition.game;
+  //   mousePosition.setFrom(pos);
+  // }
 
-  void onPanUpdate(DragUpdateInfo info) {
-    final pos = info.eventPosition.game;
-    mousePosition.setFrom(pos);
-  }
+  // void onPanUpdate(DragUpdateInfo info) {
+  //   final pos = info.eventPosition.game;
+  //   mousePosition.setFrom(pos);
+  // }
 }

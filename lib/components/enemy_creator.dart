@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:rogue_shooter/components/enemy_component.dart';
+import 'package:topdown/components/enemy_component.dart';
 
 class EnemyCreator extends TimerComponent with HasGameRef {
   final Random random = Random();

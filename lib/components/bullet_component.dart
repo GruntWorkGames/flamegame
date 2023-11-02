@@ -1,6 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:rogue_shooter/components/enemy_component.dart';
+import 'package:topdown/components/enemy_component.dart';
 
 class BulletComponent extends SpriteAnimationComponent
     with HasGameRef, CollisionCallbacks {

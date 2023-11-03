@@ -2,11 +2,17 @@ import 'dart:async';
 import 'package:flame/components.dart';
 
 class UI extends PositionComponent {
+  static TextComponent debugLabel = TextBoxComponent(text: '');
+
   @override
   FutureOr<void> onLoad() {
-    final label = TextComponent(text: 'Label');
-    label.anchor = Anchor.center;
+    if (debugLabel.parent != null) {
+      debugLabel.removeFromParent();
+    }
+    debugLabel.anchor = Anchor.center;
     anchor = Anchor.center;
-    add(label);
+    add(debugLabel);
+
+    
   }
 }

@@ -1,24 +1,13 @@
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flutter/services.dart';
-import 'package:vector_math/vector_math.dart' as math;
 
-class PlayerComponent extends SpriteComponent with HasGameRef, CollisionCallbacks, KeyboardHandler {
+class PlayerComponent extends SpriteComponent with HasGameRef, KeyboardHandler {
   PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE), position: Vector2(TILESIZE, TILESIZE));
 
   @override
   Future<void> onLoad() async {
-    add(CircleHitbox());
     this.sprite = await gameRef.loadSprite('player.png');
-  }
-
-  void takeHit() {}
-
-  @override
-  void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
   }
 
   @override

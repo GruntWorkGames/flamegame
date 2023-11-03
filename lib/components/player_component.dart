@@ -1,15 +1,11 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_game/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:vector_math/vector_math.dart' as math;
 
-class PlayerComponent extends SpriteComponent
-    with HasGameRef, CollisionCallbacks {
-  PlayerComponent()
-      : super(
-            size: Vector2(32, 32),
-            position: Vector2(100, 100),
-            anchor: Anchor.center);
+class PlayerComponent extends SpriteComponent with HasGameRef, CollisionCallbacks, KeyboardHandler {
+  PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE), position: Vector2(TILESIZE, TILESIZE));
 
   @override
   Future<void> onLoad() async {
@@ -25,10 +21,18 @@ class PlayerComponent extends SpriteComponent
     super.onCollisionStart(intersectionPoints, other);
   }
 
-  void onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.keyA)) {}
-    if (keysPressed.contains(LogicalKeyboardKey.keyD)) {}
-    if (keysPressed.contains(LogicalKeyboardKey.keyW)) {}
-    if (keysPressed.contains(LogicalKeyboardKey.keyS)) {}
+  @override
+  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (keysPressed.contains(LogicalKeyboardKey.keyD)) {
+      position.x += TILESIZE;
+    } else if (keysPressed.contains(LogicalKeyboardKey.keyA)) {
+      position.x -= TILESIZE;
+    }else if (keysPressed.contains(LogicalKeyboardKey.keyS)) {
+      position.y += TILESIZE;
+    } else if (keysPressed.contains(LogicalKeyboardKey.keyW)) {
+      position.y -= TILESIZE;
+    }
+
+    return super.onKeyEvent(event, keysPressed);
   }
 }

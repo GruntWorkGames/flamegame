@@ -11,7 +11,6 @@ class MainMenu extends World with HasGameReference<MainGame>, TapCallbacks {
 
   Vector2 size = Vector2(0,0);
   MainMenu(this.size);
-
   @override
   FutureOr<void> onLoad() async {
     final btn = RoundedRectButton('Play');

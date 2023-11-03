@@ -64,28 +64,22 @@ class RogueShooterGame extends FlameGame
     super.update(dt);
     scoreText.text = 'Score: $score';
     componentCounter.text = 'Components: ${children.length}';
-    player.updatePlayer(dt);
   }
 
   @override
   void onPanStart(DragStartInfo info) {
-    // player.beginFire();
-    // player.onPanStart(info);
   }
 
   @override
   void onPanEnd(_) {
-    // player.stopFire();
   }
 
   @override
   void onPanCancel() {
-    // player.stopFire();
   }
 
   @override
   void onPanUpdate(DragUpdateInfo info) {
-    // player.onPanUpdate(info);
   }
 
   void increaseScore() {
@@ -104,6 +98,5 @@ class RogueShooterGame extends FlameGame
 
   @override
   void onMouseMove(PointerHoverInfo info) {
-    // player.onMouseMove(info);
   }
 }

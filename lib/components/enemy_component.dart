@@ -37,6 +37,5 @@ class EnemyComponent extends SpriteAnimationComponent
     removeFromParent();
 
     gameRef.add(ExplosionComponent(position: position));
-    gameRef.increaseScore();
   }
 }

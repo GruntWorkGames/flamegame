@@ -4,8 +4,6 @@ import 'package:flame/game.dart';
 import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/player_component.dart';
 import 'package:flame_game/components/star_background_creator.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class RogueShooterGame extends FlameGame
     with
@@ -62,41 +60,5 @@ class RogueShooterGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
-    scoreText.text = 'Score: $score';
-    componentCounter.text = 'Components: ${children.length}';
-  }
-
-  @override
-  void onPanStart(DragStartInfo info) {
-  }
-
-  @override
-  void onPanEnd(_) {
-  }
-
-  @override
-  void onPanCancel() {
-  }
-
-  @override
-  void onPanUpdate(DragUpdateInfo info) {
-  }
-
-  void increaseScore() {
-    score++;
-  }
-
-  @override
-  KeyEventResult onKeyEvent(
-    RawKeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
-    super.onKeyEvent(event, keysPressed);
-    player.onKeyEvent(event, keysPressed);
-    return KeyEventResult.handled;
-  }
-
-  @override
-  void onMouseMove(PointerHoverInfo info) {
   }
 }

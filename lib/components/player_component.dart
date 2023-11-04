@@ -1,27 +1,31 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/constants.dart';
-import 'package:flutter/services.dart';
+import 'package:flame_game/direction.dart';
+import 'package:flame_game/screens/game.dart';
 
-class PlayerComponent extends SpriteComponent with HasGameRef, KeyboardHandler {
-  PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE), position: Vector2(TILESIZE, TILESIZE));
+class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
+  PlayerComponent() : super(
+            size: Vector2(TILESIZE, TILESIZE),
+            position: Vector2(TILESIZE, TILESIZE));
 
   @override
   Future<void> onLoad() async {
     this.sprite = await gameRef.loadSprite('player.png');
+    game.player = this;
   }
 
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.keyD)) {
-      position.x += TILESIZE;
-    } else if (keysPressed.contains(LogicalKeyboardKey.keyA)) {
-      position.x -= TILESIZE;
-    }else if (keysPressed.contains(LogicalKeyboardKey.keyS)) {
-      position.y += TILESIZE;
-    } else if (keysPressed.contains(LogicalKeyboardKey.keyW)) {
-      position.y -= TILESIZE;
+  void move(Direction direction) {
+    switch (direction) {
+      case Direction.up:
+        position.y -= TILESIZE;
+      case Direction.down:
+        position.y += TILESIZE;
+      case Direction.left:
+        position.x -= TILESIZE;
+        break;
+      case Direction.right:
+        position.x += TILESIZE;
+        break;
     }
-
-    return super.onKeyEvent(event, keysPressed);
   }
 }

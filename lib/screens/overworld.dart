@@ -13,12 +13,11 @@ class Overworld extends World with HasGameRef<MainGame> {
     tiledmap.position = Vector2(0, 0);
     tiledmap.anchor = Anchor.center;
     add(tiledmap);
+    final player = PlayerComponent();
+    add(player);
 
     final ui = UI();
-    ui.position = Vector2(game.size.x / 2, game.size.y / 2);
-
-    add(PlayerComponent());
-
     game.camera.viewport.add(ui);
+    game.camera.follow(player);
   }
 }

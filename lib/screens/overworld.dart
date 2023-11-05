@@ -52,10 +52,9 @@ class Overworld extends World with HasGameRef<MainGame> {
   void steppedOnTile(Vector2 pos) {
     try {
       final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
-      if(func == null) {
-        return;
+      if(func != null) {
+        func();
       }
-      func();
     } catch(e) {
       print('error checking tile');
     }

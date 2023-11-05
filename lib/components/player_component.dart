@@ -31,6 +31,5 @@ class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
     }
     final tilePos = posToTile(position);
     game.overworld.steppedOnTile(tilePos);
-    UI.debugLabel.text = '${tilePos.x.toInt()}, ${tilePos.y.toInt()}';
   }
 }

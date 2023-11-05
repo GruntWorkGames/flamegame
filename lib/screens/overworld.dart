@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flame/components.dart';
-import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
@@ -12,7 +11,7 @@ class Overworld extends World with HasGameRef<MainGame> {
   List<List<dynamic>> _triggerTiles = [];
   String _mapfile = '';
   Vector2? _reEntryPos;
-  TiledComponent? tiledmap;
+  TiledComponent? _tiledmap;
 
   Overworld(this._mapfile);
 
@@ -23,26 +22,18 @@ class Overworld extends World with HasGameRef<MainGame> {
     if (ui.parent == null) {
       game.camera.viewport.add(ui);
     }
-    final mapBounds = _getBounds(tiledmap!.tileMap.map);
-    game.camera.setBounds(mapBounds);
     game.camera.follow(game.player);
   }
 
   @override
   FutureOr<void> onLoad() async {
-    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
-    tiledmap?.position = Vector2(0, 0);
-    tiledmap?.anchor = Anchor.topLeft;
-    add(tiledmap!);
-    _generateTiles(tiledmap!.tileMap.map);
-    _buildBlockedTiles(tiledmap!.tileMap);
+    _tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
+    _tiledmap?.anchor = Anchor.topLeft;
+    add(_tiledmap!);
+    _generateTiles(_tiledmap!.tileMap.map);
+    _buildBlockedTiles(_tiledmap!.tileMap);
 
-    final player = game.player;
-    player.position = _readSpawnPoint(tiledmap!.tileMap);
-
-    game.camera.follow(player);
-    final mapBounds = _getBounds(tiledmap!.tileMap.map);
-    game.camera.setBounds(mapBounds);
+    game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
   }
 
@@ -73,12 +64,18 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
   
   void _generateTiles(TiledMap map) {
-    _blockedTiles = List<List>.generate(map.width, (index) => List<dynamic>.generate(map.height, (index) => false, growable: false), growable: false);
-    _triggerTiles = List<List>.generate(map.width, (index) => List<dynamic>.generate(map.height, (index) => null, growable: false), growable: false);
+    _blockedTiles = List<List>.generate(map.width, (index) => 
+    List<dynamic>.generate(map.height, (index) => 
+    false, growable: false), growable: false);
+
+    _triggerTiles = List<List>.generate(map.width, (index) => 
+    List<dynamic>.generate(map.height, (index) => 
+    null, growable: false), growable: false);
   }
   
   void _buildBlockedTiles(RenderableTiledMap tileMap) async {
-    await TileProcessor.processTileType(tileMap: tileMap, processorByType: <String, TileProcessorFunc> {
+    await TileProcessor.processTileType(tileMap: tileMap, 
+    processorByType: <String, TileProcessorFunc> {
       'blocked': ((tile, position, size) async {
         _addBlockedCell(position);
       }),
@@ -140,16 +137,11 @@ class Overworld extends World with HasGameRef<MainGame> {
       game.player.removeFromParent();
     }
 
-    tiledmap?.add(game.player);
+    _tiledmap?.add(game.player);
 
     if (_reEntryPos == null) {
       return;
     }
     game.player.position = _reEntryPos!;
-  }
-
-  Shape _getBounds(TiledMap tilemap) {
-    return Rectangle.fromLTWH(
-        0, 0, 896, 576);
   }
 }

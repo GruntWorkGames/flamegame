@@ -19,7 +19,13 @@ class Overworld extends World with HasGameRef<MainGame> {
   @override
   void onMount() {
     playerEntered();
-    super.onMount();
+    final ui = game.ui;
+    if (ui.parent == null) {
+      game.camera.viewport.add(ui);
+    }
+    final mapBounds = _getBounds(tiledmap!.tileMap.map);
+    game.camera.setBounds(mapBounds);
+    game.camera.follow(game.player);
   }
 
   @override
@@ -28,25 +34,19 @@ class Overworld extends World with HasGameRef<MainGame> {
     tiledmap?.position = Vector2(0, 0);
     tiledmap?.anchor = Anchor.topLeft;
     add(tiledmap!);
-    
     _generateTiles(tiledmap!.tileMap.map);
     _buildBlockedTiles(tiledmap!.tileMap);
 
     final player = game.player;
     player.position = _readSpawnPoint(tiledmap!.tileMap);
 
-    if(player.parent != null) {
-      player.removeFromParent();
-    }
-
-    tiledmap!.add(player);
     game.camera.follow(player);
-
-    final ui = UI();
-    game.camera.viewport.add(ui);
+    final mapBounds = _getBounds(tiledmap!.tileMap.map);
+    game.camera.setBounds(mapBounds);
+    game.camera.follow(game.player);
   }
 
-  bool canMoveDirection(Direction direction){
+  bool canMoveDirection(Direction direction) {
     final playerPos = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerPos);
     return !isTileBlocked(nextTile);
@@ -136,14 +136,20 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   void playerEntered() async {
-    if(game.player.parent != null) {
+    if (game.player.parent != null) {
       game.player.removeFromParent();
-      tiledmap?.add(game.player);
     }
 
-    if(_reEntryPos == null) {
+    tiledmap?.add(game.player);
+
+    if (_reEntryPos == null) {
       return;
     }
     game.player.position = _reEntryPos!;
+  }
+
+  Shape _getBounds(TiledMap tilemap) {
+    return Rectangle.fromLTWH(
+        0, 0, 896, 576);
   }
 }

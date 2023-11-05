@@ -1,5 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flame_game/components/player_component.dart';
+import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/main_menu.dart';
@@ -9,6 +10,7 @@ class MainGame extends FlameGame {
   PlayerComponent player = PlayerComponent();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
+  final ui = UI();
 
   @override
   Future<void> onLoad() async {

@@ -5,7 +5,6 @@ import 'package:flame/text.dart';
 import 'package:flame_game/components/buttons.dart';
 import 'package:flame/components.dart';
 import 'package:flame_game/screens/game.dart';
-import 'package:flame_game/screens/overworld.dart';
 
 class MainMenu extends World with HasGameReference<MainGame>, TapCallbacks {
 
@@ -17,7 +16,7 @@ class MainMenu extends World with HasGameReference<MainGame>, TapCallbacks {
     final btn = RoundedRectButton('Play');
     btn.position = Vector2(0, 100);
     btn.onPressed = () {
-      game.world = Overworld();
+      game.overworldNavigator.loadMainWorld();
     };
 
     final regularTextStyle = TextStyle(fontSize: 62, color: BasicPalette.white.color);

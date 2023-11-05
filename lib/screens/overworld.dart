@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flame/components.dart';
-import 'package:flame_game/components/player_component.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
@@ -9,15 +8,16 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 
 class Overworld extends World with HasGameRef<MainGame> {
-  
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
+  String _mapfile = '';
+  Vector2 lastPos = Vector2(0, 0);
+
+  Overworld(this._mapfile);
 
   @override
   FutureOr<void> onLoad() async {
-    game.overworld = this;
-
-    final tiledmap = await TiledComponent.load('map.tmx', Vector2.all(TILESIZE));
+    final tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
     tiledmap.position = Vector2(0, 0);
     tiledmap.anchor = Anchor.topLeft;
     add(tiledmap);
@@ -25,7 +25,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     _generateTiles(tiledmap.tileMap.map);
     _buildBlockedTiles(tiledmap.tileMap);
 
-    final player = PlayerComponent(); 
+    final player = game.player;
     player.position = _readSpawnPoint(tiledmap.tileMap);
     add(player);
     game.camera.follow(player);
@@ -107,8 +107,18 @@ class Overworld extends World with HasGameRef<MainGame> {
       final town = properties.getProperty<StringProperty>('town');
       final func = () {
         print('entered town ${town?.value}');
+        final map = town?.value;
+        if(map != null) {
+          game.overworldNavigator.loadWorld(map);
+        }
       };
       _triggerTiles[x][y] = func;
     }
   }
+
+  // void playerEntered() {
+  //   if(lastPos.x != 0 && lastPos.y != 0) {
+  //     game.player.position = lastPos;
+  //   }
+  // }
 }

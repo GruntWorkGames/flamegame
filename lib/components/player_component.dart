@@ -1,25 +1,27 @@
 import 'package:flame/components.dart';
+import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 
 class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
-  PlayerComponent() : super(
-            size: Vector2(TILESIZE, TILESIZE),
-            position: Vector2(TILESIZE, TILESIZE));
+  PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE));
 
   @override
   Future<void> onLoad() async {
     this.sprite = await gameRef.loadSprite('player.png');
     game.player = this;
+    anchor = Anchor.topLeft;
   }
 
   void move(Direction direction) {
     switch (direction) {
       case Direction.up:
         position.y -= TILESIZE;
+        break;
       case Direction.down:
         position.y += TILESIZE;
+        break;
       case Direction.left:
         position.x -= TILESIZE;
         break;
@@ -27,5 +29,8 @@ class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
         position.x += TILESIZE;
         break;
     }
+    final tilePos = posToTile(position);
+    game.overworld.steppedOnTile(tilePos);
+    UI.debugLabel.text = '${tilePos.x.toInt()}, ${tilePos.y.toInt()}';
   }
 }

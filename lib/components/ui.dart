@@ -15,6 +15,14 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     debugLabel.anchor = Anchor.topCenter;
     debugLabel.position.x = game.size.x / 2;
     add(debugLabel);
-    add(DirectionalPad());
+
+    final dPad = DirectionalPad();
+    dPad.position = Vector2(game.size.x/2 - (64*3)/2, game.size.y - 64 * 2);
+    add(dPad);
+
+    final fps = FpsTextComponent();
+    fps.position.y = game.size.y - 30;
+    fps.position.x = 20;
+    add(fps);
   }
 }

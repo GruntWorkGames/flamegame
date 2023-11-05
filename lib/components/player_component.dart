@@ -11,9 +11,8 @@ class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
     this.sprite = await gameRef.loadSprite('player.png');
     anchor = Anchor.topLeft;
   }
-
+// 1120.0,832.0
   void move(Direction direction) {
-    game.overworld?.lastPos = position;
     switch (direction) {
       case Direction.up:
         position.y -= TILESIZE;

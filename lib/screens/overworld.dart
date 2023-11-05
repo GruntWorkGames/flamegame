@@ -11,23 +11,35 @@ class Overworld extends World with HasGameRef<MainGame> {
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
   String _mapfile = '';
-  Vector2 lastPos = Vector2(0, 0);
+  Vector2? _reEntryPos;
+  TiledComponent? tiledmap;
 
   Overworld(this._mapfile);
 
   @override
+  void onMount() {
+    playerEntered();
+    super.onMount();
+  }
+
+  @override
   FutureOr<void> onLoad() async {
-    final tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
-    tiledmap.position = Vector2(0, 0);
-    tiledmap.anchor = Anchor.topLeft;
-    add(tiledmap);
+    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
+    tiledmap?.position = Vector2(0, 0);
+    tiledmap?.anchor = Anchor.topLeft;
+    add(tiledmap!);
     
-    _generateTiles(tiledmap.tileMap.map);
-    _buildBlockedTiles(tiledmap.tileMap);
+    _generateTiles(tiledmap!.tileMap.map);
+    _buildBlockedTiles(tiledmap!.tileMap);
 
     final player = game.player;
-    player.position = _readSpawnPoint(tiledmap.tileMap);
-    add(player);
+    player.position = _readSpawnPoint(tiledmap!.tileMap);
+
+    if(player.parent != null) {
+      player.removeFromParent();
+    }
+
+    tiledmap!.add(player);
     game.camera.follow(player);
 
     final ui = UI();
@@ -105,20 +117,33 @@ class Overworld extends World with HasGameRef<MainGame> {
     final properties = tile.tile.properties;
     if(properties.has('town')) {
       final town = properties.getProperty<StringProperty>('town');
-      final func = () {
-        print('entered town ${town?.value}');
+      final func = () async {
         final map = town?.value;
         if(map != null) {
-          game.overworldNavigator.loadWorld(map);
+          _reEntryPos = Vector2(x*TILESIZE, y*TILESIZE);
+          await game.overworldNavigator.loadWorld(map);
         }
+      };
+      _triggerTiles[x][y] = func;
+    }
+
+    if(properties.has('exit')) {
+      final func = () async {
+        game.overworldNavigator.loadMainWorld();
       };
       _triggerTiles[x][y] = func;
     }
   }
 
-  // void playerEntered() {
-  //   if(lastPos.x != 0 && lastPos.y != 0) {
-  //     game.player.position = lastPos;
-  //   }
-  // }
+  void playerEntered() async {
+    if(game.player.parent != null) {
+      game.player.removeFromParent();
+      tiledmap?.add(game.player);
+    }
+
+    if(_reEntryPos == null) {
+      return;
+    }
+    game.player.position = _reEntryPos!;
+  }
 }

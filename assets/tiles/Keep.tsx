@@ -23,12 +23,12 @@
  </tile>
  <tile id="22" type="building">
   <properties>
-   <property name="town" value="map.tmx"/>
+   <property name="exit" value="exit"/>
   </properties>
  </tile>
  <tile id="23" type="building">
   <properties>
-   <property name="town" value="map.tmx"/>
+   <property name="exit" value="exit"/>
   </properties>
  </tile>
 </tileset>

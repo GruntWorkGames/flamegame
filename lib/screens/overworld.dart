@@ -22,11 +22,11 @@ class Overworld extends World with HasGameRef<MainGame> {
     tiledmap.anchor = Anchor.topLeft;
     add(tiledmap);
     
-    generateTiles(tiledmap.tileMap.map);
-    buildBlockedTiles(tiledmap.tileMap);
+    _generateTiles(tiledmap.tileMap.map);
+    _buildBlockedTiles(tiledmap.tileMap);
 
     final player = PlayerComponent(); 
-    player.position = readSpawnPoint(tiledmap.tileMap);
+    player.position = _readSpawnPoint(tiledmap.tileMap);
     add(player);
     game.camera.follow(player);
 
@@ -48,32 +48,44 @@ class Overworld extends World with HasGameRef<MainGame> {
     }
     return false;
   }
+
+  void steppedOnTile(Vector2 pos) {
+    try {
+      final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
+      if(func == null) {
+        return;
+      }
+      func();
+    } catch(e) {
+      print('error checking tile');
+    }
+  }
   
-  void generateTiles(TiledMap map) {
+  void _generateTiles(TiledMap map) {
     _blockedTiles = List<List>.generate(map.width, (index) => List<dynamic>.generate(map.height, (index) => false, growable: false), growable: false);
     _triggerTiles = List<List>.generate(map.width, (index) => List<dynamic>.generate(map.height, (index) => null, growable: false), growable: false);
   }
   
-  void buildBlockedTiles(RenderableTiledMap tileMap) async {
+  void _buildBlockedTiles(RenderableTiledMap tileMap) async {
     await TileProcessor.processTileType(tileMap: tileMap, processorByType: <String, TileProcessorFunc> {
       'blocked': ((tile, position, size) async {
-        addBlockedCell(position);
+        _addBlockedCell(position);
       }),
       'building': ((tile, position, size) async {
-        addBuilding(position, tile);
+        _addBuilding(position, tile);
       }),
     }, layersToLoad: [
       'grass', 'trees', 'rocks', 'building',
     ]);
   }
   
-  Vector2 readSpawnPoint(RenderableTiledMap tileMap) {
+  Vector2 _readSpawnPoint(RenderableTiledMap tileMap) {
     final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;
     return Vector2(spawnObject.x*2, spawnObject.y*2);
   }
 
-  void addBlockedCell(Vector2 position) {
+  void _addBlockedCell(Vector2 position) {
     // because we upscale to 32x32
     position.x *= 2;
     position.y *= 2;
@@ -84,7 +96,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     _blockedTiles[x][y] = true;
   }
 
-  void addBuilding(Vector2 position, TileProcessor tile) {
+  void _addBuilding(Vector2 position, TileProcessor tile) {
     position.x *= 2;
     position.y *= 2;
     final t = posToTile(position);
@@ -98,18 +110,6 @@ class Overworld extends World with HasGameRef<MainGame> {
         print('entered town ${town?.value}');
       };
       _triggerTiles[x][y] = func;
-    }
-  }
-
-  void steppedOnTile(Vector2 pos) {
-    try {
-      final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
-      if(func == null) {
-        return;
-      }
-      func();
-    } catch(e) {
-      print('error checking tile');
     }
   }
 }

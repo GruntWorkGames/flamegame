@@ -14,6 +14,7 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     }
     debugLabel.anchor = Anchor.topCenter;
     debugLabel.position.x = game.size.x / 2;
+    debugLabel.position.y = 10;
     add(debugLabel);
 
     final dPad = DirectionalPad();

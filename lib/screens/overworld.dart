@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flame/components.dart';
+import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
@@ -14,7 +15,7 @@ class Overworld extends World with HasGameRef<MainGame> {
   TiledComponent? _tiledmap;
 
   Overworld(this._mapfile);
- 
+
   @override
   void onMount() {
     playerEntered();
@@ -32,6 +33,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     add(_tiledmap!);
     _generateTiles(_tiledmap!.tileMap.map);
     _buildBlockedTiles(_tiledmap!.tileMap);
+    _createNpcs();
 
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
@@ -46,7 +48,7 @@ class Overworld extends World with HasGameRef<MainGame> {
   bool isTileBlocked(Vector2 pos) {
     try {
       return _blockedTiles[pos.x.toInt()][pos.y.toInt()];
-    } catch(e) {
+    } catch (e) {
       print('error checking if tile is blocked');
     }
     return false;
@@ -55,42 +57,64 @@ class Overworld extends World with HasGameRef<MainGame> {
   void steppedOnTile(Vector2 pos) {
     try {
       final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
-      if(func != null) {
+      if (func != null) {
         func();
       }
-    } catch(e) {
+    } catch (e) {
       print('error checking tile');
     }
   }
-  
-  void _generateTiles(TiledMap map) {
-    _blockedTiles = List<List>.generate(map.width, (index) => 
-    List<dynamic>.generate(map.height, (index) => 
-    false, growable: false), growable: false);
 
-    _triggerTiles = List<List>.generate(map.width, (index) => 
-    List<dynamic>.generate(map.height, (index) => 
-    null, growable: false), growable: false);
+  void _generateTiles(TiledMap map) {
+    _blockedTiles = List<List>.generate(
+        map.width,
+        (index) => List<dynamic>.generate(map.height, (index) => false,
+            growable: false),
+        growable: false);
+
+    _triggerTiles = List<List>.generate(
+        map.width,
+        (index) => List<dynamic>.generate(map.height, (index) => null,
+            growable: false),
+        growable: false);
   }
-  
+
   void _buildBlockedTiles(RenderableTiledMap tileMap) async {
-    await TileProcessor.processTileType(tileMap: tileMap, 
-    processorByType: <String, TileProcessorFunc> {
-      'blocked': ((tile, position, size) async {
-        _addBlockedCell(position);
-      }),
-      'building': ((tile, position, size) async {
-        _addBuilding(position, tile);
-      }),
-    }, layersToLoad: [
-      'grass', 'trees', 'rocks', 'building',
-    ]);
+    await TileProcessor.processTileType(
+        tileMap: tileMap,
+        processorByType: <String, TileProcessorFunc>{
+          'blocked': ((tile, position, size) async {
+            _addBlockedCell(position);
+          }),
+          'building': ((tile, position, size) async {
+            _addBuilding(position, tile);
+          }),
+        },
+        layersToLoad: [
+          'grass',
+          'trees',
+          'rocks',
+          'building',
+        ]);
   }
-  
+
   Vector2 _readSpawnPoint(RenderableTiledMap tileMap) {
     final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;
-    return Vector2(spawnObject.x*2, spawnObject.y*2);
+    return Vector2(spawnObject.x * 2, spawnObject.y * 2);
+  }
+
+  List<Vector2> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
+    List<Vector2> spawns = [];
+    final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
+    if (objectGroup == null) {
+      return spawns;
+    }
+    
+    for (final object in objectGroup.objects) {
+      spawns.add(Vector2(object.x * 2, object.y * 2));
+    }
+    return spawns;
   }
 
   void _addBlockedCell(Vector2 position) {
@@ -112,19 +136,19 @@ class Overworld extends World with HasGameRef<MainGame> {
     int y = t.y.toInt();
 
     final properties = tile.tile.properties;
-    if(properties.has('town')) {
+    if (properties.has('town')) {
       final town = properties.getProperty<StringProperty>('town');
       final func = () async {
         final map = town?.value;
-        if(map != null) {
-          _reEntryPos = Vector2(x*TILESIZE, y*TILESIZE);
+        if (map != null) {
+          _reEntryPos = Vector2(x * TILESIZE, y * TILESIZE);
           await game.overworldNavigator.loadWorld(map);
         }
       };
       _triggerTiles[x][y] = func;
     }
 
-    if(properties.has('exit')) {
+    if (properties.has('exit')) {
       final func = () async {
         game.overworldNavigator.loadMainWorld();
       };
@@ -143,5 +167,14 @@ class Overworld extends World with HasGameRef<MainGame> {
       return;
     }
     game.player.position = _reEntryPos!;
+  }
+
+  void _createNpcs() {
+    final spawns = _readNpcSpawnPoints(_tiledmap!.tileMap);
+    for (final spawn in spawns) {
+      final npc = NPC();
+      npc.position = spawn;
+      add(npc);
+    }
   }
 }

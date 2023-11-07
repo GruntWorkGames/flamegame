@@ -46,6 +46,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     final npc = _isTileBlockedNpc(nextTile);
     if (npc != null) {
       print('${npc.data.speech}');
+      npc.speak();
       return false;
     }
     return !isTileBlocked(nextTile);
@@ -69,6 +70,11 @@ class Overworld extends World with HasGameRef<MainGame> {
       }
     } catch (e) {
       print('error checking tile');
+    }
+
+    if(game.currentSpeechBubble != null) {
+      game.currentSpeechBubble!.removeFromParent();
+      game.currentSpeechBubble = null;
     }
   }
 
@@ -128,6 +134,10 @@ class Overworld extends World with HasGameRef<MainGame> {
       final speech = object.properties.getProperty<StringProperty>('speech');
       if (speech != null) {
         data.speech = speech.value;
+      }
+      final speechHeight = object.properties.getProperty<IntProperty>('speechHeight');
+      if(speechHeight != null) {
+        data.speechHeight = speechHeight.value;
       }
       data.name = object.name;
       data.position = Vector2(object.x * 2, object.y * 2);

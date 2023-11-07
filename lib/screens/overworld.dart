@@ -45,7 +45,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     final nextTile = getNextTile(direction, playerPos);
     final npc = _isTileBlockedNpc(nextTile);
     if (npc != null) {
-      print('talk to npc');
+      print('${npc.data.speech}');
       return false;
     }
     return !isTileBlocked(nextTile);
@@ -73,10 +73,12 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   void _generateTiles(TiledMap map) {
-    _blockedTiles =  List<List>.generate(map.width,(index) => 
-    List<dynamic>.generate(map.height, (index) => 
-    false,growable: false), growable: false);
-    
+    _blockedTiles = List<List>.generate(
+        map.width,
+        (index) => List<dynamic>.generate(map.height, (index) => false,
+            growable: false),
+        growable: false);
+
     _triggerTiles = _generate2dArray(map.width, map.height);
     _npcTiles = _generate2dArray(map.width, map.height);
   }
@@ -114,17 +116,24 @@ class Overworld extends World with HasGameRef<MainGame> {
     return Vector2(spawnObject.x * 2, spawnObject.y * 2);
   }
 
-  List<Vector2> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
-    List<Vector2> spawns = [];
+  List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
+    List<NpcData> spawnData = [];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
     if (objectGroup == null) {
-      return spawns;
+      return spawnData;
     }
 
     for (final object in objectGroup.objects) {
-      spawns.add(Vector2(object.x * 2, object.y * 2));
+      NpcData data = NpcData();
+      final speech = object.properties.getProperty<StringProperty>('speech');
+      if (speech != null) {
+        data.speech = speech.value;
+      }
+      data.name = object.name;
+      data.position = Vector2(object.x * 2, object.y * 2);
+      spawnData.add(data);
     }
-    return spawns;
+    return spawnData;
   }
 
   void _addBlockedCell(Vector2 position) {
@@ -181,9 +190,8 @@ class Overworld extends World with HasGameRef<MainGame> {
 
   void _createNpcs() {
     final spawns = _readNpcSpawnPoints(_tiledmap!.tileMap);
-    for (final spawn in spawns) {
-      final npc = NPC();
-      npc.position = spawn;
+    for (final spawnData in spawns) {
+      final npc = NPC(spawnData);
       add(npc);
       final tile = posToTile(npc.position);
       _npcTiles[tile.x.toInt()][tile.y.toInt()] = npc;

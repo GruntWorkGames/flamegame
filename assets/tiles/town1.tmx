@@ -143,10 +143,26 @@
 </data>
  </layer>
  <objectgroup color="#0000ff" id="6" name="npc">
-  <object id="3" x="224" y="208" width="16" height="16"/>
-  <object id="4" x="176" y="320" width="16" height="16"/>
-  <object id="5" x="224" y="304" width="16" height="16"/>
-  <object id="7" x="272" y="272" width="16" height="16"/>
+  <object id="3" name="Clark" x="224" y="208" width="16" height="16">
+   <properties>
+    <property name="speech" value="Clark says: Welcome to our town. Be sure to visit Popo in the town square."/>
+   </properties>
+  </object>
+  <object id="4" name="Taco" x="176" y="320" width="16" height="16">
+   <properties>
+    <property name="speech" value="Taco says: Hello, traveler!"/>
+   </properties>
+  </object>
+  <object id="5" name="Popo" x="224" y="304" width="16" height="16">
+   <properties>
+    <property name="speech" value="Popo says: How do ya like me now!?"/>
+   </properties>
+  </object>
+  <object id="7" name="Floof" x="272" y="272" width="16" height="16">
+   <properties>
+    <property name="speech" value="Floof says: Have you seen any Boglims lately?"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#ff0000" id="3" name="spawn">
   <object id="1" x="160" y="176" width="16" height="16"/>

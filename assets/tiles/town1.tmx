@@ -153,7 +153,10 @@
   </object>
   <object id="4" name="Taco" x="176" y="320" width="16" height="16">
    <properties>
-    <property name="speech" value="Taco says: Hello, traveler!"/>
+    <property name="speech">Taco says: I hate everything, and contribute nothing! Get lost!
+
+</property>
+    <property name="speechHeight" type="int" value="100"/>
    </properties>
   </object>
   <object id="5" name="Popo" x="224" y="304" width="16" height="16">

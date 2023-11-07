@@ -1,10 +1,12 @@
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 
 class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
   PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE));
+  bool isMoving = false;
 
   @override
   Future<void> onLoad() async {
@@ -13,21 +15,39 @@ class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
   }
 
   void move(Direction direction) {
+    if(isMoving) {
+      return;
+    }
+    isMoving = true;
+    final distance = Vector2(0, 0);
     switch (direction) {
       case Direction.up:
-        position.y -= TILESIZE;
+        distance.y -= TILESIZE;
         break;
       case Direction.down:
-        position.y += TILESIZE;
+        distance.y += TILESIZE;
         break;
       case Direction.left:
-        position.x -= TILESIZE;
+        distance.x -= TILESIZE;
         break;
       case Direction.right:
-        position.x += TILESIZE;
+        distance.x += TILESIZE;
         break;
     }
-    final tilePos = posToTile(position);
-    game.overworld?.steppedOnTile(tilePos);
+
+    final lastPos = position.clone();
+
+    final move = MoveEffect.by(distance, EffectController(
+      duration: .1
+    ),onComplete: () {
+      // snap to grid. issue with moveTo/moveBy not being perfect...
+      position = lastPos + distance;
+      final tilePos = posToTile(position);
+      game.overworld?.steppedOnTile(tilePos);
+      isMoving = false;
+    },);
+    move.removeOnFinish = true;
+
+    add(move);
   }
 }

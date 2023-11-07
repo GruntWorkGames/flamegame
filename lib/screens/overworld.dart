@@ -10,6 +10,7 @@ import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 class Overworld extends World with HasGameRef<MainGame> {
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
+  List<List<dynamic>> _npcTiles = [];
   String _mapfile = '';
   Vector2? _reEntryPos;
   TiledComponent? _tiledmap;
@@ -42,6 +43,11 @@ class Overworld extends World with HasGameRef<MainGame> {
   bool canMoveDirection(Direction direction) {
     final playerPos = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerPos);
+    final npc = _isTileBlockedNpc(nextTile);
+    if (npc != null) {
+      print('talk to npc');
+      return false;
+    }
     return !isTileBlocked(nextTile);
   }
 
@@ -49,7 +55,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     try {
       return _blockedTiles[pos.x.toInt()][pos.y.toInt()];
     } catch (e) {
-      print('error checking if tile is blocked');
+      print('error checking if tile is blocked at: ${pos.x}, ${pos.y}');
     }
     return false;
   }
@@ -66,16 +72,16 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   void _generateTiles(TiledMap map) {
-    _blockedTiles = List<List>.generate(
-        map.width,
-        (index) => List<dynamic>.generate(map.height, (index) => false,
-            growable: false),
-        growable: false);
+    _blockedTiles = _generate2dArray(map.width, map.height);
+    _triggerTiles = _generate2dArray(map.width, map.height);
+    _npcTiles = _generate2dArray(map.width, map.height);
+  }
 
-    _triggerTiles = List<List>.generate(
-        map.width,
-        (index) => List<dynamic>.generate(map.height, (index) => null,
-            growable: false),
+  List<List<dynamic>> _generate2dArray(int width, int height) {
+    return List<List>.generate(
+        width,
+        (index) =>
+            List<dynamic>.generate(height, (index) => null, growable: false),
         growable: false);
   }
 
@@ -110,7 +116,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     if (objectGroup == null) {
       return spawns;
     }
-    
+
     for (final object in objectGroup.objects) {
       spawns.add(Vector2(object.x * 2, object.y * 2));
     }
@@ -175,6 +181,12 @@ class Overworld extends World with HasGameRef<MainGame> {
       final npc = NPC();
       npc.position = spawn;
       add(npc);
+      final tile = posToTile(npc.position);
+      _npcTiles[tile.x.toInt()][tile.y.toInt()] = npc;
     }
+  }
+
+  NPC? _isTileBlockedNpc(Vector2 nextTile) {
+    return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
   }
 }

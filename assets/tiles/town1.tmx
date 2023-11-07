@@ -164,6 +164,7 @@
   <object id="7" name="Floof" x="272" y="272" width="16" height="16">
    <properties>
     <property name="speech" value="Floof says: Have you seen any Boglims lately?"/>
+    <property name="speechHeight" type="int" value="90"/>
    </properties>
   </object>
  </objectgroup>

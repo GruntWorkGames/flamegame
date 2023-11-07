@@ -45,7 +45,6 @@ class Overworld extends World with HasGameRef<MainGame> {
     final nextTile = getNextTile(direction, playerPos);
     final npc = _isTileBlockedNpc(nextTile);
     if (npc != null) {
-      print('${npc.data.speech}');
       npc.speak();
       return false;
     }

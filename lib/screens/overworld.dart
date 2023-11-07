@@ -56,6 +56,7 @@ class Overworld extends World with HasGameRef<MainGame> {
       return _blockedTiles[pos.x.toInt()][pos.y.toInt()];
     } catch (e) {
       print('error checking if tile is blocked at: ${pos.x}, ${pos.y}');
+      print(e.toString());
     }
     return false;
   }
@@ -72,7 +73,10 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   void _generateTiles(TiledMap map) {
-    _blockedTiles = _generate2dArray(map.width, map.height);
+    _blockedTiles =  List<List>.generate(map.width,(index) => 
+    List<dynamic>.generate(map.height, (index) => 
+    false,growable: false), growable: false);
+    
     _triggerTiles = _generate2dArray(map.width, map.height);
     _npcTiles = _generate2dArray(map.width, map.height);
   }

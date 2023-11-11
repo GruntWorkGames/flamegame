@@ -3,16 +3,28 @@ import 'package:flame_game/screens/game.dart';
 import 'package:flame_game/screens/overworld.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
-  final mainWorld = Overworld('map.tmx');
-  
+  final Map<String, Overworld> worlds = {};
+  Overworld? lastWorld;
+
   void loadMainWorld() {
-    game.overworld = mainWorld;
-    game.world = mainWorld;
+    loadWorld('map.tmx');
   }
 
   Future<void> loadWorld(String mapfile) async {
-    final newWorld = await Overworld(mapfile);
-    game.overworld = newWorld;
-    game.world = newWorld;
+    lastWorld = game.overworld;
+    if(worlds.containsKey(mapfile)) {
+      game.overworld = worlds[mapfile];
+      game.world = worlds[mapfile]!;
+    } else { // create new
+      final newWorld = await Overworld(mapfile);
+      game.overworld = newWorld;
+      game.world = newWorld;
+      worlds[mapfile] = newWorld;
+    }
+  }
+
+  void setWorld(Overworld world){
+    game.overworld = world;
+    game.world = world;
   }
 }

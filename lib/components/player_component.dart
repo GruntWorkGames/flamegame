@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
@@ -45,6 +46,8 @@ class PlayerComponent extends SpriteComponent with HasGameRef<MainGame> {
       final tilePos = posToTile(position);
       game.overworld?.steppedOnTile(tilePos);
       isMoving = false;
+      final tile = posToTile(position);
+      UI.debugLabel.text = '${tile.x}, ${tile.y}';
     },);
     move.removeOnFinish = true;
 

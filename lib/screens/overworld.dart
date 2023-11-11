@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -12,7 +13,7 @@ class Overworld extends World with HasGameRef<MainGame> {
   List<List<dynamic>> _triggerTiles = [];
   List<List<dynamic>> _npcTiles = [];
   String _mapfile = '';
-  Vector2? _reEntryPos;
+  Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? _tiledmap;
 
   Overworld(this._mapfile);
@@ -34,6 +35,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     add(_tiledmap!);
     _generateTiles(_tiledmap!.tileMap.map);
     _buildBlockedTiles(_tiledmap!.tileMap);
+    _buildPortals(_tiledmap!.tileMap);
     _createNpcs();
 
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
@@ -44,13 +46,20 @@ class Overworld extends World with HasGameRef<MainGame> {
     final playerPos = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerPos);
     final npc = _isTileBlockedNpc(nextTile);
+    final portal = _getTilePortal(nextTile);
     if (npc != null) {
       npc.speak();
       return false;
     }
+
+    if(portal != null) {
+      portal();
+      return false;
+    }
+
     return !isTileBlocked(nextTile);
   }
-
+// 1120 x 832
   bool isTileBlocked(Vector2 pos) {
     try {
       return _blockedTiles[pos.x.toInt()][pos.y.toInt()];
@@ -62,14 +71,14 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   void steppedOnTile(Vector2 pos) {
-    try {
-      final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
-      if (func != null) {
-        func();
-      }
-    } catch (e) {
-      print('error checking tile');
-    }
+    // try {
+    //   final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
+    //   if (func != null) {
+    //     func();
+    //   }
+    // } catch (e) {
+    //   print('error checking tile');
+    // }
 
     if(game.currentSpeechBubble != null) {
       game.currentSpeechBubble!.removeFromParent();
@@ -103,16 +112,52 @@ class Overworld extends World with HasGameRef<MainGame> {
           'blocked': ((tile, position, size) async {
             _addBlockedCell(position);
           }),
-          'building': ((tile, position, size) async {
-            _addBuilding(position, tile);
-          }),
         },
         layersToLoad: [
           'grass',
           'trees',
           'rocks',
-          'building',
-        ]);
+          'building'
+        ],clear: false);
+  }
+
+  void _buildPortals(RenderableTiledMap tileMap) {
+    final portalGroup = tileMap.getLayer<ObjectGroup>('portal');
+    final exitGroup = tileMap.getLayer<ObjectGroup>('exit');
+
+    if(portalGroup != null) { 
+      for(final portal in portalGroup.objects) {
+        final pos = Vector2(portal.x*2, portal.y*2);
+        final mapProperty = portal.properties.getProperty<StringProperty>('map');
+        final map = (mapProperty != null) ? mapProperty.value : '';
+        _addPortal(Portal(map, pos));
+      }
+    }
+
+    if(exitGroup != null) {
+      for(final exit in exitGroup.objects) {
+        final pos = Vector2(exit.x, exit.y);
+        _addExit(pos);
+      }
+    }
+  }
+
+  void _addPortal(Portal portal) {
+    final func = () async {
+      final map = portal.map;
+      _reEntryPos = Vector2(portal.position.x, portal.position.y);
+      await game.overworldNavigator.loadWorld(map);
+    };
+    final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
+    _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
+  }
+
+  void _addExit(Vector2 exit) {
+    final func = () async {
+      game.overworldNavigator.loadMainWorld();
+    };
+     final tilePos = posToTile(Vector2(exit.x*2, exit.y*2));
+    _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
   }
 
   Vector2 _readSpawnPoint(RenderableTiledMap tileMap) {
@@ -156,34 +201,6 @@ class Overworld extends World with HasGameRef<MainGame> {
     _blockedTiles[x][y] = true;
   }
 
-  void _addBuilding(Vector2 position, TileProcessor tile) {
-    position.x *= 2;
-    position.y *= 2;
-    final t = posToTile(position);
-    int x = t.x.toInt();
-    int y = t.y.toInt();
-
-    final properties = tile.tile.properties;
-    if (properties.has('town')) {
-      final town = properties.getProperty<StringProperty>('town');
-      final func = () async {
-        final map = town?.value;
-        if (map != null) {
-          _reEntryPos = Vector2(x * TILESIZE, y * TILESIZE);
-          await game.overworldNavigator.loadWorld(map);
-        }
-      };
-      _triggerTiles[x][y] = func;
-    }
-
-    if (properties.has('exit')) {
-      final func = () async {
-        game.overworldNavigator.loadMainWorld();
-      };
-      _triggerTiles[x][y] = func;
-    }
-  }
-
   void playerEntered() async {
     if (game.player.parent != null) {
       game.player.removeFromParent();
@@ -191,10 +208,10 @@ class Overworld extends World with HasGameRef<MainGame> {
 
     _tiledmap?.add(game.player);
 
-    if (_reEntryPos == null) {
+    if (_reEntryPos.isZero()) {
       return;
     }
-    game.player.position = _reEntryPos!;
+    game.player.position = _reEntryPos;
   }
 
   void _createNpcs() {
@@ -209,5 +226,14 @@ class Overworld extends World with HasGameRef<MainGame> {
 
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
     return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
+  }
+  
+  Function? _getTilePortal(Vector2 nextTile) {
+    try {
+        return _triggerTiles[nextTile.x.toInt()][nextTile.y.toInt()];
+      } catch (e) {
+      print('error checking tile');
+    }
+    return null;
   }
 }

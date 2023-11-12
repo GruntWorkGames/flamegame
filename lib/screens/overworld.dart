@@ -53,6 +53,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     }
 
     if(portal != null) {
+      _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
       portal();
       return false;
     }
@@ -145,7 +146,6 @@ class Overworld extends World with HasGameRef<MainGame> {
   void _addPortal(Portal portal) {
     final func = () async {
       final map = portal.map;
-      _reEntryPos = Vector2(portal.position.x, portal.position.y);
       await game.overworldNavigator.loadWorld(map);
     };
     final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
@@ -225,7 +225,12 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
-    return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
+    try{
+      return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
+    } catch (e) {
+      print('error checking tile');
+    }
+    return null;
   }
   
   Function? _getTilePortal(Vector2 nextTile) {

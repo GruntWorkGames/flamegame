@@ -5,7 +5,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
+    "duration": 80
    },
    "AxemanRed (Sprite Sheet) #Loop 1.png": {
     "frame": { "x": 16, "y": 0, "w": 16, "h": 16 },
@@ -13,7 +13,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
+    "duration": 80
    },
    "AxemanRed (Sprite Sheet) #Loop 2.png": {
     "frame": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -21,7 +21,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
+    "duration": 80
    },
    "AxemanRed (Sprite Sheet) #Loop 3.png": {
     "frame": { "x": 32, "y": 0, "w": 16, "h": 16 },

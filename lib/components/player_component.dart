@@ -86,7 +86,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame>
     final lastPos = position.clone();
 
     final move = MoveEffect.by(distance, EffectController(
-      duration: .1
+      duration: .24
     ), onComplete: () {
       // snap to grid. issue with moveTo/moveBy not being perfect...
       position = lastPos + distance;

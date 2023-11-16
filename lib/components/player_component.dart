@@ -6,9 +6,22 @@ import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 
-enum PlayerState { beginIdle, idleDown, idleUp, idleLeft, idleRight, walkingLeft, walkingRight, walkingUp, walkingDown, attacking, takingDamage }
+enum PlayerState {
+  beginIdle,
+  idleDown,
+  idleUp,
+  idleLeft,
+  idleRight,
+  walkingLeft,
+  walkingRight,
+  walkingUp,
+  walkingDown,
+  attacking,
+  takingDamage
+}
 
-class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame> {
+class PlayerComponent extends SpriteAnimationComponent
+    with HasGameRef<MainGame> {
   PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
   final Map<PlayerState, SpriteAnimation> _animations = {};
@@ -23,43 +36,75 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame>
     anchor = Anchor.topLeft;
 
     Image? image = await game.images.load('animations/AxemanRed-walk-down.png');
-    Map<String, dynamic> jsonData = await game.assets.readJson('images/animations/AxemanRed-walk-down.json');
-    _animations[PlayerState.walkingDown] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    Map<String, dynamic> jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-walk-down.json');
+    _animations[PlayerState.walkingDown] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-up.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-walk-up.json');
-    _animations[PlayerState.walkingUp] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData =
+        await game.assets.readJson('images/animations/AxemanRed-walk-up.json');
+    _animations[PlayerState.walkingUp] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-left.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-walk-left.json');
-    _animations[PlayerState.walkingLeft] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-walk-left.json');
+    _animations[PlayerState.walkingLeft] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-right.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-walk-right.json');
-    _animations[PlayerState.walkingRight] = SpriteAnimation.fromAsepriteData(image, jsonData);
-
+    jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-walk-right.json');
+    _animations[PlayerState.walkingRight] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-up.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-idle-up.json');
-    _animations[PlayerState.idleUp] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData =
+        await game.assets.readJson('images/animations/AxemanRed-idle-up.json');
+    _animations[PlayerState.idleUp] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-down.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-idle-down.json');
-    _animations[PlayerState.idleDown] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-idle-down.json');
+    _animations[PlayerState.idleDown] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-left.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-idle-left.json');
-    _animations[PlayerState.idleLeft] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-idle-left.json');
+    _animations[PlayerState.idleLeft] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-right.png');
-    jsonData = await game.assets.readJson('images/animations/AxemanRed-idle-right.json');
-    _animations[PlayerState.idleRight] = SpriteAnimation.fromAsepriteData(image, jsonData);
+    jsonData = await game.assets
+        .readJson('images/animations/AxemanRed-idle-right.json');
+    _animations[PlayerState.idleRight] =
+        SpriteAnimation.fromAsepriteData(image, jsonData);
 
     _playerState = PlayerState.idleDown;
   }
 
+  void faceDirection(Direction direction) {
+    switch (direction) {
+      case Direction.up:
+        _stateChanged(PlayerState.idleUp);
+        break;
+      case Direction.down:
+        _stateChanged(PlayerState.idleDown);
+        break;
+      case Direction.left:
+        _stateChanged(PlayerState.idleLeft);
+        break;
+      case Direction.right:
+        _stateChanged(PlayerState.idleRight);
+      default:
+    } 
+  }
+
   void move(Direction direction) {
-    if(isMoving) {
+    if (isMoving) {
       return;
     }
     isMoving = true;
@@ -85,26 +130,28 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame>
 
     final lastPos = position.clone();
 
-    final move = MoveEffect.by(distance, EffectController(
-      duration: .24
-    ), onComplete: () {
-      // snap to grid. issue with moveTo/moveBy not being perfect...
-      position = lastPos + distance;
-      final tilePos = posToTile(position);
-      game.overworld?.steppedOnTile(tilePos);
-      isMoving = false;
-      final tile = posToTile(position);
-      UI.debugLabel.text = '${tile.x}, ${tile.y}';
-      _stateChanged(PlayerState.beginIdle);
-    },);
+    final move = MoveEffect.by(
+      distance,
+      EffectController(duration: .24),
+      onComplete: () {
+        // snap to grid. issue with moveTo/moveBy not being perfect...
+        position = lastPos + distance;
+        final tilePos = posToTile(position);
+        game.overworld?.steppedOnTile(tilePos);
+        isMoving = false;
+        final tile = posToTile(position);
+        UI.debugLabel.text = '${tile.x}, ${tile.y}';
+        _stateChanged(PlayerState.beginIdle);
+      },
+    );
     move.removeOnFinish = true;
 
     add(move);
   }
 
   void _stateChanged(PlayerState st) {
-    if(st == PlayerState.beginIdle) {
-      switch(_playerState) {
+    if (st == PlayerState.beginIdle) {
+      switch (_playerState) {
         case PlayerState.walkingUp:
           animation = _animations[PlayerState.idleUp];
           return;
@@ -115,7 +162,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame>
           animation = _animations[PlayerState.idleLeft];
           return;
         case PlayerState.walkingRight:
-          animation = _animations[PlayerState.idleRight];   
+          animation = _animations[PlayerState.idleRight];
           return;
         case PlayerState.beginIdle:
         case PlayerState.idleDown:
@@ -128,6 +175,6 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<MainGame>
     } else {
       animation = _animations[st];
       _playerState = st;
-    }   
+    }
   }
 }

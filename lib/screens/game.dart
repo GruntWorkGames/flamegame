@@ -21,8 +21,8 @@ class MainGame extends FlameGame {
   }
 
   void directionPressed(Direction direction) {
-    if(overworld != null && overworld!.canMoveDirection(direction)) {
-      player.move(direction);
+    if (overworld != null) {
+      overworld!.directionPressed(direction);
     }
   }
 }

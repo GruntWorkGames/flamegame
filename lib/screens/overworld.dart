@@ -42,6 +42,13 @@ class Overworld extends World with HasGameRef<MainGame> {
     game.camera.follow(game.player);
   }
 
+  void directionPressed(Direction direction) {
+    game.player.faceDirection(direction);
+    if (canMoveDirection(direction)) {
+      game.player.move(direction);
+    }
+  }
+
   bool canMoveDirection(Direction direction) {
     final playerPos = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerPos);
@@ -52,7 +59,7 @@ class Overworld extends World with HasGameRef<MainGame> {
       return false;
     }
 
-    if(portal != null) {
+    if (portal != null) {
       _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
       portal();
       return false;
@@ -60,6 +67,7 @@ class Overworld extends World with HasGameRef<MainGame> {
 
     return !isTileBlocked(nextTile);
   }
+
 // 1120 x 832
   bool isTileBlocked(Vector2 pos) {
     try {
@@ -81,7 +89,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     //   print('error checking tile');
     // }
 
-    if(game.currentSpeechBubble != null) {
+    if (game.currentSpeechBubble != null) {
       game.currentSpeechBubble!.removeFromParent();
       game.currentSpeechBubble = null;
     }
@@ -114,29 +122,26 @@ class Overworld extends World with HasGameRef<MainGame> {
             _addBlockedCell(position);
           }),
         },
-        layersToLoad: [
-          'grass',
-          'trees',
-          'rocks',
-          'building'
-        ],clear: false);
+        layersToLoad: ['grass', 'trees', 'rocks', 'building'],
+        clear: false);
   }
 
   void _buildPortals(RenderableTiledMap tileMap) {
     final portalGroup = tileMap.getLayer<ObjectGroup>('portal');
     final exitGroup = tileMap.getLayer<ObjectGroup>('exit');
 
-    if(portalGroup != null) { 
-      for(final portal in portalGroup.objects) {
-        final pos = Vector2(portal.x*2, portal.y*2);
-        final mapProperty = portal.properties.getProperty<StringProperty>('map');
+    if (portalGroup != null) {
+      for (final portal in portalGroup.objects) {
+        final pos = Vector2(portal.x * 2, portal.y * 2);
+        final mapProperty =
+            portal.properties.getProperty<StringProperty>('map');
         final map = (mapProperty != null) ? mapProperty.value : '';
         _addPortal(Portal(map, pos));
       }
     }
 
-    if(exitGroup != null) {
-      for(final exit in exitGroup.objects) {
+    if (exitGroup != null) {
+      for (final exit in exitGroup.objects) {
         final pos = Vector2(exit.x, exit.y);
         _addExit(pos);
       }
@@ -156,7 +161,7 @@ class Overworld extends World with HasGameRef<MainGame> {
     final func = () async {
       game.overworldNavigator.loadMainWorld();
     };
-     final tilePos = posToTile(Vector2(exit.x*2, exit.y*2));
+    final tilePos = posToTile(Vector2(exit.x * 2, exit.y * 2));
     _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
   }
 
@@ -179,8 +184,9 @@ class Overworld extends World with HasGameRef<MainGame> {
       if (speech != null) {
         data.speech = speech.value;
       }
-      final speechHeight = object.properties.getProperty<IntProperty>('speechHeight');
-      if(speechHeight != null) {
+      final speechHeight =
+          object.properties.getProperty<IntProperty>('speechHeight');
+      if (speechHeight != null) {
         data.speechHeight = speechHeight.value;
       }
       data.name = object.name;
@@ -225,18 +231,18 @@ class Overworld extends World with HasGameRef<MainGame> {
   }
 
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
-    try{
+    try {
       return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
     } catch (e) {
       print('error checking tile');
     }
     return null;
   }
-  
+
   Function? _getTilePortal(Vector2 nextTile) {
     try {
-        return _triggerTiles[nextTile.x.toInt()][nextTile.y.toInt()];
-      } catch (e) {
+      return _triggerTiles[nextTile.x.toInt()][nextTile.y.toInt()];
+    } catch (e) {
       print('error checking tile');
     }
     return null;

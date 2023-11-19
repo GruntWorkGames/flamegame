@@ -1,12 +1,13 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 
-enum PlayerState {
+enum CharacterAnimationState {
   beginIdle,
   idleDown,
   idleUp,
@@ -20,85 +21,81 @@ enum PlayerState {
   takingDamage
 }
 
-class PlayerComponent extends SpriteAnimationComponent
+class Player extends SpriteAnimationComponent
     with HasGameRef<MainGame> {
-  PlayerComponent() : super(size: Vector2(TILESIZE, TILESIZE));
+  Player() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
-  final Map<PlayerState, SpriteAnimation> _animations = {};
-  PlayerState _playerState = PlayerState.idleDown;
+  final Map<CharacterAnimationState, SpriteAnimation> _animations = {};
+  CharacterAnimationState _playerState = CharacterAnimationState.idleDown;
 
   @override
   Future<void> onLoad() async {
-    // this.sprite = await gameRef.loadSprite('player.png');
-    // final playerSpriteSize = Vector2(16, 16);
-    // final playerSpriteLoc = Vector2(0,0);
-    // final idleFrames = [Vector2(0, 0)];
     anchor = Anchor.topLeft;
 
     Image? image = await game.images.load('animations/AxemanRed-walk-down.png');
     Map<String, dynamic> jsonData = await game.assets
         .readJson('images/animations/AxemanRed-walk-down.json');
-    _animations[PlayerState.walkingDown] =
+    _animations[CharacterAnimationState.walkingDown] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-up.png');
     jsonData =
         await game.assets.readJson('images/animations/AxemanRed-walk-up.json');
-    _animations[PlayerState.walkingUp] =
+    _animations[CharacterAnimationState.walkingUp] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-left.png');
     jsonData = await game.assets
         .readJson('images/animations/AxemanRed-walk-left.json');
-    _animations[PlayerState.walkingLeft] =
+    _animations[CharacterAnimationState.walkingLeft] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-walk-right.png');
     jsonData = await game.assets
         .readJson('images/animations/AxemanRed-walk-right.json');
-    _animations[PlayerState.walkingRight] =
+    _animations[CharacterAnimationState.walkingRight] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-up.png');
     jsonData =
         await game.assets.readJson('images/animations/AxemanRed-idle-up.json');
-    _animations[PlayerState.idleUp] =
+    _animations[CharacterAnimationState.idleUp] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-down.png');
     jsonData = await game.assets
         .readJson('images/animations/AxemanRed-idle-down.json');
-    _animations[PlayerState.idleDown] =
+    _animations[CharacterAnimationState.idleDown] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-left.png');
     jsonData = await game.assets
         .readJson('images/animations/AxemanRed-idle-left.json');
-    _animations[PlayerState.idleLeft] =
+    _animations[CharacterAnimationState.idleLeft] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
     image = await game.images.load('animations/AxemanRed-idle-right.png');
     jsonData = await game.assets
         .readJson('images/animations/AxemanRed-idle-right.json');
-    _animations[PlayerState.idleRight] =
+    _animations[CharacterAnimationState.idleRight] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
-    _playerState = PlayerState.idleDown;
+    _stateChanged(CharacterAnimationState.idleDown);
   }
 
   void faceDirection(Direction direction) {
     switch (direction) {
       case Direction.up:
-        _stateChanged(PlayerState.idleUp);
+        _stateChanged(CharacterAnimationState.idleUp);
         break;
       case Direction.down:
-        _stateChanged(PlayerState.idleDown);
+        _stateChanged(CharacterAnimationState.idleDown);
         break;
       case Direction.left:
-        _stateChanged(PlayerState.idleLeft);
+        _stateChanged(CharacterAnimationState.idleLeft);
         break;
       case Direction.right:
-        _stateChanged(PlayerState.idleRight);
+        _stateChanged(CharacterAnimationState.idleRight);
       default:
     } 
   }
@@ -112,20 +109,21 @@ class PlayerComponent extends SpriteAnimationComponent
     switch (direction) {
       case Direction.up:
         distance.y -= TILESIZE;
-        _stateChanged(PlayerState.walkingUp);
+        _stateChanged(CharacterAnimationState.walkingUp);
         break;
       case Direction.down:
         distance.y += TILESIZE;
-        _stateChanged(PlayerState.walkingDown);
+        _stateChanged(CharacterAnimationState.walkingDown);
         break;
       case Direction.left:
         distance.x -= TILESIZE;
-        _stateChanged(PlayerState.walkingLeft);
+        _stateChanged(CharacterAnimationState.walkingLeft);
         break;
       case Direction.right:
         distance.x += TILESIZE;
-        _stateChanged(PlayerState.walkingRight);
+        _stateChanged(CharacterAnimationState.walkingRight);
         break;
+      case Direction.none:
     }
 
     final lastPos = position.clone();
@@ -141,7 +139,8 @@ class PlayerComponent extends SpriteAnimationComponent
         isMoving = false;
         final tile = posToTile(position);
         UI.debugLabel.text = '${tile.x}, ${tile.y}';
-        _stateChanged(PlayerState.beginIdle);
+        _stateChanged(CharacterAnimationState.beginIdle);
+        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       },
     );
     move.removeOnFinish = true;
@@ -149,28 +148,28 @@ class PlayerComponent extends SpriteAnimationComponent
     add(move);
   }
 
-  void _stateChanged(PlayerState st) {
-    if (st == PlayerState.beginIdle) {
+  void _stateChanged(CharacterAnimationState st) {
+    if (st == CharacterAnimationState.beginIdle) {
       switch (_playerState) {
-        case PlayerState.walkingUp:
-          animation = _animations[PlayerState.idleUp];
+        case CharacterAnimationState.walkingUp:
+          animation = _animations[CharacterAnimationState.idleUp];
           return;
-        case PlayerState.walkingDown:
-          animation = _animations[PlayerState.idleDown];
+        case CharacterAnimationState.walkingDown:
+          animation = _animations[CharacterAnimationState.idleDown];
           return;
-        case PlayerState.walkingLeft:
-          animation = _animations[PlayerState.idleLeft];
+        case CharacterAnimationState.walkingLeft:
+          animation = _animations[CharacterAnimationState.idleLeft];
           return;
-        case PlayerState.walkingRight:
-          animation = _animations[PlayerState.idleRight];
+        case CharacterAnimationState.walkingRight:
+          animation = _animations[CharacterAnimationState.idleRight];
           return;
-        case PlayerState.beginIdle:
-        case PlayerState.idleDown:
-        case PlayerState.idleUp:
-        case PlayerState.idleLeft:
-        case PlayerState.idleRight:
-        case PlayerState.attacking:
-        case PlayerState.takingDamage:
+        case CharacterAnimationState.beginIdle:
+        case CharacterAnimationState.idleDown:
+        case CharacterAnimationState.idleUp:
+        case CharacterAnimationState.idleLeft:
+        case CharacterAnimationState.idleRight:
+        case CharacterAnimationState.attacking:
+        case CharacterAnimationState.takingDamage:
       }
     } else {
       animation = _animations[st];

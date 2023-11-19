@@ -1,25 +1,45 @@
 import 'dart:async';
+import 'package:a_star_algorithm/a_star_algorithm.dart' as AStarAlgorithm;
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
+import 'package:flame_game/components/enemy.dart';
+import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
+import 'package:flame_game/components/square.dart';
+import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
+import 'dart:math' as math;
 
-class Overworld extends World with HasGameRef<MainGame> {
+class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
   List<List<dynamic>> _npcTiles = [];
+  List<List<dynamic>> _enemyTiles = [];
+  List<Enemy> _enemies = [];
+  List<NPC> _npcs = [];
+  bool _debugDraw = false;
+  bool listenToInput = false;
+
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? _tiledmap;
+  final enemyCreator = EnemyCreator();
+  late final TurnSystem turnSystem;
+  List<math.Point<int>> _blockedTileList = [];
+  List<Enemy> _enemiesToMove = [];
+  
+  final List<Square> _squares = [];
 
   Overworld(this._mapfile);
 
   @override
   void onMount() {
+    super.onMount();
     playerEntered();
     final ui = game.ui;
     if (ui.parent == null) {
@@ -37,12 +57,38 @@ class Overworld extends World with HasGameRef<MainGame> {
     _buildBlockedTiles(_tiledmap!.tileMap);
     _buildPortals(_tiledmap!.tileMap);
     _createNpcs();
-
+    // _blockedTileList = _blockedTilesLocationFrom2DList(_blockedTiles);
+    _enemies = _createEnemies(_tiledmap!.tileMap);
+    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: (){print('playerFinished');});
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
+    turnSystem.updateState(TurnSystemState.player);
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    super.onTapUp(event);
+  }
+
+  void enemyTurn() {
+    _enemiesToMove.addAll(_enemies);
+    moveNextEnemy();
+  }
+  
+  void moveNextEnemy() {
+    if(_enemiesToMove.isEmpty) {
+      turnSystem.updateState(TurnSystemState.enemyFinished);
+      return;
+    }
+    final enemy = _enemiesToMove.last;
+    _enemiesToMove.removeLast();
+    enemy.move(_findPath(enemy));
   }
 
   void directionPressed(Direction direction) {
+    if(!listenToInput) {
+      return;
+    }
     game.player.faceDirection(direction);
     if (canMoveDirection(direction)) {
       game.player.move(direction);
@@ -104,6 +150,7 @@ class Overworld extends World with HasGameRef<MainGame> {
 
     _triggerTiles = _generate2dArray(map.width, map.height);
     _npcTiles = _generate2dArray(map.width, map.height);
+    _enemyTiles = _generate2dArray(map.width, map.height);
   }
 
   List<List<dynamic>> _generate2dArray(int width, int height) {
@@ -171,6 +218,20 @@ class Overworld extends World with HasGameRef<MainGame> {
     return Vector2(spawnObject.x * 2, spawnObject.y * 2);
   }
 
+  List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
+    final List<Vector2> spawns = [];
+    final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
+    if (objectGroup == null) {
+      return spawns;
+    }
+
+    for(final object in objectGroup.objects) {
+      spawns.add(Vector2(object.x * 2, object.y * 2));
+    }
+
+    return spawns;
+  }
+
   List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
     List<NpcData> spawnData = [];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
@@ -205,6 +266,8 @@ class Overworld extends World with HasGameRef<MainGame> {
     int x = t.x.toInt();
     int y = t.y.toInt();
     _blockedTiles[x][y] = true;
+
+    _blockedTileList.add(math.Point<int>(x, y));
   }
 
   void playerEntered() async {
@@ -220,14 +283,45 @@ class Overworld extends World with HasGameRef<MainGame> {
     game.player.position = _reEntryPos;
   }
 
+  // void playerEntered() async {
+  //   if (game.player.parent != null) {
+  //     game.player.removeFromParent();
+  //   }
+
+  //   _tiledmap?.add(game.player);
+
+  //   if (_reEntryPos.isZero()) {
+  //     if(_tiledmap != null){
+  //       game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
+  //     }
+  //     return;
+  //   }
+
+  //   game.player.position = _reEntryPos;
+  // }
+
   void _createNpcs() {
     final spawns = _readNpcSpawnPoints(_tiledmap!.tileMap);
     for (final spawnData in spawns) {
       final npc = NPC(spawnData);
       add(npc);
+      _npcs.add(npc);
       final tile = posToTile(npc.position);
       _npcTiles[tile.x.toInt()][tile.y.toInt()] = npc;
     }
+  }
+
+  List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
+    final List<Enemy> enemies = [];
+    final spawns = _readEnemySpawns(_tiledmap!.tileMap);
+    for (final spawnPos in spawns) {
+      final enemy = Enemy(position: spawnPos);
+      final tile = posToTile(enemy.position);
+      _enemyTiles[tile.x.toInt()][tile.y.toInt()] = enemy;
+      enemies.add(enemy);
+      add(enemy);
+    }
+    return enemies;
   }
 
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
@@ -246,5 +340,66 @@ class Overworld extends World with HasGameRef<MainGame> {
       print('error checking tile');
     }
     return null;
+  }
+  
+  Direction _findPath(Enemy enemy) {
+    final map = _tiledmap!.tileMap.map;
+    final endVec = posToTile(game.player.position);
+    final startVec = posToTile(enemy.position);
+    final math.Point<int> end = math.Point(endVec.x.toInt(), endVec.y.toInt());
+    final math.Point<int> start= math.Point(startVec.x.toInt(), startVec.y.toInt());
+    final wallTiles = _blockedTileList;
+    final npcTiles = _npcs.map((npc) {
+      final tile = posToTile(npc.data.position);
+      return math.Point<int>(tile.x.toInt(), tile.y.toInt());
+    }).toSet();
+    final enemys = _enemies.where((other) => other != enemy);
+    final enemyTiles = enemys.map((enemy) {
+      final tile = posToTile(enemy.position);
+      return math.Point<int>(tile.x.toInt(), tile.y.toInt());
+    }).toSet();
+    final barriers = Set<math.Point<int>>.from([... wallTiles, ... npcTiles, ... enemyTiles]).toList();
+    final result = AStarAlgorithm.AStar(
+      rows: map.width, 
+      columns: map.height, 
+      start: start, 
+      end: end, 
+      withDiagonal: false,
+      barriers: barriers).findThePath(doneList: (doneList) {
+    });
+
+    if(result.isEmpty) {
+      return Direction.none;
+    }
+
+    final tilePath = result.map((point) {
+      return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
+    }).toList();
+
+
+    if(_debugDraw) {
+      for(final square in _squares) {
+        square.removeFromParent();
+      }
+
+      for(final tile in tilePath) {
+        final square = Square()..position = tile;
+        _squares.add(square);
+        add(square);
+      }
+    }
+
+    if(tilePath.length > 1) {
+      final tile = tilePath[1];
+      // prevent from running over player
+      if(posToTile(tile) == posToTile(game.player.position)) {
+        return Direction.none;
+      }
+
+      final direction = directionFromPosToPos(enemy.position, tile);
+      return direction;
+    }
+
+    return Direction.none;
   }
 }

@@ -1,10 +1,9 @@
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:flame_game/components/enemy_component.dart';
+import 'package:flame_game/components/enemy.dart';
 
 class EnemyCreator extends TimerComponent with HasGameRef {
   final Random random = Random();
-  final _halfWidth = EnemyComponent.initialSize.x / 2;
 
   EnemyCreator() : super(period: 0.1, repeat: true);
 
@@ -13,9 +12,9 @@ class EnemyCreator extends TimerComponent with HasGameRef {
     gameRef.addAll(
       List.generate(
         1,
-        (index) => EnemyComponent(
+        (index) => Enemy(
           position: Vector2(
-            _halfWidth + (gameRef.size.x - _halfWidth) * random.nextDouble(),
+            16 + (gameRef.size.x - 16) * random.nextDouble(),
             0,
           ),
         ),

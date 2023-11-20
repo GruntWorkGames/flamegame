@@ -57,9 +57,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     _buildBlockedTiles(_tiledmap!.tileMap);
     _buildPortals(_tiledmap!.tileMap);
     _createNpcs();
-    // _blockedTileList = _blockedTilesLocationFrom2DList(_blockedTiles);
     _enemies = _createEnemies(_tiledmap!.tileMap);
-    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: (){print('playerFinished');});
+    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: (){});
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);

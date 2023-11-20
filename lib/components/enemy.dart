@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame_game/components/player.dart';
-import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';

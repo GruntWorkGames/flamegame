@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/screens/game.dart';
 import 'package:flame_game/screens/overworld.dart';
 

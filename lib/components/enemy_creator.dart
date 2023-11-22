@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:flame_game/components/enemy.dart';
 
 class EnemyCreator extends TimerComponent with HasGameRef {
   final Random random = Random();
@@ -9,16 +8,16 @@ class EnemyCreator extends TimerComponent with HasGameRef {
 
   @override
   void onTick() {
-    gameRef.addAll(
-      List.generate(
-        1,
-        (index) => Enemy(
-          position: Vector2(
-            16 + (gameRef.size.x - 16) * random.nextDouble(),
-            0,
-          ),
-        ),
-      ),
-    );
+    // gameRef.addAll(
+    //   List.generate(
+    //     1,
+    //     (index) => Enemy(
+    //       position: Vector2(
+    //         16 + (gameRef.size.x - 16) * random.nextDouble(),
+    //         0,
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }

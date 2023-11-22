@@ -89,9 +89,45 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
       return;
     }
     game.player.faceDirection(direction);
-    if (canMoveDirection(direction)) {
+    final enemy = getEnemyInDirection(direction);
+    if(enemy != null) {
+      fightDirectionPressed(enemy, direction);
+    } else if (canMoveDirection(direction)) { 
       game.player.move(direction);
     }
+  }
+
+  void fightDirectionPressed(Enemy enemy, Direction direction) {
+    if(!listenToInput) {
+      return;
+    }
+    game.player.attackDirection(direction, (){
+      enemy.takeHit(game.player.currentWeapon.damage, (){
+        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+      }, (){
+        enemy.removeFromParent();
+        _enemies.removeWhere((other) => other == enemy);
+        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+      });
+      // if(result == MeleeAttackResult.killed) {
+      //   enemy.removeFromParent();
+      //   _enemies.removeWhere((other) => other == enemy);
+      //   game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+      // }
+    });
+  }
+
+  Enemy? getEnemyInDirection(Direction direction) {
+    final playerTile = posToTile(game.player.position);
+    final nextTile = getNextTile(direction, playerTile);
+    for(final enemy in _enemies) {
+      final npcTile = posToTile(enemy.position);
+      if(nextTile == npcTile) {
+        return enemy;
+      }
+    }
+
+    return null;
   }
 
   bool canMoveDirection(Direction direction) {
@@ -314,7 +350,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final List<Enemy> enemies = [];
     final spawns = _readEnemySpawns(_tiledmap!.tileMap);
     for (final spawnPos in spawns) {
-      final enemy = Enemy(position: spawnPos);
+      final enemy = Enemy();
+      enemy.position = spawnPos;
       final tile = posToTile(enemy.position);
       _enemyTiles[tile.x.toInt()][tile.y.toInt()] = enemy;
       enemies.add(enemy);
@@ -374,7 +411,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final tilePath = result.map((point) {
       return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
     }).toList();
-
 
     if(_debugDraw) {
       for(final square in _squares) {

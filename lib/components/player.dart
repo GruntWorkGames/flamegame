@@ -1,6 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame/sprite.dart';
+import 'package:flame_game/components/dull_short_sword.dart';
+import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
@@ -17,7 +20,10 @@ enum CharacterAnimationState {
   walkingRight,
   walkingUp,
   walkingDown,
-  attacking,
+  attackDown,
+  attackUp,
+  attackLeft,
+  attackRight,
   takingDamage
 }
 
@@ -26,7 +32,10 @@ class Player extends SpriteAnimationComponent
   Player() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> _animations = {};
-  CharacterAnimationState _playerState = CharacterAnimationState.idleDown;
+  CharacterAnimationState animationState = CharacterAnimationState.idleDown;
+  List<MeleeWeapon> weapons = [];
+  MeleeWeapon currentWeapon = DullShortSword();
+  int health = 100;
 
   @override
   Future<void> onLoad() async {
@@ -80,24 +89,87 @@ class Player extends SpriteAnimationComponent
     _animations[CharacterAnimationState.idleRight] =
         SpriteAnimation.fromAsepriteData(image, jsonData);
 
-    _stateChanged(CharacterAnimationState.idleDown);
+    _buildAnimations();
+
+    actionFinished(CharacterAnimationState.idleDown);
+  }
+
+  Future<void> _buildAnimations() async {
+    final spriteSheet = SpriteSheet(
+      image: await game.images.load('AxemanRed.png'),
+      srcSize: Vector2(16.0, 16.0),
+    );
+
+    final attackDown = SpriteAnimation.fromFrameData(
+      await game.images.load('AxemanRed.png'), 
+      SpriteAnimationData([
+      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
+    ]));
+
+    final attackUp = SpriteAnimation.fromFrameData(
+      await game.images.load('AxemanRed.png'), 
+      SpriteAnimationData([
+      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
+    ]));
+
+    final attackLeft = SpriteAnimation.fromFrameData(
+      await game.images.load('AxemanRed.png'), 
+      SpriteAnimationData([
+      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
+    ]));
+
+    final attackRight = SpriteAnimation.fromFrameData(
+      await game.images.load('AxemanRed.png'), 
+      SpriteAnimationData([
+      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
+      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
+    ]));
+
+    _animations[CharacterAnimationState.attackLeft] = attackLeft;
+    _animations[CharacterAnimationState.attackRight] = attackRight;
+    _animations[CharacterAnimationState.attackUp] = attackUp;
+    _animations[CharacterAnimationState.attackDown] = attackDown;
   }
 
   void faceDirection(Direction direction) {
     switch (direction) {
       case Direction.up:
-        _stateChanged(CharacterAnimationState.idleUp);
+        actionFinished(CharacterAnimationState.idleUp);
         break;
       case Direction.down:
-        _stateChanged(CharacterAnimationState.idleDown);
+        actionFinished(CharacterAnimationState.idleDown);
         break;
       case Direction.left:
-        _stateChanged(CharacterAnimationState.idleLeft);
+        actionFinished(CharacterAnimationState.idleLeft);
         break;
       case Direction.right:
-        _stateChanged(CharacterAnimationState.idleRight);
+        actionFinished(CharacterAnimationState.idleRight);
       default:
     } 
+  }
+
+  void onMoveCompleted(Vector2 newTile) {
+    game.overworld?.steppedOnTile(newTile);
+    isMoving = false;
+    final tile = posToTile(position);
+    UI.debugLabel.text = '${tile.x}, ${tile.y}';
+    actionFinished(CharacterAnimationState.beginIdle);
+    game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
   }
 
   void move(Direction direction) {
@@ -109,25 +181,23 @@ class Player extends SpriteAnimationComponent
     switch (direction) {
       case Direction.up:
         distance.y -= TILESIZE;
-        _stateChanged(CharacterAnimationState.walkingUp);
+        actionFinished(CharacterAnimationState.walkingUp);
         break;
       case Direction.down:
         distance.y += TILESIZE;
-        _stateChanged(CharacterAnimationState.walkingDown);
+        actionFinished(CharacterAnimationState.walkingDown);
         break;
       case Direction.left:
         distance.x -= TILESIZE;
-        _stateChanged(CharacterAnimationState.walkingLeft);
+        actionFinished(CharacterAnimationState.walkingLeft);
         break;
       case Direction.right:
         distance.x += TILESIZE;
-        _stateChanged(CharacterAnimationState.walkingRight);
+        actionFinished(CharacterAnimationState.walkingRight);
         break;
       case Direction.none:
     }
-
     final lastPos = position.clone();
-
     final move = MoveEffect.by(
       distance,
       EffectController(duration: .24),
@@ -135,12 +205,9 @@ class Player extends SpriteAnimationComponent
         // snap to grid. issue with moveTo/moveBy not being perfect...
         position = lastPos + distance;
         final tilePos = posToTile(position);
-        game.overworld?.steppedOnTile(tilePos);
+        actionFinished(CharacterAnimationState.beginIdle);
         isMoving = false;
-        final tile = posToTile(position);
-        UI.debugLabel.text = '${tile.x}, ${tile.y}';
-        _stateChanged(CharacterAnimationState.beginIdle);
-        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+        onMoveCompleted(tilePos);
       },
     );
     move.removeOnFinish = true;
@@ -148,9 +215,9 @@ class Player extends SpriteAnimationComponent
     add(move);
   }
 
-  void _stateChanged(CharacterAnimationState st) {
+  void actionFinished(CharacterAnimationState st) {
     if (st == CharacterAnimationState.beginIdle) {
-      switch (_playerState) {
+      switch (animationState) {
         case CharacterAnimationState.walkingUp:
           animation = _animations[CharacterAnimationState.idleUp];
           return;
@@ -168,12 +235,52 @@ class Player extends SpriteAnimationComponent
         case CharacterAnimationState.idleUp:
         case CharacterAnimationState.idleLeft:
         case CharacterAnimationState.idleRight:
-        case CharacterAnimationState.attacking:
         case CharacterAnimationState.takingDamage:
+        case CharacterAnimationState.attackDown:
+          animation = _animations[CharacterAnimationState.idleDown];
+          return;
+        case CharacterAnimationState.attackUp:
+          animation = _animations[CharacterAnimationState.idleUp];
+          return;
+        case CharacterAnimationState.attackLeft:
+          animation = _animations[CharacterAnimationState.idleLeft];
+          return;
+        case CharacterAnimationState.attackRight:
+          animation = _animations[CharacterAnimationState.idleRight];
+          return;
       }
     } else {
       animation = _animations[st];
-      _playerState = st;
+      animationState = st;
     }
+  }
+
+  void attackDirection(Direction direction, Function onComplete) {
+    switch(direction) {
+        case Direction.down:
+            animation = _animations[CharacterAnimationState.attackDown];
+            animationState = CharacterAnimationState.attackDown;
+            break;
+        case Direction.up:
+            animation = _animations[CharacterAnimationState.attackUp];
+            animationState = CharacterAnimationState.attackUp;
+            break;
+        case Direction.left:
+            animation = _animations[CharacterAnimationState.attackLeft];
+            animationState = CharacterAnimationState.attackLeft;
+            break;
+        case Direction.right:
+            animation = _animations[CharacterAnimationState.attackRight];
+            animationState = CharacterAnimationState.attackRight;
+            break;
+      case Direction.none:
+    }
+
+    final emptyEffect = MoveByEffect(Vector2(0,0), EffectController(duration: .5), onComplete: () {
+      actionFinished(CharacterAnimationState.beginIdle);
+      onComplete();
+    });
+    emptyEffect.removeOnFinish = true;
+    add(emptyEffect);
   }
 }

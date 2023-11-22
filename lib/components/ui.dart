@@ -21,9 +21,9 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     dPad.position = Vector2(game.size.x/2 - (64*3)/2, game.size.y - 64 * 2);
     add(dPad);
 
-    final fps = FpsTextComponent();
-    fps.position.y = game.size.y - 30;
-    fps.position.x = 20;
-    add(fps);
+    // final fps = FpsTextComponent();
+    // fps.position.y = game.size.y - 30;
+    // fps.position.x = 20;
+    // add(fps);
   }
 }

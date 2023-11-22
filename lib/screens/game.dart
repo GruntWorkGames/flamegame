@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame_game/components/player.dart';
+import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/direction.dart';
@@ -8,7 +8,7 @@ import 'package:flame_game/screens/main_menu.dart';
 import 'package:flame_game/screens/overworld.dart';
 
 class MainGame extends FlameGame {
-  Player player = Player();
+  MeleeCharacter player = MeleeCharacter();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
   final ui = UI();

@@ -92,8 +92,10 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final enemy = getEnemyInDirection(direction);
     if(enemy != null) {
       fightDirectionPressed(enemy, direction);
+      listenToInput = false;
     } else if (canMoveDirection(direction)) { 
       game.player.move(direction);
+      listenToInput = false;
     }
   }
 

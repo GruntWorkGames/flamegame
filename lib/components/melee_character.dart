@@ -27,9 +27,9 @@ enum CharacterAnimationState {
   takingDamage
 }
 
-class Player extends SpriteAnimationComponent
+class MeleeCharacter extends SpriteAnimationComponent
     with HasGameRef<MainGame> {
-  Player() : super(size: Vector2(TILESIZE, TILESIZE));
+  MeleeCharacter() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> _animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;

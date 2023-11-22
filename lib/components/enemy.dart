@@ -1,8 +1,8 @@
 import 'package:flame/effects.dart';
-import 'package:flame_game/components/player.dart';
+import 'package:flame_game/components/melee_character.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-class Enemy extends Player {
+class Enemy extends MeleeCharacter {
   
   Enemy();
 

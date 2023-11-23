@@ -8,9 +8,9 @@ class Enemy extends MeleeCharacter {
 
   @override
   Future<void> onLoad() async {
+    super.onLoad();
     position = position;
     health = 30;
-    super.onLoad();  
   }
 
   @override

@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/extensions.dart';
+import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_game/components/dull_short_sword.dart';
 import 'package:flame_game/components/melee_weapon.dart';
@@ -40,110 +41,66 @@ class MeleeCharacter extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     anchor = Anchor.topLeft;
-
-    Image? image = await game.images.load('animations/AxemanRed-walk-down.png');
-    Map<String, dynamic> jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-walk-down.json');
-    _animations[CharacterAnimationState.walkingDown] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-walk-up.png');
-    jsonData =
-        await game.assets.readJson('images/animations/AxemanRed-walk-up.json');
-    _animations[CharacterAnimationState.walkingUp] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-walk-left.png');
-    jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-walk-left.json');
-    _animations[CharacterAnimationState.walkingLeft] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-walk-right.png');
-    jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-walk-right.json');
-    _animations[CharacterAnimationState.walkingRight] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-idle-up.png');
-    jsonData =
-        await game.assets.readJson('images/animations/AxemanRed-idle-up.json');
-    _animations[CharacterAnimationState.idleUp] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-idle-down.png');
-    jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-idle-down.json');
-    _animations[CharacterAnimationState.idleDown] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-idle-left.png');
-    jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-idle-left.json');
-    _animations[CharacterAnimationState.idleLeft] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
-    image = await game.images.load('animations/AxemanRed-idle-right.png');
-    jsonData = await game.assets
-        .readJson('images/animations/AxemanRed-idle-right.json');
-    _animations[CharacterAnimationState.idleRight] =
-        SpriteAnimation.fromAsepriteData(image, jsonData);
-
     _buildAnimations();
-
     actionFinished(CharacterAnimationState.idleDown);
   }
 
   Future<void> _buildAnimations() async {
-    final spriteSheet = SpriteSheet(
-      image: await game.images.load('AxemanRed.png'),
-      srcSize: Vector2(16.0, 16.0),
-    );
+    final image = await game.images.load('AxemanRed.png');
+    final json = await game.assets.readJson('json/player_animations.json');
 
-    final attackDown = SpriteAnimation.fromFrameData(
-      await game.images.load('AxemanRed.png'), 
-      SpriteAnimationData([
-      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
-    ]));
+    final idleDown = _animationFromJson(image, json, 'idle_down');
+    final idleUp = _animationFromJson(image, json, 'idle_up');
+    final idleRight = _animationFromJson(image, json, 'idle_right');
+    final idleLeft = _animationFromJson(image, json, 'idle_left');
 
-    final attackUp = SpriteAnimation.fromFrameData(
-      await game.images.load('AxemanRed.png'), 
-      SpriteAnimationData([
-      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
-    ]));
+    final walkDown = _animationFromJson(image, json, 'walk_down');
+    final walkUp = _animationFromJson(image, json, 'walk_up');
+    final walkRight = _animationFromJson(image, json, 'walk_right');
+    final walkLeft = _animationFromJson(image, json, 'walk_left');
 
-    final attackLeft = SpriteAnimation.fromFrameData(
-      await game.images.load('AxemanRed.png'), 
-      SpriteAnimationData([
-      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
-    ]));
+    final attackDown = _animationFromJson(image, json, 'attack_down');
+    final attackUp = _animationFromJson(image, json, 'attack_up');
+    final attackRight = _animationFromJson(image, json, 'attack_right');
+    final attackLeft = _animationFromJson(image, json, 'attack_left');
 
-    final attackRight = SpriteAnimation.fromFrameData(
-      await game.images.load('AxemanRed.png'), 
-      SpriteAnimationData([
-      spriteSheet.createFrameData(5, 3, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 4, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 5, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 1, stepTime: 0.1), // row, column
-      spriteSheet.createFrameData(5, 2, stepTime: 0.1), // row, column
-    ]));
+    _animations[CharacterAnimationState.idleDown] = idleDown;
+    _animations[CharacterAnimationState.idleUp] = idleUp;
+    _animations[CharacterAnimationState.idleLeft] = idleLeft;
+    _animations[CharacterAnimationState.idleRight] = idleRight;
+
+    _animations[CharacterAnimationState.walkingDown] = walkDown;
+    _animations[CharacterAnimationState.walkingLeft] = walkLeft;
+    _animations[CharacterAnimationState.walkingUp] = walkUp;
+    _animations[CharacterAnimationState.walkingRight] = walkRight;
 
     _animations[CharacterAnimationState.attackLeft] = attackLeft;
     _animations[CharacterAnimationState.attackRight] = attackRight;
     _animations[CharacterAnimationState.attackUp] = attackUp;
     _animations[CharacterAnimationState.attackDown] = attackDown;
+  }
+
+  SpriteAnimation _animationFromJson(Image image, Map<String, dynamic> json, String animName) {
+    if(!json.containsKey(animName)) {
+      return SpriteAnimation.fromFrameData(image, SpriteAnimationData([]));
+    }
+    final spriteSheet = SpriteSheet(
+      image: image,
+      srcSize: Vector2(16, 16),
+    );
+    final Map<String, dynamic> anim = json[animName];
+    final List<SpriteAnimationFrameData> frames = [];
+    final double stepTime = anim['timePerFrame'] ?? 0;
+    if(anim.containsKey('frames')) {
+      final List<dynamic> frameData = anim['frames'];
+      for(final frame in frameData) {
+        final x = frame['y'] ?? 0;
+        final y = frame['x'] ?? 0;
+        final f = spriteSheet.createFrameData(x, y, stepTime: stepTime);
+        frames.add(f);
+      }
+    }
+    return SpriteAnimation.fromFrameData(image, SpriteAnimationData(frames));
   }
 
   void faceDirection(Direction direction) {

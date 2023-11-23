@@ -1,7 +1,7 @@
 import 'package:flame_game/direction.dart';
 import 'package:vector_math/vector_math_64.dart';
 
-const double TILESIZE = 32;
+const double TILESIZE = 16;
 
 Vector2 posToTile(Vector2 pos) {
   return Vector2(pos.x / TILESIZE, pos.y / TILESIZE);

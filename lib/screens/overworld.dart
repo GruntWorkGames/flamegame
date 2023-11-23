@@ -24,6 +24,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   List<NPC> _npcs = [];
   bool _debugDraw = false;
   bool listenToInput = false;
+  // final scaleFactor = 1.0;
 
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
@@ -32,8 +33,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   late final TurnSystem turnSystem;
   List<math.Point<int>> _blockedTileList = [];
   List<Enemy> _enemiesToMove = [];
-  
   final List<Square> _squares = [];
+  double zoomFactor = 2.4;
 
   Overworld(this._mapfile);
 
@@ -45,6 +46,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     if (ui.parent == null) {
       game.camera.viewport.add(ui);
     }
+    game.camera.viewfinder.zoom = zoomFactor;
     game.camera.follow(game.player);
   }
 
@@ -63,7 +65,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
   }
-
   @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
@@ -211,7 +212,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
 
     if (portalGroup != null) {
       for (final portal in portalGroup.objects) {
-        final pos = Vector2(portal.x * 2, portal.y * 2);
+        final pos = Vector2(portal.x, portal.y);
         final mapProperty =
             portal.properties.getProperty<StringProperty>('map');
         final map = (mapProperty != null) ? mapProperty.value : '';
@@ -240,14 +241,14 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final func = () async {
       game.overworldNavigator.loadMainWorld();
     };
-    final tilePos = posToTile(Vector2(exit.x * 2, exit.y * 2));
+    final tilePos = posToTile(Vector2(exit.x, exit.y));
     _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
   }
 
   Vector2 _readSpawnPoint(RenderableTiledMap tileMap) {
     final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;
-    return Vector2(spawnObject.x * 2, spawnObject.y * 2);
+    return Vector2(spawnObject.x, spawnObject.y);
   }
 
   List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
@@ -258,7 +259,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
 
     for(final object in objectGroup.objects) {
-      spawns.add(Vector2(object.x * 2, object.y * 2));
+      spawns.add(Vector2(object.x, object.y));
     }
 
     return spawns;
@@ -283,7 +284,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
         data.speechHeight = speechHeight.value;
       }
       data.name = object.name;
-      data.position = Vector2(object.x * 2, object.y * 2);
+      data.position = Vector2(object.x, object.y);
       spawnData.add(data);
     }
     return spawnData;
@@ -291,8 +292,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
 
   void _addBlockedCell(Vector2 position) {
     // because we upscale to 32x32
-    position.x *= 2;
-    position.y *= 2;
+    // position.x *= scaleFactor;
+    // position.y *= scaleFactor;
     final t = posToTile(position);
 
     int x = t.x.toInt();

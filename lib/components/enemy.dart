@@ -15,7 +15,6 @@ class Enemy extends MeleeCharacter {
   @override
   Future<void> buildAnimations() async {
     final json = await game.assets.readJson('json/club_goblin.json');
-
     final imageFilename = json['imageFile'] ?? '';
     final image = await game.images.load(imageFilename);
 

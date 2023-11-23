@@ -5,7 +5,6 @@ import 'package:flame/sprite.dart';
 import 'package:flame_game/components/dull_short_sword.dart';
 import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
-import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/game.dart';
@@ -62,7 +61,6 @@ class MeleeCharacter extends SpriteAnimationComponent
     if (!json.containsKey(animName)) {
       throw Exception('Missing Animation $animName');
     }
-
     final spriteSheet = SpriteSheet(
       image: image,
       srcSize: Vector2(16, 16),
@@ -102,8 +100,6 @@ class MeleeCharacter extends SpriteAnimationComponent
   void onMoveCompleted(Vector2 newTile) {
     game.overworld?.steppedOnTile(newTile);
     isMoving = false;
-    final tile = posToTile(position);
-    UI.debugLabel.text = '${tile.x}, ${tile.y}';
     actionFinished(CharacterAnimationState.beginIdle);
     game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
   }

@@ -111,11 +111,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
         _enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
-      // if(result == MeleeAttackResult.killed) {
-      //   enemy.removeFromParent();
-      //   _enemies.removeWhere((other) => other == enemy);
-      //   game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
-      // }
     });
   }
 

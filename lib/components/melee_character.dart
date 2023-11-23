@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
@@ -17,10 +16,10 @@ enum CharacterAnimationState {
   idleUp,
   idleLeft,
   idleRight,
-  walkingLeft,
-  walkingRight,
-  walkingUp,
-  walkingDown,
+  walkLeft,
+  walkRight,
+  walkUp,
+  walkDown,
   attackDown,
   attackUp,
   attackLeft,
@@ -32,7 +31,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     with HasGameRef<MainGame> {
   MeleeCharacter() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
-  final Map<CharacterAnimationState, SpriteAnimation> _animations = {};
+  final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
   List<MeleeWeapon> weapons = [];
   MeleeWeapon currentWeapon = DullShortSword();
@@ -41,49 +40,29 @@ class MeleeCharacter extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     anchor = Anchor.topLeft;
-    _buildAnimations();
+    buildAnimations();
     actionFinished(CharacterAnimationState.idleDown);
   }
 
-  Future<void> _buildAnimations() async {
-    final image = await game.images.load('AxemanRed.png');
+  Future<void> buildAnimations() async {
     final json = await game.assets.readJson('json/player_animations.json');
+    final imageFilename = json['imageFile'] ?? '';
+    final image = await game.images.load(imageFilename);
+    for (final state in CharacterAnimationState.values) {
+      if(json.containsKey(state.name)) {
+        animations[state] = animationFromJson(image, json, state.name);
+      }
+    }
 
-    final idleDown = _animationFromJson(image, json, 'idle_down');
-    final idleUp = _animationFromJson(image, json, 'idle_up');
-    final idleRight = _animationFromJson(image, json, 'idle_right');
-    final idleLeft = _animationFromJson(image, json, 'idle_left');
-
-    final walkDown = _animationFromJson(image, json, 'walk_down');
-    final walkUp = _animationFromJson(image, json, 'walk_up');
-    final walkRight = _animationFromJson(image, json, 'walk_right');
-    final walkLeft = _animationFromJson(image, json, 'walk_left');
-
-    final attackDown = _animationFromJson(image, json, 'attack_down');
-    final attackUp = _animationFromJson(image, json, 'attack_up');
-    final attackRight = _animationFromJson(image, json, 'attack_right');
-    final attackLeft = _animationFromJson(image, json, 'attack_left');
-
-    _animations[CharacterAnimationState.idleDown] = idleDown;
-    _animations[CharacterAnimationState.idleUp] = idleUp;
-    _animations[CharacterAnimationState.idleLeft] = idleLeft;
-    _animations[CharacterAnimationState.idleRight] = idleRight;
-
-    _animations[CharacterAnimationState.walkingDown] = walkDown;
-    _animations[CharacterAnimationState.walkingLeft] = walkLeft;
-    _animations[CharacterAnimationState.walkingUp] = walkUp;
-    _animations[CharacterAnimationState.walkingRight] = walkRight;
-
-    _animations[CharacterAnimationState.attackLeft] = attackLeft;
-    _animations[CharacterAnimationState.attackRight] = attackRight;
-    _animations[CharacterAnimationState.attackUp] = attackUp;
-    _animations[CharacterAnimationState.attackDown] = attackDown;
+    animation = animations[CharacterAnimationState.idleDown];
   }
 
-  SpriteAnimation _animationFromJson(Image image, Map<String, dynamic> json, String animName) {
-    if(!json.containsKey(animName)) {
-      return SpriteAnimation.fromFrameData(image, SpriteAnimationData([]));
+  SpriteAnimation animationFromJson(
+      Image image, Map<String, dynamic> json, String animName) {
+    if (!json.containsKey(animName)) {
+      throw Exception('Missing Animation $animName');
     }
+
     final spriteSheet = SpriteSheet(
       image: image,
       srcSize: Vector2(16, 16),
@@ -91,9 +70,9 @@ class MeleeCharacter extends SpriteAnimationComponent
     final Map<String, dynamic> anim = json[animName];
     final List<SpriteAnimationFrameData> frames = [];
     final double stepTime = anim['timePerFrame'] ?? 0;
-    if(anim.containsKey('frames')) {
+    if (anim.containsKey('frames')) {
       final List<dynamic> frameData = anim['frames'];
-      for(final frame in frameData) {
+      for (final frame in frameData) {
         final x = frame['y'] ?? 0;
         final y = frame['x'] ?? 0;
         final f = spriteSheet.createFrameData(x, y, stepTime: stepTime);
@@ -117,7 +96,7 @@ class MeleeCharacter extends SpriteAnimationComponent
       case Direction.right:
         actionFinished(CharacterAnimationState.idleRight);
       default:
-    } 
+    }
   }
 
   void onMoveCompleted(Vector2 newTile) {
@@ -138,19 +117,19 @@ class MeleeCharacter extends SpriteAnimationComponent
     switch (direction) {
       case Direction.up:
         distance.y -= TILESIZE;
-        actionFinished(CharacterAnimationState.walkingUp);
+        actionFinished(CharacterAnimationState.walkUp);
         break;
       case Direction.down:
         distance.y += TILESIZE;
-        actionFinished(CharacterAnimationState.walkingDown);
+        actionFinished(CharacterAnimationState.walkDown);
         break;
       case Direction.left:
         distance.x -= TILESIZE;
-        actionFinished(CharacterAnimationState.walkingLeft);
+        actionFinished(CharacterAnimationState.walkLeft);
         break;
       case Direction.right:
         distance.x += TILESIZE;
-        actionFinished(CharacterAnimationState.walkingRight);
+        actionFinished(CharacterAnimationState.walkRight);
         break;
       case Direction.none:
     }
@@ -175,17 +154,17 @@ class MeleeCharacter extends SpriteAnimationComponent
   void actionFinished(CharacterAnimationState st) {
     if (st == CharacterAnimationState.beginIdle) {
       switch (animationState) {
-        case CharacterAnimationState.walkingUp:
-          animation = _animations[CharacterAnimationState.idleUp];
+        case CharacterAnimationState.walkUp:
+          animation = animations[CharacterAnimationState.idleUp];
           return;
-        case CharacterAnimationState.walkingDown:
-          animation = _animations[CharacterAnimationState.idleDown];
+        case CharacterAnimationState.walkDown:
+          animation = animations[CharacterAnimationState.idleDown];
           return;
-        case CharacterAnimationState.walkingLeft:
-          animation = _animations[CharacterAnimationState.idleLeft];
+        case CharacterAnimationState.walkLeft:
+          animation = animations[CharacterAnimationState.idleLeft];
           return;
-        case CharacterAnimationState.walkingRight:
-          animation = _animations[CharacterAnimationState.idleRight];
+        case CharacterAnimationState.walkRight:
+          animation = animations[CharacterAnimationState.idleRight];
           return;
         case CharacterAnimationState.beginIdle:
         case CharacterAnimationState.idleDown:
@@ -194,46 +173,47 @@ class MeleeCharacter extends SpriteAnimationComponent
         case CharacterAnimationState.idleRight:
         case CharacterAnimationState.takingDamage:
         case CharacterAnimationState.attackDown:
-          animation = _animations[CharacterAnimationState.idleDown];
+          animation = animations[CharacterAnimationState.idleDown];
           return;
         case CharacterAnimationState.attackUp:
-          animation = _animations[CharacterAnimationState.idleUp];
+          animation = animations[CharacterAnimationState.idleUp];
           return;
         case CharacterAnimationState.attackLeft:
-          animation = _animations[CharacterAnimationState.idleLeft];
+          animation = animations[CharacterAnimationState.idleLeft];
           return;
         case CharacterAnimationState.attackRight:
-          animation = _animations[CharacterAnimationState.idleRight];
+          animation = animations[CharacterAnimationState.idleRight];
           return;
       }
     } else {
-      animation = _animations[st];
+      animation = animations[st];
       animationState = st;
     }
   }
 
   void attackDirection(Direction direction, Function onComplete) {
-    switch(direction) {
-        case Direction.down:
-            animation = _animations[CharacterAnimationState.attackDown];
-            animationState = CharacterAnimationState.attackDown;
-            break;
-        case Direction.up:
-            animation = _animations[CharacterAnimationState.attackUp];
-            animationState = CharacterAnimationState.attackUp;
-            break;
-        case Direction.left:
-            animation = _animations[CharacterAnimationState.attackLeft];
-            animationState = CharacterAnimationState.attackLeft;
-            break;
-        case Direction.right:
-            animation = _animations[CharacterAnimationState.attackRight];
-            animationState = CharacterAnimationState.attackRight;
-            break;
+    switch (direction) {
+      case Direction.down:
+        animation = animations[CharacterAnimationState.attackDown];
+        animationState = CharacterAnimationState.attackDown;
+        break;
+      case Direction.up:
+        animation = animations[CharacterAnimationState.attackUp];
+        animationState = CharacterAnimationState.attackUp;
+        break;
+      case Direction.left:
+        animation = animations[CharacterAnimationState.attackLeft];
+        animationState = CharacterAnimationState.attackLeft;
+        break;
+      case Direction.right:
+        animation = animations[CharacterAnimationState.attackRight];
+        animationState = CharacterAnimationState.attackRight;
+        break;
       case Direction.none:
     }
 
-    final emptyEffect = MoveByEffect(Vector2(0,0), EffectController(duration: .5), onComplete: () {
+    final emptyEffect = MoveByEffect(
+        Vector2(0, 0), EffectController(duration: .5), onComplete: () {
       actionFinished(CharacterAnimationState.beginIdle);
       onComplete();
     });

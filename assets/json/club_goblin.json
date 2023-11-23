@@ -1,5 +1,5 @@
 {
-    "imageFile": "AxemanRed.png",
+    "imageFile": "ClubGoblin.png",
     "idleDown": {
         "timePerFrame": 0.4,
         "frames": [
@@ -63,8 +63,6 @@
     "attackUp": {
         "timePerFrame": 0.1,
         "frames": [
-            {"x":4,"y":5},
-            {"x":5,"y":5},
             {"x":1,"y":5},
             {"x":2,"y":5},
             {"x":3,"y":5}
@@ -73,31 +71,25 @@
     "attackDown": {
         "timePerFrame": 0.1,
         "frames": [
-            {"x":1,"y":5},
-            {"x":2,"y":5},
-            {"x":3,"y":5},
-            {"x":4,"y":5},
-            {"x":5,"y":5}
+            {"x":1,"y":4},
+            {"x":2,"y":4},
+            {"x":3,"y":5}
         ]
     },
     "attackLeft": {
         "timePerFrame": 0.1,
         "frames": [
-            {"x":5,"y":5},
-            {"x":1,"y":5},
-            {"x":2,"y":5},
-            {"x":3,"y":5},
-            {"x":4,"y":5}
+            {"x":1,"y":7},
+            {"x":2,"y":7},
+            {"x":3,"y":7}
         ]
     },
     "attackRight": {
         "timePerFrame": 0.1,
         "frames": [
-            {"x":3,"y":3},
-            {"x":4,"y":4},
-            {"x":5,"y":5},
-            {"x":1,"y":1},
-            {"x":2,"y":2}
+            {"x":1,"y":6},
+            {"x":2,"y":6},
+            {"x":3,"y":6}
         ]
     }
 }

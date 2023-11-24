@@ -187,7 +187,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     }
   }
 
-  void attackDirection(Direction direction, Function onComplete) {
+  void playAttackDirectionAnim(Direction direction, Function onComplete) {
     switch (direction) {
       case Direction.down:
         animation = animations[CharacterAnimationState.attackDown];
@@ -215,5 +215,21 @@ class MeleeCharacter extends SpriteAnimationComponent
     });
     emptyEffect.removeOnFinish = true;
     add(emptyEffect);
+  }
+
+  void takeHit(int damage, Function onComplete, Function onKilled) {
+    health -= damage;
+
+    final flicker = OpacityEffect.fadeOut(
+        EffectController(repeatCount: 2, duration: 0.1, alternate: true),
+        onComplete: () {
+      if (health <= 0) {
+        onKilled();
+      } else {
+        onComplete();
+      }
+    });
+    flicker.removeOnFinish = true;
+    add(flicker);
   }
 }

@@ -37,6 +37,7 @@ class Enemy extends MeleeCharacter {
     game.overworld!.moveNextEnemy();
   }
 
+  @override
   void takeHit(int damage, Function onComplete, Function onKilled) {
     health -= damage;
 

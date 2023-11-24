@@ -82,7 +82,41 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
     final enemy = _enemiesToMove.last;
     _enemiesToMove.removeLast();
-    enemy.move(findPath(enemy));
+
+
+    // if enemy is next to the player
+    final playerDirection = enemyCanAttackPlayer(enemy);
+    if(playerDirection == Direction.none) {
+      enemy.move(findPath(enemy));
+    } else {
+      enemyAttackPlayer(enemy, playerDirection);
+    }
+  }
+
+  Direction enemyCanAttackPlayer(Enemy enemy) {
+    
+    // if player is either above, below, right or left
+    final playerTile = posToTile(game.player.position);
+    final enemyTile  = posToTile(enemy.position);
+
+    final difX = playerTile.x - enemyTile.x;
+    final difY = playerTile.y - enemyTile.y;
+
+    if(difX.abs() == 1 || difY.abs() == 1) {
+      return directionFromPosToPos(enemyTile, playerTile);
+    }   
+
+    return Direction.none;
+  }
+  
+  void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
+    enemy.playAttackDirectionAnim(playerDirection, (){
+      game.player.takeHit(enemy.currentWeapon.damage, (){
+        enemy.onMoveCompleted(enemy.position);
+      }, (){
+        // on death callback
+      });
+    });
   }
   
   void directionPressed(Direction direction) {
@@ -104,7 +138,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     if(!listenToInput) {
       return;
     }
-    game.player.attackDirection(direction, (){
+    game.player.playAttackDirectionAnim(direction, (){
       enemy.takeHit(game.player.currentWeapon.damage, (){
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, (){

@@ -63,33 +63,33 @@
     "attackUp": {
         "timePerFrame": 0.1,
         "frames": [
+            {"x":0,"y":5},
             {"x":1,"y":5},
-            {"x":2,"y":5},
-            {"x":3,"y":5}
+            {"x":2,"y":5}
         ]
     },
     "attackDown": {
         "timePerFrame": 0.1,
         "frames": [
+            {"x":0,"y":4},
             {"x":1,"y":4},
-            {"x":2,"y":4},
-            {"x":3,"y":5}
+            {"x":2,"y":4}
         ]
     },
     "attackLeft": {
         "timePerFrame": 0.1,
         "frames": [
+            {"x":0,"y":7},
             {"x":1,"y":7},
-            {"x":2,"y":7},
-            {"x":3,"y":7}
+            {"x":2,"y":7}
         ]
     },
     "attackRight": {
         "timePerFrame": 0.1,
         "frames": [
+            {"x":0,"y":6},
             {"x":1,"y":6},
-            {"x":2,"y":6},
-            {"x":3,"y":6}
+            {"x":2,"y":6}
         ]
     }
 }

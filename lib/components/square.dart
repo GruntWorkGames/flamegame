@@ -4,9 +4,11 @@ import 'package:flutter/painting.dart';
 
 // used for debugging
 class Square extends PositionComponent {
+  PaletteEntry palette;
+  Square(this.palette);
   @override
   void render(Canvas canvas) {
-    canvas.drawRect(Rect.fromCircle(center: Offset(16,16), radius: 16), 
-    BasicPalette.red.paint()..style = PaintingStyle.stroke..strokeWidth = 1);
+    canvas.drawRect(Rect.fromCircle(center: Offset(8,8), radius: 7.4), 
+    palette.paint()..style = PaintingStyle.stroke..strokeWidth = 1);
   }
 }

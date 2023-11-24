@@ -221,17 +221,17 @@
 </data>
  </layer>
  <objectgroup color="#000000" id="9" name="enemy">
-  <object id="9" x="368" y="464" width="16" height="16"/>
-  <object id="11" x="416" y="464" width="16" height="16"/>
-  <object id="12" x="400" y="496" width="16" height="16"/>
-  <object id="13" x="480" y="448" width="16" height="16"/>
-  <object id="14" x="464" y="480" width="16" height="16"/>
+  <object id="9" x="400" y="480" width="16" height="16"/>
+  <object id="11" x="256" y="272" width="16" height="16"/>
+  <object id="12" x="272" y="448" width="16" height="16"/>
+  <object id="13" x="496" y="240" width="16" height="16"/>
+  <object id="14" x="544" y="496" width="16" height="16"/>
  </objectgroup>
  <objectgroup color="#0000ff" id="10" name="npc">
   <object id="10" x="320" y="432" width="16" height="16"/>
  </objectgroup>
  <objectgroup color="#ff0000" id="7" name="spawn">
-  <object id="3" x="480" y="400" width="16" height="16"/>
+  <object id="3" x="544" y="368" width="16" height="16"/>
  </objectgroup>
  <objectgroup color="#55007f" id="8" name="portal">
   <object id="5" x="560" y="384" width="16" height="16">

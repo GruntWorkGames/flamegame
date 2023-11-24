@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:a_star_algorithm/a_star_algorithm.dart' as AStarAlgorithm;
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/palette.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
@@ -22,9 +23,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   List<List<dynamic>> _enemyTiles = [];
   List<Enemy> _enemies = [];
   List<NPC> _npcs = [];
-  bool _debugDraw = false;
   bool listenToInput = false;
-  // final scaleFactor = 1.0;
 
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
@@ -35,6 +34,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   List<Enemy> _enemiesToMove = [];
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
+  final _aggroDistance = 8;
 
   Overworld(this._mapfile);
 
@@ -71,7 +71,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   }
 
   void enemyTurn() {
-    _enemiesToMove.addAll(_enemies);
+    _enemiesToMove.addAll(getEnemiesWithinRange(_aggroDistance));
     moveNextEnemy();
   }
   
@@ -82,9 +82,9 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
     final enemy = _enemiesToMove.last;
     _enemiesToMove.removeLast();
-    enemy.move(_findPath(enemy));
+    enemy.move(findPath(enemy));
   }
-
+  
   void directionPressed(Direction direction) {
     if(!listenToInput) {
       return;
@@ -159,15 +159,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   }
 
   void steppedOnTile(Vector2 pos) {
-    // try {
-    //   final func = _triggerTiles[pos.x.toInt()][pos.y.toInt()];
-    //   if (func != null) {
-    //     func();
-    //   }
-    // } catch (e) {
-    //   print('error checking tile');
-    // }
-
     if (game.currentSpeechBubble != null) {
       game.currentSpeechBubble!.removeFromParent();
       game.currentSpeechBubble = null;
@@ -291,9 +282,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   }
 
   void _addBlockedCell(Vector2 position) {
-    // because we upscale to 32x32
-    // position.x *= scaleFactor;
-    // position.y *= scaleFactor;
     final t = posToTile(position);
 
     int x = t.x.toInt();
@@ -315,23 +303,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
     game.player.position = _reEntryPos;
   }
-
-  // void playerEntered() async {
-  //   if (game.player.parent != null) {
-  //     game.player.removeFromParent();
-  //   }
-
-  //   _tiledmap?.add(game.player);
-
-  //   if (_reEntryPos.isZero()) {
-  //     if(_tiledmap != null){
-  //       game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
-  //     }
-  //     return;
-  //   }
-
-  //   game.player.position = _reEntryPos;
-  // }
 
   void _createNpcs() {
     final spawns = _readNpcSpawnPoints(_tiledmap!.tileMap);
@@ -375,14 +346,16 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
     return null;
   }
-  
-  Direction _findPath(Enemy enemy) {
+
+  Direction findPath(Enemy enemy) {
     final map = _tiledmap!.tileMap.map;
     final endVec = posToTile(game.player.position);
     final startVec = posToTile(enemy.position);
     final math.Point<int> end = math.Point(endVec.x.toInt(), endVec.y.toInt());
     final math.Point<int> start= math.Point(startVec.x.toInt(), startVec.y.toInt());
-    final wallTiles = _blockedTileList;
+    final playerTile = posToTile(game.player.position);
+    final tiles = tilesArroundPosition(playerTile, 6);
+    final wallTiles = getBlockedTilesInList(tiles);
     final npcTiles = _npcs.map((npc) {
       final tile = posToTile(npc.data.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
@@ -410,18 +383,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
       return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
     }).toList();
 
-    if(_debugDraw) {
-      for(final square in _squares) {
-        square.removeFromParent();
-      }
-
-      for(final tile in tilePath) {
-        final square = Square()..position = tile;
-        _squares.add(square);
-        add(square);
-      }
-    }
-
     if(tilePath.length > 1) {
       final tile = tilePath[1];
       // prevent from running over player
@@ -434,5 +395,73 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
 
     return Direction.none;
+  }
+  
+  List<math.Point<int>> tilesArroundPosition(Vector2 playerTile, int distance) {
+    final map = _tiledmap!.tileMap.map;
+    // get left boundary
+    final int farthestTileXLeftAvailable = 
+    playerTile.x > distance
+    ? playerTile.x.toInt() - distance
+    : 0;
+    // get right boundary
+    final int farthestTileXRightAvailable = 
+    playerTile.x + distance < map.width 
+    ?  playerTile.x.toInt() + distance 
+    : playerTile.x.toInt() + (map.width - playerTile.x.toInt());
+    // get bottom boundary
+    final int farthestTileYDownAvailable = 
+    playerTile.y + distance < map.height
+    ? playerTile.y.toInt() + distance
+    : playerTile.y.toInt() + (map.height - playerTile.y.toInt() );
+    // get top boundary
+    final int farthestTileYUpAvailable = 
+    playerTile.y.toInt() > distance
+    ? playerTile.y.toInt() - distance
+    : 0;
+
+    final List<math.Point<int>> tiles = [];
+
+    for(int x = farthestTileXLeftAvailable; x < farthestTileXRightAvailable; x++) {
+      for(int y = farthestTileYUpAvailable; y < farthestTileYDownAvailable; y++) {
+        tiles.add(math.Point<int>(x,y));
+      }
+    }
+    
+    return tiles;
+  }
+
+  List<math.Point<int>> getBlockedTilesInList(List<math.Point<int>> list) {
+    final List<math.Point<int>> tiles = [];
+    for(final tile in list) {
+      final pos = Vector2(tile.x.toDouble(), tile.y.toDouble());
+      if(isTileBlocked(pos)) {
+        tiles.add(tile);
+      }
+    }
+    return tiles;
+  }
+
+  void clearDebug() {
+    for(final square in _squares) {
+      square.removeFromParent();
+    }
+    _squares.clear();
+  }
+
+  void drawSquare(Vector2 pos, [PaletteEntry palette = BasicPalette.red]) {
+    final square = Square(palette)..position = pos;
+    _squares.add(square);
+    add(square);
+  }
+  
+  List<Enemy> getEnemiesWithinRange(int distance) {
+    final list = _enemies.where((npc) {
+      final enemyTile = posToTile(npc.position);
+      final playerTile = posToTile(game.player.position);
+      final dist = enemyTile.distanceTo(playerTile);
+      return dist <= distance;
+    }).toList();
+    return list;
   }
 }

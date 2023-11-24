@@ -1,5 +1,6 @@
 import 'package:flame/effects.dart';
 import 'package:flame_game/components/melee_character.dart';
+import 'package:flame_game/components/old_club.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class Enemy extends MeleeCharacter {
@@ -9,7 +10,8 @@ class Enemy extends MeleeCharacter {
   Future<void> onLoad() async {
     super.onLoad();
     position = position;
-    health = 30;
+    health = 9;
+    currentWeapon = OldClub();
   }
 
   @override

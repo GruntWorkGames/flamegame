@@ -13,6 +13,7 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
 
   static TextComponent debugLabel = TextBoxComponent(text: '');
   final coinText = TextBoxComponent(text: '23');
+  final heartText = TextBoxComponent(text: '30');
   RectangleComponent? gameOverScreen;
 
   @override
@@ -39,6 +40,15 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
 
     add(coinText);
     coinText.position = Vector2(game.size.x - 64, 58);
+
+    final heartImg = await game.images.load('heart.png');
+    final heart = SpriteComponent.fromImage(heartImg);
+    heart.scale = Vector2(2, 2);
+    heart.position = Vector2(game.size.x - 96, 20);
+    add(heart);
+
+    add(heartText);
+    heartText.position = Vector2(game.size.x - 64, 16);
     
     // final fps = FpsTextComponent();
     // fps.position.y = game.size.y - 30;

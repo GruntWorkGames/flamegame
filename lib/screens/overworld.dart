@@ -64,6 +64,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
+    UI.instance.heartText.text = '${game.player.health}';
   }
 
   @override
@@ -114,6 +115,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     enemy.playAttackDirectionAnim(playerDirection, (){
       game.player.takeHit(enemy.currentWeapon.damage, (){
         enemy.onMoveCompleted(enemy.position);
+        UI.instance.heartText.text = '${game.player.health}';
       }, (){
         // on death callback
         game.player.removeFromParent();

@@ -34,7 +34,7 @@ class MeleeCharacter extends SpriteAnimationComponent
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
   List<MeleeWeapon> weapons = [];
   MeleeWeapon currentWeapon = DullShortSword();
-  int health = 100;
+  int health = 30;
 
   @override
   Future<void> onLoad() async {

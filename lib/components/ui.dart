@@ -1,11 +1,19 @@
 import 'dart:async';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
+import 'package:flame/palette.dart';
+import 'package:flame_game/components/buttons.dart';
 import 'package:flame_game/components/directional_pad.dart';
 import 'package:flame_game/screens/game.dart';
+import 'package:flutter/material.dart';
 
 class UI extends PositionComponent with HasGameRef<MainGame> {
+
+  static UI instance = UI();
+
   static TextComponent debugLabel = TextBoxComponent(text: '');
   final coinText = TextBoxComponent(text: '23');
+  RectangleComponent? gameOverScreen;
 
   @override
   FutureOr<void> onLoad() async {
@@ -36,5 +44,38 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     // fps.position.y = game.size.y - 30;
     // fps.position.x = 20;
     // add(fps);
+  }
+
+void showGameOver() {;
+    game.overworld?.listenToInput = false;
+    final blackPaint = Paint();
+    blackPaint.color = Colors.black;
+    gameOverScreen = RectangleComponent(size: game.size, paint: blackPaint, anchor: Anchor.topLeft);
+    gameOverScreen?.opacity = 0;
+    add(gameOverScreen!);
+
+    gameOverScreen?.add(OpacityEffect.fadeIn(EffectController(duration: 3)));
+
+    final regularTextStyle = TextStyle(fontSize: 62, color: BasicPalette.red.color);
+    final regular = TextPaint(style: regularTextStyle);
+    final label = TextComponent(
+        text: 'You died',
+        anchor: Anchor.center,
+        position: Vector2(game.size.x/2, game.size.y/2 - 40),
+        textRenderer: regular);
+    gameOverScreen?.add(label);
+
+    final btn = RoundedRectButton('MOAR');
+    btn.position = Vector2(game.size.x/2, game.size.y/2 + 60);
+    btn.onPressed = () {
+      removeGameOver();
+      game.overworldNavigator.loadNewGame();
+    };
+    gameOverScreen?.add(btn);
+  }
+
+  void removeGameOver() {
+    gameOverScreen?.removeFromParent();
+    game.overworld?.listenToInput = true;
   }
 }

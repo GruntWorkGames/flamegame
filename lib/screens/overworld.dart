@@ -8,6 +8,7 @@ import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
+import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/direction.dart';
@@ -115,6 +116,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
         enemy.onMoveCompleted(enemy.position);
       }, (){
         // on death callback
+        game.player.removeFromParent();
+        UI.instance.showGameOver();
       });
     });
   }

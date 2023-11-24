@@ -12,7 +12,7 @@ class MainGame extends FlameGame with HorizontalDragDetector, VerticalDragDetect
   MeleeCharacter player = MeleeCharacter();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
-  final ui = UI();
+  final ui = UI.instance;
   Component? currentSpeechBubble;
 
   @override

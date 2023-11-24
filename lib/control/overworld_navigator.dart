@@ -27,4 +27,9 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
     game.overworld = world;
     game.world = world;
   }
+
+  void loadNewGame() {
+    worlds.clear();
+    loadMainWorld();
+  }
 }

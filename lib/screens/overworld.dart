@@ -24,7 +24,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   List<Enemy> _enemies = [];
   List<NPC> _npcs = [];
   bool listenToInput = false;
-
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? _tiledmap;
@@ -65,6 +64,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
   }
+
   @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
@@ -147,7 +147,6 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     return !isTileBlocked(nextTile);
   }
 
-// 1120 x 832
   bool isTileBlocked(Vector2 pos) {
     try {
       return _blockedTiles[pos.x.toInt()][pos.y.toInt()];

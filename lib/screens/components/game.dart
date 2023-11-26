@@ -11,7 +11,7 @@ import 'package:flame_game/screens/components/main_menu.dart';
 import 'package:flame_game/screens/components/overworld.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MainGame extends FlameGame with HorizontalDragDetector, VerticalDragDetector, TapDetector {
+class MainGame extends FlameGame with TapDetector {
   MeleeCharacter player = MeleeCharacter();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
@@ -50,7 +50,7 @@ class MainGame extends FlameGame with HorizontalDragDetector, VerticalDragDetect
 
   @override
   void onVerticalDragEnd(DragEndInfo info) {
-    super.onVerticalDragEnd(info);
+    
     final v = info.velocity;
     if(v.y > 0) {
       directionPressed(Direction.down);
@@ -62,7 +62,7 @@ class MainGame extends FlameGame with HorizontalDragDetector, VerticalDragDetect
 
   @override
   void onHorizontalDragEnd(DragEndInfo info) {
-    super.onHorizontalDragEnd(info);
+ 
     final v = info.velocity;
     if(v.x > 0) {
       directionPressed(Direction.right);

@@ -4,7 +4,7 @@ import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_game/components/buttons.dart';
 import 'package:flame/components.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 
 class MainMenu extends World with HasGameReference<MainGame>, TapCallbacks {
 

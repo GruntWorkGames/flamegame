@@ -4,7 +4,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_game/components/buttons.dart';
 import 'package:flame_game/components/directional_pad.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 
 class UI extends PositionComponent with HasGameRef<MainGame> {
@@ -26,11 +26,6 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     debugLabel.position.x = game.size.x / 2;
     debugLabel.position.y = 10;
     add(debugLabel);
-
-    final dPad = DirectionalPad();
-    dPad.position =
-        Vector2(game.size.x / 2 - (64 * 3) / 2, game.size.y - 64 * 2);
-    add(dPad);
 
     final coinImg = await game.images.load('coin.png');
     final coin = SpriteComponent.fromImage(coinImg);
@@ -56,7 +51,7 @@ class UI extends PositionComponent with HasGameRef<MainGame> {
     // add(fps);
   }
 
-void showGameOver() {;
+  void showGameOver() {;
     game.overworld?.listenToInput = false;
     final blackPaint = Paint();
     blackPaint.color = Colors.black;

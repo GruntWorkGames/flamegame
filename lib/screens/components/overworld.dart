@@ -12,7 +12,7 @@ import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;

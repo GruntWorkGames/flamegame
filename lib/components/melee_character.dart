@@ -7,7 +7,7 @@ import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 
 enum CharacterAnimationState {
   beginIdle,

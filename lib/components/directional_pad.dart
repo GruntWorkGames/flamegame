@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 
 class DirectionalPad extends PositionComponent with HasGameRef<MainGame> {
   @override

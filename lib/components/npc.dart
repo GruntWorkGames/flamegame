@@ -3,7 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_game/constants.dart';
-import 'package:flame_game/screens/game.dart';
+import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 
 class NPC extends SpriteComponent with HasGameRef<MainGame> {

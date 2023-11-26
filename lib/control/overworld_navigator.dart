@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/components/melee_character.dart';
-import 'package:flame_game/screens/game.dart';
-import 'package:flame_game/screens/overworld.dart';
+import 'package:flame_game/screens/components/game.dart';
+import 'package:flame_game/screens/components/overworld.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
   final Map<String, Overworld> worlds = {};

@@ -10,14 +10,17 @@ import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/portal.dart';
+import 'package:flame_game/control/provider/dialog_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
 
-class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
+class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
   List<List<dynamic>> _npcTiles = [];
@@ -60,11 +63,12 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     _buildPortals(_tiledmap!.tileMap);
     _createNpcs();
     _enemies = _createEnemies(_tiledmap!.tileMap);
-    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: (){});
+    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     UI.instance.heartText.text = '${game.player.health}';
+    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
   }
 
   @override
@@ -76,19 +80,18 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     _enemiesToMove.addAll(getEnemiesWithinRange(_aggroDistance));
     moveNextEnemy();
   }
-  
+
   void moveNextEnemy() {
-    if(_enemiesToMove.isEmpty) {
+    if (_enemiesToMove.isEmpty) {
       turnSystem.updateState(TurnSystemState.enemyFinished);
       return;
     }
     final enemy = _enemiesToMove.last;
     _enemiesToMove.removeLast();
 
-
     // if enemy is next to the player
     final playerDirection = enemyCanAttackPlayer(enemy);
-    if(playerDirection == Direction.none) {
+    if (playerDirection == Direction.none) {
       enemy.move(findPath(enemy));
     } else {
       enemyAttackPlayer(enemy, playerDirection);
@@ -96,57 +99,56 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   }
 
   Direction enemyCanAttackPlayer(Enemy enemy) {
-    
     // if player is either above, below, right or left
     final playerTile = posToTile(game.player.position);
-    final enemyTile  = posToTile(enemy.position);
+    final enemyTile = posToTile(enemy.position);
 
     final difX = playerTile.x - enemyTile.x;
     final difY = playerTile.y - enemyTile.y;
 
-    if(difX.abs() == 1 || difY.abs() == 1) {
+    if (difX.abs() == 1 || difY.abs() == 1) {
       return directionFromPosToPos(enemyTile, playerTile);
-    }   
+    }
 
     return Direction.none;
   }
-  
+
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
-    enemy.playAttackDirectionAnim(playerDirection, (){
-      game.player.takeHit(enemy.currentWeapon.damage, (){
+    enemy.playAttackDirectionAnim(playerDirection, () {
+      game.player.takeHit(enemy.currentWeapon.damage, () {
         enemy.onMoveCompleted(enemy.position);
         UI.instance.heartText.text = '${game.player.health}';
-      }, (){
+      }, () {
         // on death callback
         game.player.removeFromParent();
         UI.instance.showGameOver();
       });
     });
   }
-  
+
   void directionPressed(Direction direction) {
-    if(!listenToInput) {
+    if (!listenToInput) {
       return;
     }
     game.player.faceDirection(direction);
     final enemy = getEnemyInDirection(direction);
-    if(enemy != null) {
+    if (enemy != null) {
       fightDirectionPressed(enemy, direction);
       listenToInput = false;
-    } else if (canMoveDirection(direction)) { 
+    } else if (canMoveDirection(direction)) {
       game.player.move(direction);
       listenToInput = false;
     }
   }
 
   void fightDirectionPressed(Enemy enemy, Direction direction) {
-    if(!listenToInput) {
+    if (!listenToInput) {
       return;
     }
-    game.player.playAttackDirectionAnim(direction, (){
-      enemy.takeHit(game.player.currentWeapon.damage, (){
+    game.player.playAttackDirectionAnim(direction, () {
+      enemy.takeHit(game.player.currentWeapon.damage, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
-      }, (){
+      }, () {
         enemy.removeFromParent();
         _enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
@@ -157,9 +159,9 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   Enemy? getEnemyInDirection(Direction direction) {
     final playerTile = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerTile);
-    for(final enemy in _enemies) {
+    for (final enemy in _enemies) {
       final npcTile = posToTile(enemy.position);
-      if(nextTile == npcTile) {
+      if (nextTile == npcTile) {
         return enemy;
       }
     }
@@ -173,7 +175,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final npc = _isTileBlockedNpc(nextTile);
     final portal = _getTilePortal(nextTile);
     if (npc != null) {
-      npc.speak();
+      showDialog(npc);
       return false;
     }
 
@@ -184,6 +186,14 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     }
 
     return !isTileBlocked(nextTile);
+  }
+
+  void showDialog(NPC npc) {
+    final dialog = DialogData();
+    dialog.title = npc.data.name;
+    dialog.message = npc.data.speech;
+    game.ref.read(dialogProvider.notifier).set(dialog);
+    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
   }
 
   bool isTileBlocked(Vector2 pos) {
@@ -287,7 +297,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
       return spawns;
     }
 
-    for(final object in objectGroup.objects) {
+    for (final object in objectGroup.objects) {
       spawns.add(Vector2(object.x, object.y));
     }
 
@@ -390,7 +400,8 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     final endVec = posToTile(game.player.position);
     final startVec = posToTile(enemy.position);
     final math.Point<int> end = math.Point(endVec.x.toInt(), endVec.y.toInt());
-    final math.Point<int> start= math.Point(startVec.x.toInt(), startVec.y.toInt());
+    final math.Point<int> start =
+        math.Point(startVec.x.toInt(), startVec.y.toInt());
     final playerTile = posToTile(game.player.position);
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
@@ -403,17 +414,19 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
       final tile = posToTile(enemy.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
     }).toSet();
-    final barriers = Set<math.Point<int>>.from([... wallTiles, ... npcTiles, ... enemyTiles]).toList();
+    final barriers =
+        Set<math.Point<int>>.from([...wallTiles, ...npcTiles, ...enemyTiles])
+            .toList();
     final result = AStarAlgorithm.AStar(
-      rows: map.width, 
-      columns: map.height, 
-      start: start, 
-      end: end, 
-      withDiagonal: false,
-      barriers: barriers).findThePath(doneList: (doneList) {
-    });
+            rows: map.width,
+            columns: map.height,
+            start: start,
+            end: end,
+            withDiagonal: false,
+            barriers: barriers)
+        .findThePath(doneList: (doneList) {});
 
-    if(result.isEmpty) {
+    if (result.isEmpty) {
       return Direction.none;
     }
 
@@ -421,10 +434,10 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
       return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
     }).toList();
 
-    if(tilePath.length > 1) {
+    if (tilePath.length > 1) {
       final tile = tilePath[1];
       // prevent from running over player
-      if(posToTile(tile) == posToTile(game.player.position)) {
+      if (posToTile(tile) == posToTile(game.player.position)) {
         return Direction.none;
       }
 
@@ -434,46 +447,44 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
 
     return Direction.none;
   }
-  
+
   List<math.Point<int>> tilesArroundPosition(Vector2 playerTile, int distance) {
     final map = _tiledmap!.tileMap.map;
     // get left boundary
-    final int farthestTileXLeftAvailable = 
-    playerTile.x > distance
-    ? playerTile.x.toInt() - distance
-    : 0;
+    final int farthestTileXLeftAvailable =
+        playerTile.x > distance ? playerTile.x.toInt() - distance : 0;
     // get right boundary
-    final int farthestTileXRightAvailable = 
-    playerTile.x + distance < map.width 
-    ?  playerTile.x.toInt() + distance 
-    : playerTile.x.toInt() + (map.width - playerTile.x.toInt());
+    final int farthestTileXRightAvailable = playerTile.x + distance < map.width
+        ? playerTile.x.toInt() + distance
+        : playerTile.x.toInt() + (map.width - playerTile.x.toInt());
     // get bottom boundary
-    final int farthestTileYDownAvailable = 
-    playerTile.y + distance < map.height
-    ? playerTile.y.toInt() + distance
-    : playerTile.y.toInt() + (map.height - playerTile.y.toInt() );
+    final int farthestTileYDownAvailable = playerTile.y + distance < map.height
+        ? playerTile.y.toInt() + distance
+        : playerTile.y.toInt() + (map.height - playerTile.y.toInt());
     // get top boundary
-    final int farthestTileYUpAvailable = 
-    playerTile.y.toInt() > distance
-    ? playerTile.y.toInt() - distance
-    : 0;
+    final int farthestTileYUpAvailable =
+        playerTile.y.toInt() > distance ? playerTile.y.toInt() - distance : 0;
 
     final List<math.Point<int>> tiles = [];
 
-    for(int x = farthestTileXLeftAvailable; x < farthestTileXRightAvailable; x++) {
-      for(int y = farthestTileYUpAvailable; y < farthestTileYDownAvailable; y++) {
-        tiles.add(math.Point<int>(x,y));
+    for (int x = farthestTileXLeftAvailable;
+        x < farthestTileXRightAvailable;
+        x++) {
+      for (int y = farthestTileYUpAvailable;
+          y < farthestTileYDownAvailable;
+          y++) {
+        tiles.add(math.Point<int>(x, y));
       }
     }
-    
+
     return tiles;
   }
 
   List<math.Point<int>> getBlockedTilesInList(List<math.Point<int>> list) {
     final List<math.Point<int>> tiles = [];
-    for(final tile in list) {
+    for (final tile in list) {
       final pos = Vector2(tile.x.toDouble(), tile.y.toDouble());
-      if(isTileBlocked(pos)) {
+      if (isTileBlocked(pos)) {
         tiles.add(tile);
       }
     }
@@ -481,7 +492,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
   }
 
   void clearDebug() {
-    for(final square in _squares) {
+    for (final square in _squares) {
       square.removeFromParent();
     }
     _squares.clear();
@@ -492,7 +503,7 @@ class Overworld extends World with HasGameRef<MainGame> , TapCallbacks{
     _squares.add(square);
     add(square);
   }
-  
+
   List<Enemy> getEnemiesWithinRange(int distance) {
     final list = _enemies.where((npc) {
       final enemyTile = posToTile(npc.position);

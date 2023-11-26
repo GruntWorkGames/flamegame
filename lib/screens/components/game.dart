@@ -47,28 +47,4 @@ class MainGame extends FlameGame with TapDetector {
       overworld!.directionPressed(direction);
     }
   }
-
-  @override
-  void onVerticalDragEnd(DragEndInfo info) {
-    
-    final v = info.velocity;
-    if(v.y > 0) {
-      directionPressed(Direction.down);
-    }
-    if(v.y < 0) {
-      directionPressed(Direction.up);
-    }
-  }
-
-  @override
-  void onHorizontalDragEnd(DragEndInfo info) {
- 
-    final v = info.velocity;
-    if(v.x > 0) {
-      directionPressed(Direction.right);
-    }
-    if(v.x < 0) {
-      directionPressed(Direction.left);
-    }
-  }
 }

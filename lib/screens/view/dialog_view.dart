@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,7 +23,10 @@ class DialogView extends ConsumerWidget {
 
     const spacer = SizedBox(height: 4);
     final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message]);
-    
-    return BackdropFilter(filter:ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Center(child: column));
+        // game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+    final blur =  BackdropFilter(filter:ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Center(child: column));
+    return GestureDetector(onTap: (){
+      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    }, child: blur);
   }
 }

@@ -6,7 +6,7 @@ final uiProvider = StateNotifierProvider<UIState, UIViewDisplayType>((ref) {
 });
 
 class UIState extends StateNotifier<UIViewDisplayType> {
-  UIState() : super(UIViewDisplayType.game);
+  UIState() : super(UIViewDisplayType.invisible);
 
   void set(UIViewDisplayType type) {
     state = type;

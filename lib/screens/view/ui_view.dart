@@ -17,7 +17,7 @@ class UIView extends ConsumerWidget {
     game.ref = ref;
 
     if (uiState == UIViewDisplayType.game) {
-      return _gameOverlay(context, ref, game);
+      return _gameOverlay(context, ref);
     }
 
     if (uiState == UIViewDisplayType.shop) {
@@ -31,25 +31,28 @@ class UIView extends ConsumerWidget {
     return SizedBox.shrink();
   }
 
-  Widget _gameOverlay(BuildContext context, WidgetRef ref, MainGame game) {
-    final detector = GestureDetector(onHorizontalDragEnd: (drag) {
-    final v = drag.velocity.pixelsPerSecond;
-    if(v.dx > 0) {
-      game.directionPressed(Direction.right);
-    }
-    if(v.dx < 0) {
-      game.directionPressed(Direction.left);
-    }
+  Widget _gameOverlay(BuildContext context, WidgetRef ref) {
+    return Center(child: ControlPad(game));
+  }
+
+  Widget _buildSwipeDetector() {
+    return GestureDetector(onHorizontalDragEnd: (drag) {
+      final v = drag.velocity.pixelsPerSecond;
+      if (v.dx > 0) {
+        game.directionPressed(Direction.right);
+      }
+      if (v.dx < 0) {
+        game.directionPressed(Direction.left);
+      }
     }, onVerticalDragEnd: (drag) {
       final v = drag.velocity.pixelsPerSecond;
-      if(v.dy > 0) {
+      if (v.dy > 0) {
         game.directionPressed(Direction.down);
       }
-      if(v.dy < 0) {
+      if (v.dy < 0) {
         game.directionPressed(Direction.up);
       }
     });
-    return detector;
   }
 }
 
@@ -60,17 +63,34 @@ class ControlPad extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final upIcon = Transform.rotate(
-        angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left));
-    final upButton = _buttonWithIcon(upIcon, () {});
-    return Container();
-  }
+    final color = Colors.white;
+    final upIcon = Padding(padding: EdgeInsets.all(10), child: Transform.rotate(
+        angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color)));
 
-  Widget _buttonWithIcon(Widget icon, Function function) {
-    return InkWell(
-        onTap: () {
-          function();
-        },
-        child: Padding(padding: EdgeInsets.all(36), child: icon));
+    final downIcon = Padding(padding: EdgeInsets.all(10), child: Transform.rotate(
+        angle: -90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color)));
+    final leftIcon = Padding(padding: EdgeInsets.all(10), child: Icon(Icons.chevron_left, color: color));
+    final rightIcon = Padding(padding: EdgeInsets.all(10), child: Icon(Icons.chevron_right, color: color));
+
+    final style = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+      if(states.contains(MaterialState.pressed)) {
+        return Colors.grey[700]!;
+      } else {
+        return Colors.grey[400]!;
+      }
+    }));
+
+    final upButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.up);}, child: upIcon, style: style);
+    final downButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.down);}, child: downIcon, style: style);
+    final leftButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.left);}, child: leftIcon, style: style);
+    final rightButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.right);}, child: rightIcon, style: style);
+
+    final topRow =Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
+    final middleRow = Padding(padding: EdgeInsets.symmetric(horizontal: 10), 
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [leftButton, rightButton]));
+    final bottomRow = Padding(padding: EdgeInsets.only(bottom: 10),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [downButton]));
+
+    return Column(children: [const Spacer(), topRow, middleRow, bottomRow]);
   }
 }

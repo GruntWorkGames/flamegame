@@ -31,8 +31,8 @@ class UIView extends ConsumerWidget {
   }
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref, MainGame game) {
-    // return Center(child: ControlPad(game));
-    return Container();
+    final gameCenter = Center(child: ControlPad(game));
+    return gameCenter;
   }
 }
 
@@ -43,10 +43,9 @@ class ControlPad extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final upFunc = (){};
     final upIcon = Transform.rotate(angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left));
-    final upButton = _buttonWithIcon(upIcon, upFunc);
-    return upButton;
+    final upButton = _buttonWithIcon(upIcon, (){});
+    return Container();
   }
 
   Widget _buttonWithIcon(Widget icon, Function function) {

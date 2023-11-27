@@ -8,7 +8,6 @@ import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
-import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/shop.dart';
@@ -122,6 +121,11 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         // on death callback
         game.ref.read(healthProvider.notifier).set(game.player.health);
         game.player.removeFromParent();
+
+        final dialog = DialogData();
+        dialog.title = 'You have died';
+        dialog.message = 'Press here to restart';
+        game.ref.read(dialogProvider.notifier).set(dialog);
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
     });

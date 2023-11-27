@@ -17,7 +17,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
   List<MeleeWeapon> weapons = [];
   MeleeWeapon currentWeapon = DullShortSword();
-  int health = 30;
+  int health = 10;
   int maxHealth = 30;
   double moveDuration = 0.24;
   int money = 0;

@@ -25,8 +25,6 @@ class DialogView extends ConsumerWidget {
     final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message]);
         // game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     final blur =  BackdropFilter(filter:ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Center(child: column));
-    return GestureDetector(onTap: (){
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    }, child: blur);
+    return blur;
   }
 }

@@ -13,7 +13,7 @@ final dialogProvider = StateNotifierProvider<DialogState, DialogData>((ref) {
 class DialogState extends StateNotifier<DialogData> {
   DialogState() : super(DialogData());
 
-  void set(DialogData Dialog) {
-    state = Dialog;
+  void set(DialogData dialog) {
+    state = dialog;
   }
 }

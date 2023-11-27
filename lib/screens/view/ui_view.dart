@@ -20,19 +20,18 @@ class UIView extends ConsumerWidget {
 
     final hud = _buildHud(ref);
 
-    if (uiState == UIViewDisplayType.game) {
-      return Stack(children:[_gameOverlay(context, ref), hud]);
+    switch(uiState) {
+      case UIViewDisplayType.game:
+        return Stack(children:[_gameOverlay(context, ref), hud]);
+      case UIViewDisplayType.shop:
+        return Stack(children: [ShopMenu(), hud]);
+      case UIViewDisplayType.dialog:
+        return Stack(children:[DialogView(), hud]);
+      case UIViewDisplayType.invisible:
+        return SizedBox.shrink();
+      case UIViewDisplayType.gameOver:
+        return _gameOver(ref);
     }
-
-    if (uiState == UIViewDisplayType.shop) {
-      return Stack(children: [ShopMenu(), hud]);
-    }
-
-    if (uiState == UIViewDisplayType.dialog) {
-      return DialogView();
-    }
-
-    return SizedBox.shrink();
   }
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref) {
@@ -73,6 +72,13 @@ class UIView extends ConsumerWidget {
         game.directionPressed(Direction.up);
       }
     });
+  }
+  
+  Widget _gameOver(WidgetRef ref) {
+    final dialog = GestureDetector(onTap: (){
+      game.overworldNavigator.loadNewGame();
+    }, child: DialogView());
+    return Center(child: dialog);
   }
 }
 

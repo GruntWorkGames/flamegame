@@ -18,6 +18,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   List<MeleeWeapon> weapons = [];
   MeleeWeapon currentWeapon = DullShortSword();
   int health = 30;
+  int maxHealth = 30;
   double moveDuration = 0.24;
   int money = 0;
 

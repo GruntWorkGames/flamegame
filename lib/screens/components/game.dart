@@ -38,17 +38,4 @@ class MainGame extends FlameGame with TapDetector {
       overworld!.directionPressed(direction);
     }
   }
-
-  void playerBoughtItem(ShopItem item) {
-    if(player.money < item.cost) {
-      final dialog = DialogData();
-      dialog.title = 'Oops!';
-      dialog.message = 'Sorry, you don\'t have enough gold!';
-      ref.read(dialogProvider.notifier).set(dialog);
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
-    } else {
-      player.money -= item.cost;
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    }
-  }
 }

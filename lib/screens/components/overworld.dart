@@ -68,8 +68,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    game.ref.read(goldProvider.notifier).set(game.player.money);
-    game.ref.read(healthProvider.notifier).set(game.player.health);
+    updateUI();
   }
 
   @override
@@ -152,7 +151,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.money += enemy.money;
-        game.ref.read(goldProvider.notifier).set(game.player.money);
+        updateUI();
         enemy.removeFromParent();
         _enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
@@ -529,5 +528,28 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       return dist <= distance;
     }).toList();
     return list;
+  }
+
+  void playerBoughtItem(ShopItem item) {
+    if(game.player.money < item.cost) {
+      final dialog = DialogData();
+      dialog.title = 'Oops!';
+      dialog.message = 'Sorry, you don\'t have enough gold!';
+      game.ref.read(dialogProvider.notifier).set(dialog);
+      game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+    } else {
+      game.player.money -= item.cost;
+      game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+
+      if(item.name == 'Heal') {
+        game.player.health = game.player.maxHealth;
+        updateUI();
+      }
+    }
+  }
+
+  void updateUI() {
+    game.ref.read(healthProvider.notifier).set(game.player.health);
+    game.ref.read(goldProvider.notifier).set(game.player.money);
   }
 }

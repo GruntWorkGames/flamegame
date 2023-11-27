@@ -47,7 +47,7 @@ class ShopMenu extends ConsumerWidget {
     final row = Row(children: [titleText, const Spacer(), costText]);
     final cell = Container(decoration: decoration, child: row);
     final touchableCell = InkWell(onTap: (){
-      MainGame.instance.playerBoughtItem(item);
+      MainGame.instance.overworld!.playerBoughtItem(item);
     }, child: cell);
     return touchableCell;
   }

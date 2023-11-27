@@ -1,0 +1,12 @@
+{
+    "name": "Taco",
+    "shop": {
+        "message": "I can heal you to full hp for 10 gold pieces.",
+        "items" : [
+            {
+                "name": "Heal",
+                "cost": 10
+            }
+        ]
+    }
+}

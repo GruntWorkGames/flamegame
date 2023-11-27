@@ -3,6 +3,7 @@ import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
+import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -44,6 +45,10 @@ class ShopMenu extends ConsumerWidget {
     final costText = Padding(padding: EdgeInsets.all(5), child: Text(item.cost.toString(), style: titleStyle));
     final decoration = BoxDecoration(border: Border.all(color: Color.fromARGB(255, 173, 91, 20), width: 4), color: Color.fromARGB(255, 82, 41, 4));
     final row = Row(children: [titleText, const Spacer(), costText]);
-    return Container(decoration: decoration, child: row);
+    final cell = Container(decoration: decoration, child: row);
+    final touchableCell = InkWell(onTap: (){
+      MainGame.instance.playerBoughtItem(item);
+    }, child: cell);
+    return touchableCell;
   }
 }

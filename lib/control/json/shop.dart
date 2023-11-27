@@ -26,4 +26,11 @@ class ShopItem {
     name = json['name'] ?? '';
     cost = json['cost'] ?? 0;
   }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> json = {};
+    json['name'] = name;
+    json['cost'] = cost;
+    return json;
+  }
 }

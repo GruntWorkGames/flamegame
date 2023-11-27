@@ -4,6 +4,7 @@ import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
@@ -18,11 +19,13 @@ class MainGame extends FlameGame with TapDetector {
   final ui = UI.instance;
   Component? currentSpeechBubble;
   late WidgetRef ref;
-  
+  static late MainGame instance;
+
   @override
   Future<void> onLoad() async {
     add(overworldNavigator);
     world = MainMenu(size);
+    instance = this;
   }
 
   @override
@@ -46,5 +49,10 @@ class MainGame extends FlameGame with TapDetector {
     if (overworld != null) {
       overworld!.directionPressed(direction);
     }
+  }
+
+  void playerBoughtItem(ShopItem item) {
+    // final itemStr = jsonEncode(item.toJson());
+    print('player bought ${item.name}');
   }
 }

@@ -150,8 +150,7 @@
   </object>
   <object id="4" name="Taco" x="176" y="320" width="16" height="16">
    <properties>
-    <property name="speech" value="I hate everything, and contribute nothing! Get lost!"/>
-    <property name="speechHeight" type="int" value="100"/>
+    <property name="shop" value="json/taco.json"/>
    </properties>
   </object>
   <object id="5" name="Popo" x="224" y="304" width="16" height="16">

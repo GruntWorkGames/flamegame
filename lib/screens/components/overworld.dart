@@ -11,8 +11,10 @@ import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/components/ui.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
+import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
@@ -189,11 +191,23 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void showDialog(NPC npc) {
+    if (npc.data.shopJsonFile.isNotEmpty) {
+      showShop(npc);
+      return;
+    }
+
     final dialog = DialogData();
     dialog.title = npc.data.name;
     dialog.message = npc.data.speech;
     game.ref.read(dialogProvider.notifier).set(dialog);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+  }
+
+  void showShop(NPC npc) async {
+    final json = await game.assets.readJson(npc.data.shopJsonFile);
+    final shop = Shop.fromJson(json);
+    game.ref.read(shopProvider.notifier).set(shop);
+    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.shop);
   }
 
   bool isTileBlocked(Vector2 pos) {
@@ -317,11 +331,12 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       if (speech != null) {
         data.speech = speech.value;
       }
-      final speechHeight =
-          object.properties.getProperty<IntProperty>('speechHeight');
-      if (speechHeight != null) {
-        data.speechHeight = speechHeight.value;
+
+      final jsonFile = object.properties.getProperty<StringProperty>('shop');
+      if (jsonFile != null) {
+        data.shopJsonFile = jsonFile.value;
       }
+
       data.name = object.name;
       data.position = Vector2(object.x, object.y);
       spawnData.add(data);

@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_game/components/buttons.dart';
-import 'package:flame_game/components/directional_pad.dart';
 import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 

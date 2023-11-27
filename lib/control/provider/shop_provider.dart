@@ -1,11 +1,6 @@
+import 'package:flame_game/control/json/shop.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Shop {
-  Shop();
-  String title = '';
-  String message = '';
-  List<Function> functions = [];
-}
 
 final shopProvider = StateNotifierProvider<ShopState, Shop>((ref) {
   return ShopState();

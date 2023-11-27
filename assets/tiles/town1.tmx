@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="44" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="17">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="44" height="40" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="17">
  <tileset firstgid="1" source="Grass.tsx"/>
  <tileset firstgid="6" source="Rocks.tsx"/>
  <tileset firstgid="18" source="Keep.tsx"/>
@@ -146,7 +146,6 @@
   <object id="3" name="Clark" x="224" y="208" width="16" height="16">
    <properties>
     <property name="speech" value="Welcome to our town. Be sure to visit Popo in the town square."/>
-    <property name="speechHeight" type="int" value="100"/>
    </properties>
   </object>
   <object id="4" name="Taco" x="176" y="320" width="16" height="16">
@@ -157,13 +156,14 @@
   </object>
   <object id="5" name="Popo" x="224" y="304" width="16" height="16">
    <properties>
+    <property name="option1" value=""/>
     <property name="speech" value="How do ya like me now!?"/>
    </properties>
   </object>
   <object id="7" name="Floof" x="272" y="272" width="16" height="16">
    <properties>
+    <property name="shop" value="json/floof.json"/>
     <property name="speech" value="Have you seen any Boglims lately?"/>
-    <property name="speechHeight" type="int" value="90"/>
    </properties>
   </object>
  </objectgroup>

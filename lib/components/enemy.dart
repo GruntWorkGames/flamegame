@@ -1,6 +1,7 @@
 import 'package:flame/effects.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/old_club.dart';
+import 'package:flame_game/control/enum/character_state.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class Enemy extends MeleeCharacter {
@@ -12,6 +13,7 @@ class Enemy extends MeleeCharacter {
     position = position;
     health = 9;
     currentWeapon = OldClub();
+    moveDuration = 0.15;
   }
 
   @override

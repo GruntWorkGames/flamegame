@@ -6,28 +6,11 @@ import 'package:flame_game/components/dull_short_sword.dart';
 import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 
-enum CharacterAnimationState {
-  beginIdle,
-  idleDown,
-  idleUp,
-  idleLeft,
-  idleRight,
-  walkLeft,
-  walkRight,
-  walkUp,
-  walkDown,
-  attackDown,
-  attackUp,
-  attackLeft,
-  attackRight,
-  takingDamage
-}
-
-class MeleeCharacter extends SpriteAnimationComponent
-    with HasGameRef<MainGame> {
+class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> {
   MeleeCharacter() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
@@ -35,6 +18,7 @@ class MeleeCharacter extends SpriteAnimationComponent
   List<MeleeWeapon> weapons = [];
   MeleeWeapon currentWeapon = DullShortSword();
   int health = 30;
+  double moveDuration = 0.24;
 
   @override
   Future<void> onLoad() async {
@@ -132,7 +116,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     final lastPos = position.clone();
     final move = MoveEffect.by(
       distance,
-      EffectController(duration: .24),
+      EffectController(duration: moveDuration),
       onComplete: () {
         // snap to grid. issue with moveTo/moveBy not being perfect...
         position = lastPos + distance;

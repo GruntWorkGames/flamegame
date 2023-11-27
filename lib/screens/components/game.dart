@@ -6,7 +6,6 @@ import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/components/main_menu.dart';
 import 'package:flame_game/screens/components/overworld.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,8 +20,8 @@ class MainGame extends FlameGame with TapDetector {
   @override
   Future<void> onLoad() async {
     add(overworldNavigator);
-    world = MainMenu(size);
     instance = this;
+    overworldNavigator.loadMainWorld();
   }
 
   @override

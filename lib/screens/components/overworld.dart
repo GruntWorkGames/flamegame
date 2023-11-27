@@ -48,8 +48,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void onMount() {
     super.onMount();
     playerEntered();
-    game.camera.viewfinder.zoom = zoomFactor;
-    game.camera.follow(game.player);
   }
 
   @override
@@ -67,6 +65,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    game.camera.viewfinder.zoom = zoomFactor;
     updateUI();
   }
 

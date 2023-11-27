@@ -19,6 +19,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   MeleeWeapon currentWeapon = DullShortSword();
   int health = 30;
   double moveDuration = 0.24;
+  int money = 0;
 
   @override
   Future<void> onLoad() async {

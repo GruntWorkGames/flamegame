@@ -14,6 +14,7 @@ class Enemy extends MeleeCharacter {
     health = 9;
     currentWeapon = OldClub();
     moveDuration = 0.15;
+    money = 4;
   }
 
   @override

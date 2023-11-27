@@ -23,7 +23,7 @@ class ShopMenu extends ConsumerWidget {
     final message = Container(decoration: decoration, child: box);
 
     // create buy options
-    final items = _buildItemCells(shop);
+    final items = _buildItemCells(shop, ref);
 
     const spacer = SizedBox(height: 4);
     final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message, spacer, ... items]);
@@ -33,13 +33,13 @@ class ShopMenu extends ConsumerWidget {
     }, child: blur);
   }
 
-  List<Widget> _buildItemCells(Shop shop) {
+  List<Widget> _buildItemCells(Shop shop, WidgetRef ref) {
     return shop.items.map((item) {
-      return _buildItemCell(item);
+      return _buildItemCell(item, ref);
     }).toList();
   }
 
-  Widget _buildItemCell(ShopItem item) {
+  Widget _buildItemCell(ShopItem item, WidgetRef ref) {
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final titleText = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
     final costText = Padding(padding: EdgeInsets.all(5), child: Text(item.cost.toString(), style: titleStyle));

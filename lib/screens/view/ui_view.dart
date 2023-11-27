@@ -1,4 +1,6 @@
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/provider/gold_provider.dart';
+import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
@@ -16,12 +18,14 @@ class UIView extends ConsumerWidget {
     final uiState = ref.watch(uiProvider);
     game.ref = ref;
 
+    final hud = _buildHud(ref);
+
     if (uiState == UIViewDisplayType.game) {
-      return _gameOverlay(context, ref);
+      return Stack(children:[_gameOverlay(context, ref), hud]);
     }
 
     if (uiState == UIViewDisplayType.shop) {
-      return ShopMenu();
+      return Stack(children: [ShopMenu(), hud]);
     }
 
     if (uiState == UIViewDisplayType.dialog) {
@@ -33,6 +37,22 @@ class UIView extends ConsumerWidget {
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref) {
     return Center(child: ControlPad(game));
+  }
+
+  Widget _buildHud(WidgetRef ref) {
+    final style = TextStyle(color: Colors.white, fontSize: 24);
+    final health = ref.watch(healthProvider);
+    final heartImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/heart.png'));
+    final healthText = Padding(padding: EdgeInsets.only(left: 20), child: Text(health.toString(), style: style));
+
+    final coins = ref.watch(goldProvider);
+    final coinImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/coin.png'));
+    final coinText = Padding(padding: EdgeInsets.only(left: 20), child: Text(coins.toString(), style: style));
+
+    final healthRow = Row(children: [heartImg, healthText]);
+    final goldRow = Row(children: [coinImg, coinText]);
+    final column = Padding(padding: EdgeInsets.all(10), child: Column(children: [healthRow, goldRow]));
+    return column;
   }
 
   Widget _buildSwipeDetector() {

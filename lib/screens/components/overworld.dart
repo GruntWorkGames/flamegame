@@ -14,6 +14,8 @@ import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
+import 'package:flame_game/control/provider/gold_provider.dart';
+import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
@@ -47,10 +49,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void onMount() {
     super.onMount();
     playerEntered();
-    final ui = game.ui;
-    if (ui.parent == null) {
-      game.camera.viewport.add(ui);
-    }
     game.camera.viewfinder.zoom = zoomFactor;
     game.camera.follow(game.player);
   }
@@ -69,8 +67,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
-    UI.instance.heartText.text = '${game.player.health}';
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    game.ref.read(goldProvider.notifier).set(game.player.money);
+    game.ref.read(healthProvider.notifier).set(game.player.health);
   }
 
   @override
@@ -118,12 +117,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     enemy.playAttackDirectionAnim(playerDirection, () {
       game.player.takeHit(enemy.currentWeapon.damage, () {
+        game.ref.read(healthProvider.notifier).set(game.player.health);
         enemy.onMoveCompleted(enemy.position);
-        UI.instance.heartText.text = '${game.player.health}';
       }, () {
         // on death callback
+        game.ref.read(healthProvider.notifier).set(game.player.health);
         game.player.removeFromParent();
-        UI.instance.showGameOver();
+        game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
     });
   }
@@ -151,6 +151,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       enemy.takeHit(game.player.currentWeapon.damage, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
+        game.player.money += enemy.money;
+        game.ref.read(goldProvider.notifier).set(game.player.money);
         enemy.removeFromParent();
         _enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);

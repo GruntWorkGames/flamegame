@@ -5,6 +5,7 @@ import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
+import 'package:flame_game/screens/view/inventory_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,11 +32,13 @@ class UIView extends ConsumerWidget {
         return SizedBox.shrink();
       case UIViewDisplayType.gameOver:
         return _gameOver(ref);
+      case UIViewDisplayType.inventory:
+        return Stack(children:[InventoryView(game), hud]);  
     }
   }
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref) {
-    return Center(child: _buildSwipeDetector());
+    return Center(child: ControlPad(game));
   }
 
   Widget _buildHud(WidgetRef ref) {

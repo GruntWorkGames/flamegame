@@ -9,6 +9,7 @@ import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/json/shop.dart';
@@ -16,6 +17,8 @@ import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
+import 'package:flame_game/control/provider/inventory_item_provider.dart';
+import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
@@ -70,6 +73,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.camera.viewfinder.zoom = zoomFactor;
     final inventoryJson = await game.assets.readJson('json/inventory.json');
     inventory = Inventory.fromJson(inventoryJson);
+    game.ref.read(inventoryProvider.notifier).set(inventory);
+    final firstItem = inventory.items.first;
+    game.ref.read(inventoryItemProvider.notifier).set(firstItem);
     updateUI();
   }
 
@@ -556,8 +562,34 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
       if (item.name == 'Heal') {
         game.player.health = game.player.maxHealth;
-        updateUI();
       }
+
+      final inventoryItem = InventoryItem.fromShopItem(item);
+      inventory.items.add(inventoryItem);
+
+      updateUI();
+    }
+  }
+
+  void useItem(InventoryItem item) {
+    switch(item.type) {
+      case ItemType.heal:
+        break;
+      case ItemType.food:
+        break;
+      case ItemType.weapon:
+        break;
+      case ItemType.armor:
+        break;
+      case ItemType.potion:
+        game.player.drinkPotion(item);
+        inventory.delete(item);
+        updateUI();
+        break;
+      case ItemType.torch:
+        break;
+      case ItemType.none:
+        break;
     }
   }
 

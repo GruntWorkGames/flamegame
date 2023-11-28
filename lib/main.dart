@@ -6,7 +6,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final mainMenu = MainMenuFlutter();
   final scaffold = Scaffold(body: mainMenu);
-  final app = MaterialApp(home: scaffold);
+  final app = MaterialApp(home: scaffold, );
   final ProviderScope scope = ProviderScope(child: app);
   runApp(scope);
 }

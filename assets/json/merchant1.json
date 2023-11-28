@@ -5,11 +5,11 @@
         "items" : [
             {
                 "name": "Sharp Short Sword",
-                "cost": 10
+                "cost": 2
             },
             {
                 "name": "Health Potion",
-                "cost": 12
+                "cost": 2
             }
         ]
     }

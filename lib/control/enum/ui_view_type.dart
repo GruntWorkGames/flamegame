@@ -1,3 +1,3 @@
 enum UIViewDisplayType {
-  game, shop, dialog, invisible, gameOver
+  game, shop, dialog, invisible, gameOver, inventory
 }

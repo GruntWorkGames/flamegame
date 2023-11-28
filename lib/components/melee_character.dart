@@ -7,6 +7,7 @@ import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
+import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 
@@ -20,7 +21,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   int health = 10;
   int maxHealth = 30;
   double moveDuration = 0.24;
-  int money = 0;
+  int money = 200;
 
   @override
   Future<void> onLoad() async {
@@ -217,5 +218,14 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     });
     flicker.removeOnFinish = true;
     add(flicker);
+  }
+
+  void drinkPotion(InventoryItem item) {
+    final newMax = health + item.value;
+    if(newMax > maxHealth) {
+      health = maxHealth;
+    } else {
+      health = newMax;
+    }
   }
 }

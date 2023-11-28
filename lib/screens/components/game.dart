@@ -3,8 +3,9 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
+import 'package:flame_game/control/provider/inventory_item_provider.dart';
+import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/overworld.dart';
@@ -31,6 +32,19 @@ class MainGame extends FlameGame with TapDetector {
     if (state == UIViewDisplayType.dialog || state == UIViewDisplayType.shop) {
       ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     }
+    
+    if(state == UIViewDisplayType.game) { 
+      final items = ref.read(inventoryProvider).items;
+      if(items.isNotEmpty){
+        ref.read(inventoryItemProvider.notifier).set(items.first);
+      }
+      ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory);
+    }
+
+    if(state == UIViewDisplayType.inventory) {
+      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    }
+
 
     super.onTap();
   }

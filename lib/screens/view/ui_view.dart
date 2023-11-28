@@ -35,7 +35,7 @@ class UIView extends ConsumerWidget {
   }
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref) {
-    return Center(child: ControlPad(game));
+    return Center(child: _buildSwipeDetector());
   }
 
   Widget _buildHud(WidgetRef ref) {

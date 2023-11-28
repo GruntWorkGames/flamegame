@@ -341,6 +341,11 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         data.shopJsonFile = jsonFile.value;
       }
 
+      final animationFile = object.properties.getProperty<StringProperty>('animationFile');
+      if(animationFile != null) {
+        data.animationJsonFile = animationFile.value;
+      }
+
       data.name = object.name;
       data.position = Vector2(object.x, object.y);
       spawnData.add(data);

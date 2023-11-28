@@ -1,0 +1,15 @@
+{
+    "items": [
+        {
+            "name" : "Health Potion",
+            "type" : "potion",
+            "value" : 10
+        },
+
+        {
+            "name" : "Dull Short Sword",
+            "type" : "weapon",
+            "value" : 10
+        }
+    ]
+}

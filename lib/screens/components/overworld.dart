@@ -10,6 +10,7 @@ import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
@@ -41,6 +42,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
   final _aggroDistance = 8;
+  Inventory inventory = Inventory();
 
   Overworld(this._mapfile);
 
@@ -66,6 +68,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
+    final inventoryJson = await game.assets.readJson('json/inventory.json');
+    inventory = Inventory.fromJson(inventoryJson);
     updateUI();
   }
 
@@ -341,8 +345,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         data.shopJsonFile = jsonFile.value;
       }
 
-      final animationFile = object.properties.getProperty<StringProperty>('animationFile');
-      if(animationFile != null) {
+      final animationFile =
+          object.properties.getProperty<StringProperty>('animationFile');
+      if (animationFile != null) {
         data.animationJsonFile = animationFile.value;
       }
 
@@ -539,7 +544,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void playerBoughtItem(ShopItem item) {
-    if(game.player.money < item.cost) {
+    if (game.player.money < item.cost) {
       final dialog = DialogData();
       dialog.title = 'Oops!';
       dialog.message = 'Sorry, you don\'t have enough gold!';
@@ -549,7 +554,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       game.player.money -= item.cost;
       game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
 
-      if(item.name == 'Heal') {
+      if (item.name == 'Heal') {
         game.player.health = game.player.maxHealth;
         updateUI();
       }

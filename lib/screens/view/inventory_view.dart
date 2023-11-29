@@ -1,3 +1,4 @@
+import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
@@ -8,10 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class InventoryView extends ConsumerWidget {
   final MainGame game;
   InventoryView(this.game);
-  final mainColor = Colors.grey[600]!;
-  final borderColor = Colors.grey[700]!;
-  final borderRadius = 5.0;
-  final borderWidth = 2.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

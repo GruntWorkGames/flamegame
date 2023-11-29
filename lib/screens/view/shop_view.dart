@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
@@ -14,7 +15,7 @@ class ShopMenu extends ConsumerWidget {
     // create title box
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final titleText = Padding(padding: EdgeInsets.all(5), child: Text(shop.owner, style: titleStyle));
-    final decoration = BoxDecoration(border: Border.all(color: Color.fromARGB(255, 173, 91, 20), width: 4), color: Color.fromARGB(255, 82, 41, 4));
+    final decoration = BoxDecoration(borderRadius: BorderRadius.circular(borderRadius), border: Border.all(color: borderColor, width: borderWidth), color: mainColor);
     final title = Container(decoration: decoration, child: titleText);
 
     // create message box
@@ -43,7 +44,7 @@ class ShopMenu extends ConsumerWidget {
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final titleText = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
     final costText = Padding(padding: EdgeInsets.all(5), child: Text(item.cost.toString(), style: titleStyle));
-    final decoration = BoxDecoration(border: Border.all(color: Color.fromARGB(255, 173, 91, 20), width: 4), color: Color.fromARGB(255, 82, 41, 4));
+    final decoration = BoxDecoration(borderRadius: BorderRadius.circular(borderRadius), border: Border.all(color: borderColor, width: borderWidth), color: mainColor);
     final row = Row(children: [titleText, const Spacer(), costText]);
     final cell = Container(decoration: decoration, child: row);
     final touchableCell = InkWell(onTap: (){

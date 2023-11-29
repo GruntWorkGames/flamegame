@@ -23,6 +23,7 @@ class InventoryItem {
   ItemType type = ItemType.none;
   int value = 0;
   String description = '';
+  bool isSelected = false;
 
   InventoryItem();
 

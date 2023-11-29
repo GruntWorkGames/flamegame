@@ -75,6 +75,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     inventory = Inventory.fromJson(inventoryJson);
     game.ref.read(inventoryProvider.notifier).set(inventory);
     final firstItem = inventory.items.first;
+    firstItem.isSelected = true;
     game.ref.read(inventoryItemProvider.notifier).set(firstItem);
     updateUI();
   }

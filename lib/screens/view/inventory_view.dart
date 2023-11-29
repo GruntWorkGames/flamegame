@@ -15,14 +15,9 @@ class InventoryView extends ConsumerWidget {
     final inventoryData = ref.watch(inventoryProvider);
     final width = MediaQuery.of(context).size.width;
     final title = _title(context);
-    final cells = inventoryData.items
-        .map((item) => _buildCell(context, item, ref))
-        .toList();
-    final rightCol = SizedBox(
-        height: 300,
-        child: SingleChildScrollView(
-            child: Ink(child: Column(children: cells)),
-            physics: AlwaysScrollableScrollPhysics()));
+    final cells = inventoryData.items.map((item) => _buildCell(context, item, ref)).toList();
+    final rightCol = SizedBox(height: 300, child: SingleChildScrollView(child: Column(children: cells),
+      physics: AlwaysScrollableScrollPhysics()));
     final leftCol = Column(children: [_descriptionPane(context, ref)]);
     final row = Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,8 +48,7 @@ class InventoryView extends ConsumerWidget {
   Widget _buildCell(BuildContext context, InventoryItem item, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
-    final name = Padding(
-        padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
+    final name = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
     final row = Row(children: [name]);
 
     final decoration = BoxDecoration(

@@ -103,9 +103,9 @@ class ControlPad extends ConsumerWidget {
 
     final style = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
       if(states.contains(MaterialState.pressed)) {
-        return Colors.grey[700]!;
+        return Colors.grey[700]!.withOpacity(0.3);
       } else {
-        return Colors.grey[400]!;
+        return Colors.grey[400]!.withOpacity(0.3);
       }
     }));
 

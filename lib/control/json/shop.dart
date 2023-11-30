@@ -1,4 +1,4 @@
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 
 class Shop {
   String message = '';

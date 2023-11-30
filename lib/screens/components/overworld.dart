@@ -11,7 +11,7 @@ import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
@@ -117,7 +117,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     enemy.playAttackDirectionAnim(playerDirection, () {
-      game.player.takeHit(enemy.currentWeapon.damage, () {
+      game.player.takeHit(enemy.weapon.value, () {
         game.ref.read(healthProvider.notifier).set(game.player.health);
         enemy.onMoveCompleted(enemy.position);
       }, () {
@@ -154,7 +154,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       return;
     }
     game.player.playAttackDirectionAnim(direction, () {
-      enemy.takeHit(game.player.currentWeapon.damage, () {
+      enemy.takeHit(game.player.weapon.value, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.money += enemy.money;
@@ -566,6 +566,18 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     }
   }
 
+  void equipArmor(Item item) {
+
+  }
+
+  void equipWeapon(Item item) {
+    print('print weapon');
+    // un equip other weapon
+    game.player.weapon.isEquipped = false;
+    game.player.weapon = item;
+    item.isEquipped = true;
+  }
+
   void useItem(Item item) {
     switch(item.type) {
       case ItemType.heal:
@@ -573,19 +585,21 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       case ItemType.food:
         break;
       case ItemType.weapon:
+        equipWeapon(item);
         break;
       case ItemType.armor:
+        equipArmor(item);
         break;
       case ItemType.potion:
         game.player.drinkPotion(item);
         game.inventory.delete(item);
-        updateUI();
         break;
       case ItemType.torch:
         break;
       case ItemType.none:
         break;
     }
+    updateUI();
   }
 
   void updateUI() {

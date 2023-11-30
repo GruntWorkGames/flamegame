@@ -1,4 +1,4 @@
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final inventoryItemProvider = StateNotifierProvider<InventoryItemState, Item>((ref) {

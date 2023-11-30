@@ -1,5 +1,5 @@
 import 'package:flame_game/constants.dart';
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/screens/components/game.dart';
@@ -75,7 +75,8 @@ class InventoryView extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width - 2;
     final item = ref.watch(inventoryItemProvider);
     final style = TextStyle(fontSize: 16, color: Colors.white);
-    final description = '${item.description}\n\n+${item.value} ${item.valueName}';
+    final isEquipped = item.isEquipped ? '* Equipped' : '';
+    final description = '${item.description}\n\n+${item.value} ${item.valueName}\n\n$isEquipped';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));
@@ -99,6 +100,12 @@ class InventoryView extends ConsumerWidget {
       style: buttonStyle,
         onPressed: () {
           game.inventory.delete(item);
+          if(game.player.weapon == item) {
+            game.player.weapon = Item()..value = 1;
+          }
+          if(game.player.armor == item) {
+            game.player.armor = Item();
+          }
           ref.read(inventoryProvider.notifier).set(game.inventory);
           if (game.inventory.items.isNotEmpty) {
             ref

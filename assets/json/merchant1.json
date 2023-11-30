@@ -15,10 +15,19 @@
             {
                 "name" : "Dull Short Sword",
                 "type" : "weapon",
-                "value" : 10,
+                "value" : 2,
                 "valueName": "damage",
                 "description": "A nearly useless weapon. A kids toy.",
-                "cost" : 11,
+                "cost" : 1,
+                "inventoryUseText" : "Equip"
+            },
+            {
+                "name" : "Dull Axe",
+                "type" : "weapon",
+                "value" : 4,
+                "valueName": "damage",
+                "description": "A nearly useless weapon. A kids toy.",
+                "cost" : 5,
                 "inventoryUseText" : "Equip"
             }
         ]

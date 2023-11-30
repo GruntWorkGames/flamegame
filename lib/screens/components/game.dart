@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
+import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
@@ -36,6 +37,10 @@ class MainGame extends FlameGame with TapDetector {
     final firstItem = inventory.items.first;
     firstItem.isSelected = true;
     ref.read(inventoryItemProvider.notifier).set(firstItem);
+    final weapon = inventory.items.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    if(weapon != null) {
+      player.weapon = weapon;
+    }
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:flame_game/constants.dart';
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/screens/components/game.dart';

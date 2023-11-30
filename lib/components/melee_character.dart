@@ -2,12 +2,11 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
-import 'package:flame_game/components/dull_short_sword.dart';
 import 'package:flame_game/components/melee_weapon.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 
@@ -17,7 +16,8 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
   List<MeleeWeapon> weapons = [];
-  MeleeWeapon currentWeapon = DullShortSword();
+  Item weapon = Item()..value=1;
+  Item armor = Item();
   int health = 10;
   int maxHealth = 30;
   double moveDuration = 0.24;

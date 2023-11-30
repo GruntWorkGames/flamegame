@@ -24,6 +24,7 @@ class Item {
   String description = '';
   bool isSelected = false;
   String inventoryUseText = 'Use';
+  String valueName = '';
   int cost = 0;
 
   Item();
@@ -35,5 +36,6 @@ class Item {
     type = ItemType.typeFromString(json['type'] ?? '');
     cost = json['cost'] ?? 0;
     inventoryUseText = json['inventoryUseText'] ?? 'Use';
+    valueName = json['valueName'] ?? '';
   }
 }

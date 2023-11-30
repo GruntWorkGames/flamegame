@@ -25,7 +25,8 @@ class UIView extends ConsumerWidget {
       case UIViewDisplayType.game:
         return Stack(children:[_gameOverlay(context, ref), hud]);
       case UIViewDisplayType.shop:
-        return Stack(children: [ShopMenu(), hud]);
+        final stack = Stack(children: [ShopMenu(game), hud]);
+        return stack;
       case UIViewDisplayType.dialog:
         return Stack(children:[DialogView(), hud]);
       case UIViewDisplayType.invisible:

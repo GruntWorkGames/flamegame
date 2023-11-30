@@ -3,6 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
@@ -18,12 +19,23 @@ class MainGame extends FlameGame with TapDetector {
   Component? currentSpeechBubble;
   late WidgetRef ref;
   static late MainGame instance;
+  Inventory inventory = Inventory();
 
   @override
   Future<void> onLoad() async {
     add(overworldNavigator);
     instance = this;
     overworldNavigator.loadMainWorld();
+    _buildInventory();
+  }
+
+  void _buildInventory() async {
+    final inventoryJson = await assets.readJson('json/inventory.json');
+    inventory = Inventory.fromJson(inventoryJson);
+    ref.read(inventoryProvider.notifier).set(inventory);
+    final firstItem = inventory.items.first;
+    firstItem.isSelected = true;
+    ref.read(inventoryItemProvider.notifier).set(firstItem);
   }
 
   @override

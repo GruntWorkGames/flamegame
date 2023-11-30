@@ -19,6 +19,7 @@ import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
+import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
@@ -45,7 +46,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
   final _aggroDistance = 8;
-  Inventory inventory = Inventory();
 
   Overworld(this._mapfile);
 
@@ -71,12 +71,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
-    final inventoryJson = await game.assets.readJson('json/inventory.json');
-    inventory = Inventory.fromJson(inventoryJson);
-    game.ref.read(inventoryProvider.notifier).set(inventory);
-    final firstItem = inventory.items.first;
-    firstItem.isSelected = true;
-    game.ref.read(inventoryItemProvider.notifier).set(firstItem);
+
     updateUI();
   }
 
@@ -222,6 +217,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final json = await game.assets.readJson(npc.data.shopJsonFile);
     final shop = Shop.fromJson(json);
     game.ref.read(shopProvider.notifier).set(shop);
+    final firstItem = shop.items.first;
+    game.ref.read(shopItemProvider.notifier).set(firstItem);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.shop);
   }
 
@@ -565,7 +562,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.player.health = game.player.maxHealth;
       }
 
-      inventory.items.add(item);
+      game.inventory.items.add(item);
 
       updateUI();
     }
@@ -583,7 +580,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         break;
       case ItemType.potion:
         game.player.drinkPotion(item);
-        inventory.delete(item);
+        game.inventory.delete(item);
         updateUI();
         break;
       case ItemType.torch:

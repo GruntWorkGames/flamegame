@@ -4,14 +4,18 @@
             "name" : "Health Potion",
             "type" : "potion",
             "value" : 10,
-            "description": "The thick red liquid reminds you of cough syrup.",
+            "valueName": "health",
+            "description": "The thick red liquid reminds you of cough syrup.", 
+            "cost" : 10,
             "inventoryUseText" : "Drink"
         },
         {
             "name" : "Dull Short Sword",
             "type" : "weapon",
             "value" : 10,
+            "valueName": "damage",
             "description": "A nearly useless weapon. A kids toy.",
+            "cost" : 11,
             "inventoryUseText" : "Equip"
         }
     ]

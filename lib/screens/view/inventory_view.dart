@@ -74,15 +74,17 @@ class InventoryView extends ConsumerWidget {
   Widget _descriptionPane(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width - 2;
     final item = ref.watch(inventoryItemProvider);
-    final style = TextStyle(fontSize: 18, color: Colors.white);
+    final style = TextStyle(fontSize: 16, color: Colors.white);
+    final description = '${item.description}\n\n${item.value} ${item.valueName}';
     final label = Padding(
         padding: EdgeInsets.all(5),
-        child: Text(item.description, style: style));
+        child: Text(description, style: style));
     final decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(color: borderColor, width: borderWidth),
         color: mainColor);
-    final deleteIcon = Icon(Icons.delete, size: 36, color: Colors.white);
+
+    final deleteIcon = Icon(Icons.delete, size: 24, color: Colors.white);
     final useText = Padding(padding: EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
 
     final buttonStyle = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
@@ -96,12 +98,12 @@ class InventoryView extends ConsumerWidget {
     final deleteBtn = ElevatedButton(
       style: buttonStyle,
         onPressed: () {
-          game.overworld?.inventory.delete(item);
-          ref.read(inventoryProvider.notifier).set(game.overworld!.inventory);
-          if (game.overworld!.inventory.items.isNotEmpty) {
+          game.inventory.delete(item);
+          ref.read(inventoryProvider.notifier).set(game.inventory);
+          if (game.inventory.items.isNotEmpty) {
             ref
                 .read(inventoryItemProvider.notifier)
-                .set(game.overworld!.inventory.items.first);
+                .set(game.inventory.items.first);
           } else {
             ref.read(inventoryItemProvider.notifier).set(Item());
           }
@@ -112,11 +114,11 @@ class InventoryView extends ConsumerWidget {
       style: buttonStyle,
       onPressed: () {
         game.overworld?.useItem(item);
-        ref.read(inventoryProvider.notifier).set(game.overworld!.inventory);
-        if (game.overworld!.inventory.items.isNotEmpty) {
+        ref.read(inventoryProvider.notifier).set(game.inventory);
+        if (game.inventory.items.isNotEmpty) {
           ref
               .read(inventoryItemProvider.notifier)
-              .set(game.overworld!.inventory.items.first);
+              .set(game.inventory.items.first);
         } else {
           ref.read(inventoryItemProvider.notifier).set(Item());
         }

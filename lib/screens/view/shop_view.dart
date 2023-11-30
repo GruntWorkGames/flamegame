@@ -75,7 +75,7 @@ class ShopMenu extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width - 2;
     final item = ref.watch(shopItemProvider);
     final style = TextStyle(fontSize: 18, color: Colors.white);
-    final description = '${item.description}\n\n+${item.value} ${item.valueName}\n\nCost: ${item.cost} gold';
+    final description = '${item.name}\n\n${item.description}\n\n+${item.value} ${item.valueName}';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));

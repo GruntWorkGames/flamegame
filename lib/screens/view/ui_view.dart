@@ -23,7 +23,7 @@ class UIView extends ConsumerWidget {
 
     switch(uiState) {
       case UIViewDisplayType.game:
-        return Stack(children:[_gameOverlay(context, ref), hud]);
+        return SafeArea(child: Stack(children:[_gameOverlay(context, ref), hud]));
       case UIViewDisplayType.shop:
         final stack = Stack(children: [ShopMenu(game), hud]);
         return stack;

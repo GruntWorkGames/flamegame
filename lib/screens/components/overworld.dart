@@ -571,8 +571,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void equipWeapon(Item item) {
-    print('print weapon');
-    // un equip other weapon
     game.player.weapon.isEquipped = false;
     game.player.weapon = item;
     item.isEquipped = true;

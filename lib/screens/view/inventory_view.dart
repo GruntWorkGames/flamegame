@@ -76,7 +76,7 @@ class InventoryView extends ConsumerWidget {
     final item = ref.watch(inventoryItemProvider);
     final style = TextStyle(fontSize: 16, color: Colors.white);
     final isEquipped = item.isEquipped ? '* Equipped' : '';
-    final description = '${item.description}\n\n+${item.value} ${item.valueName}\n\n$isEquipped';
+    final description = '${item.name}\n\n${item.description}\n\n+${item.value} ${item.valueName}\n\n$isEquipped';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));

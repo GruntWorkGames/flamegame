@@ -48,12 +48,15 @@ class InventoryView extends ConsumerWidget {
   Widget _buildCell(BuildContext context, Item item, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
-    final name = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
+    final isEquipped = item.isEquipped ? ' *' : '';
+    final name = Padding(padding: EdgeInsets.all(5), child: Text('${item.name} $isEquipped', style: titleStyle));
     final row = Row(children: [name]);
+
+    final color = item.isSelected ? selectedColor : mainColor;
 
     final decoration = BoxDecoration(
         border: Border.all(color: borderColor, width: borderWidth),
-        color: mainColor,
+        color: color,
         borderRadius: BorderRadius.circular(borderRadius));
 
     final container = Container(
@@ -67,6 +70,7 @@ class InventoryView extends ConsumerWidget {
     return InkWell(
         onTap: () {
           ref.read(inventoryItemProvider.notifier).set(item);
+          item.isSelected = true;
         },
         child: paddedContainer);
   }
@@ -76,7 +80,8 @@ class InventoryView extends ConsumerWidget {
     final item = ref.watch(inventoryItemProvider);
     final style = TextStyle(fontSize: 16, color: Colors.white);
     final isEquipped = item.isEquipped ? '* Equipped' : '';
-    final description = '${item.name}\n\n${item.description}\n\n+${item.value} ${item.valueName}\n\n$isEquipped';
+    final value = item.value == 0 ? '' : '+${item.value} ${item.valueName}';
+    final description = '${item.name}\n\n${item.description}\n\n$value\n\n$isEquipped';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));

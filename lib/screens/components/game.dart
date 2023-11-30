@@ -28,14 +28,18 @@ class MainGame extends FlameGame with TapDetector {
     instance = this;
     overworldNavigator.loadMainWorld();
     _buildInventory();
+
+    final fps = FpsTextComponent();
+    fps.position = Vector2(25, size.y - 50);
+    add(fps);
   }
 
   void _buildInventory() async {
     final inventoryJson = await assets.readJson('json/inventory.json');
     inventory = Inventory.fromJson(inventoryJson);
-    ref.read(inventoryProvider.notifier).set(inventory);
     final firstItem = inventory.items.first;
     firstItem.isSelected = true;
+    ref.read(inventoryProvider.notifier).set(inventory);
     ref.read(inventoryItemProvider.notifier).set(firstItem);
     final weapon = inventory.items.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if(weapon != null) {
@@ -55,6 +59,9 @@ class MainGame extends FlameGame with TapDetector {
       if(items.isNotEmpty){
         ref.read(inventoryItemProvider.notifier).set(items.first);
       }
+    final firstItem = inventory.items.first;
+    firstItem.isSelected = true;
+    ref.read(inventoryItemProvider.notifier).set(firstItem);
       ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory);
     }
 

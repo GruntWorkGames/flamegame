@@ -5,6 +5,7 @@ import 'package:vector_math/vector_math_64.dart';
 const double TILESIZE = 16;
 final mainColor = mat.Colors.grey[600]!;
 final borderColor = mat.Colors.grey[700]!;
+final selectedColor = mat.Color.fromARGB(255, 49, 49, 49)!;
 final borderRadius = 5.0;
 final borderWidth = 2.0;
 

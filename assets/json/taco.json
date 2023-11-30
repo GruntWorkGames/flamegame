@@ -5,8 +5,9 @@
         "items" : [
             {
                 "name": "Heal",
-                "cost": 10
-            }
+                "cost": 10,
+                "description": "Heal to full health."
+            }   
         ]
     }
 }

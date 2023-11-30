@@ -558,9 +558,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
       if (item.name == 'Heal') {
         game.player.health = game.player.maxHealth;
+      } else {
+        game.inventory.items.add(item);
       }
-
-      game.inventory.items.add(item);
 
       updateUI();
     }

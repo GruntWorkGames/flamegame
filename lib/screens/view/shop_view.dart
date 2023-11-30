@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/json/inventory.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -40,7 +41,7 @@ class ShopMenu extends ConsumerWidget {
     }).toList();
   }
 
-  Widget _buildItemCell(ShopItem item, WidgetRef ref) {
+  Widget _buildItemCell(Item item, WidgetRef ref) {
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final titleText = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
     final costText = Padding(padding: EdgeInsets.all(5), child: Text(item.cost.toString(), style: titleStyle));

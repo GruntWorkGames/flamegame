@@ -45,7 +45,7 @@ class InventoryView extends ConsumerWidget {
         child: label));
   }
 
-  Widget _buildCell(BuildContext context, InventoryItem item, WidgetRef ref) {
+  Widget _buildCell(BuildContext context, Item item, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final name = Padding(padding: EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
@@ -83,8 +83,7 @@ class InventoryView extends ConsumerWidget {
         border: Border.all(color: borderColor, width: borderWidth),
         color: mainColor);
     final deleteIcon = Icon(Icons.delete, size: 36, color: Colors.white);
-    final useText =
-        Padding(padding: EdgeInsets.all(5), child: Text('Use', style: style));
+    final useText = Padding(padding: EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
 
     final buttonStyle = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
       if(states.contains(MaterialState.pressed)) {
@@ -104,7 +103,7 @@ class InventoryView extends ConsumerWidget {
                 .read(inventoryItemProvider.notifier)
                 .set(game.overworld!.inventory.items.first);
           } else {
-            ref.read(inventoryItemProvider.notifier).set(InventoryItem());
+            ref.read(inventoryItemProvider.notifier).set(Item());
           }
         },
         child: Center(child: deleteIcon));
@@ -119,7 +118,7 @@ class InventoryView extends ConsumerWidget {
               .read(inventoryItemProvider.notifier)
               .set(game.overworld!.inventory.items.first);
         } else {
-          ref.read(inventoryItemProvider.notifier).set(InventoryItem());
+          ref.read(inventoryItemProvider.notifier).set(Item());
         }
       },
       child: useText,

@@ -4,12 +4,20 @@
         "message": "Would you like to buy something?",
         "items" : [
             {
-                "name": "Sharp Short Sword",
-                "cost": 2
+                "name" : "Health Potion",
+                "type" : "potion",
+                "value" : 10,
+                "description": "The thick red liquid reminds you of cough syrup.", 
+                "cost" : 10,
+                "inventoryUseText" : "Drink"
             },
             {
-                "name": "Health Potion",
-                "cost": 2
+                "name" : "Dull Short Sword",
+                "type" : "weapon",
+                "value" : 10,
+                "description": "A nearly useless weapon. A kids toy.",
+                "cost" : 11,
+                "inventoryUseText" : "Equip"
             }
         ]
     }

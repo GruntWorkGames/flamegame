@@ -220,7 +220,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     add(flicker);
   }
 
-  void drinkPotion(InventoryItem item) {
+  void drinkPotion(Item item) {
     final newMax = health + item.value;
     if(newMax > maxHealth) {
       health = maxHealth;

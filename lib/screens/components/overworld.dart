@@ -550,7 +550,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     return list;
   }
 
-  void playerBoughtItem(ShopItem item) {
+  void playerBoughtItem(Item item) {
     if (game.player.money < item.cost) {
       final dialog = DialogData();
       dialog.title = 'Oops!';
@@ -565,14 +565,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.player.health = game.player.maxHealth;
       }
 
-      final inventoryItem = InventoryItem.fromShopItem(item);
-      inventory.items.add(inventoryItem);
+      inventory.items.add(item);
 
       updateUI();
     }
   }
 
-  void useItem(InventoryItem item) {
+  void useItem(Item item) {
     switch(item.type) {
       case ItemType.heal:
         break;

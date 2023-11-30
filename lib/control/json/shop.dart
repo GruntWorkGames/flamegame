@@ -1,7 +1,9 @@
+import 'package:flame_game/control/json/inventory.dart';
+
 class Shop {
   String message = '';
   String owner = '';
-  List<ShopItem> items = [];
+  List<Item> items = [];
 
   Shop();
 
@@ -11,26 +13,7 @@ class Shop {
     message = shop['message'] ?? '';
     final itemsJson = shop['items'] ?? [];
     for (final item in itemsJson) {
-      items.add(ShopItem.fromJson(item));
+      items.add(Item.fromJson(item));
     }
-  }
-}
-
-class ShopItem {
-  String name = '';
-  int cost = 0;
-
-  ShopItem();
-
-  ShopItem.fromJson(Map<String, dynamic> json) {
-    name = json['name'] ?? '';
-    cost = json['cost'] ?? 0;
-  }
-
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = {};
-    json['name'] = name;
-    json['cost'] = cost;
-    return json;
   }
 }

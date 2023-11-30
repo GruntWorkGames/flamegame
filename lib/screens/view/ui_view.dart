@@ -33,7 +33,7 @@ class UIView extends ConsumerWidget {
         return SizedBox.shrink();
       case UIViewDisplayType.gameOver:
         return _gameOver(ref);
-      case UIViewDisplayType.inventory:q
+      case UIViewDisplayType.inventory:
         return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
     }
   }

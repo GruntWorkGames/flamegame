@@ -75,7 +75,7 @@ class InventoryView extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width - 2;
     final item = ref.watch(inventoryItemProvider);
     final style = TextStyle(fontSize: 16, color: Colors.white);
-    final description = '${item.description}\n\n${item.value} ${item.valueName}';
+    final description = '${item.description}\n\n+${item.value} ${item.valueName}';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));

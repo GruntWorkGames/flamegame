@@ -17,8 +17,6 @@ import 'package:flame_game/control/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
-import 'package:flame_game/control/provider/inventory_item_provider.dart';
-import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';

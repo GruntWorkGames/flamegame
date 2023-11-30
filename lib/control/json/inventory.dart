@@ -26,6 +26,7 @@ class Item {
   String inventoryUseText = 'Use';
   String valueName = '';
   int cost = 0;
+  bool isEquipped = false;
 
   Item();
 

@@ -29,9 +29,9 @@ class MainGame extends FlameGame with TapDetector {
     overworldNavigator.loadMainWorld();
     _buildInventory();
 
-    final fps = FpsTextComponent();
-    fps.position = Vector2(25, size.y - 50);
-    add(fps);
+    // final fps = FpsTextComponent();
+    // fps.position = Vector2(25, size.y - 50);
+    // add(fps);
   }
 
   void _buildInventory() async {

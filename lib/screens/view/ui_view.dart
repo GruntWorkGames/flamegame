@@ -25,16 +25,16 @@ class UIView extends ConsumerWidget {
       case UIViewDisplayType.game:
         return SafeArea(child: Stack(children:[_gameOverlay(context, ref), hud]));
       case UIViewDisplayType.shop:
-        final stack = Stack(children: [ShopMenu(game), hud]);
+        final stack = SafeArea(child: Stack(children: [ShopMenu(game), hud]));
         return stack;
       case UIViewDisplayType.dialog:
-        return Stack(children:[DialogView(), hud]);
+        return SafeArea(child: Stack(children:[DialogView(), hud]));
       case UIViewDisplayType.invisible:
         return SizedBox.shrink();
       case UIViewDisplayType.gameOver:
         return _gameOver(ref);
-      case UIViewDisplayType.inventory:
-        return Stack(children:[InventoryView(game), hud]);  
+      case UIViewDisplayType.inventory:q
+        return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
     }
   }
 

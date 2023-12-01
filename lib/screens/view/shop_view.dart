@@ -1,7 +1,9 @@
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,9 +25,22 @@ class ShopMenu extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [leftCol, rightCol]);
-    final col = Column(children: [title, row]);
+
+    final closeBtnContainer = InkWell(
+      onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
+      child: Padding(padding: EdgeInsets.only(top: 30), 
+        child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+        boxShadow: [BoxShadow(offset: const Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        borderRadius: BorderRadius.circular(30), 
+        color: Colors.grey[600]), 
+        child: Icon(Icons.close, size: 24, color: Colors.white))));  
+
+    final col = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, row, closeBtnContainer]);
     final box =
-        Center(child: SizedBox(width: width, height: width, child: col));
+        Center(child: SizedBox(width: width, child: col));
     return box;
   }
 

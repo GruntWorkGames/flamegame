@@ -25,6 +25,7 @@ class InventoryView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [leftCol, rightCol]);
+
     final closeBtnContainer = InkWell(
       onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
       child: Padding(padding: EdgeInsets.only(top: 30), 
@@ -35,7 +36,7 @@ class InventoryView extends ConsumerWidget {
         boxShadow: [BoxShadow(offset: const Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
         borderRadius: BorderRadius.circular(30), 
         color: Colors.grey[600]), 
-        child: Icon(Icons.close, size: 24))));  
+        child: Icon(Icons.close, size: 24, color: Colors.white))));  
     final col = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, row, closeBtnContainer]);
     final box =
         Center(child: SizedBox(width: width, child: col));

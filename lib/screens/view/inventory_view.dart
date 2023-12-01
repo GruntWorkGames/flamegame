@@ -1,7 +1,9 @@
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/screens/components/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,9 +25,20 @@ class InventoryView extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [leftCol, rightCol]);
-    final col = Column(children: [title, row]);
+    final closeBtnContainer = InkWell(
+      onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
+      child: Padding(padding: EdgeInsets.only(top: 30), 
+        child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+        boxShadow: [BoxShadow(offset: const Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        borderRadius: BorderRadius.circular(30), 
+        color: Colors.grey[600]), 
+        child: Icon(Icons.close, size: 24))));  
+    final col = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, row, closeBtnContainer]);
     final box =
-        Center(child: SizedBox(width: width, height: width, child: col));
+        Center(child: SizedBox(width: width, child: col));
     return box;
   }
 
@@ -93,7 +106,13 @@ class InventoryView extends ConsumerWidget {
     final deleteIcon = Icon(Icons.delete, size: 24, color: Colors.white);
     final useText = Padding(padding: EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
 
-    final buttonStyle = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+    final buttonStyle = ButtonStyle(elevation: MaterialStateProperty.resolveWith<double>((states) {
+      if(states.contains(MaterialState.pressed)) {
+        return 0;
+      } else {
+        return 5;
+      }
+    }), backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
       if(states.contains(MaterialState.pressed)) {
         return mainColor;
       } else {

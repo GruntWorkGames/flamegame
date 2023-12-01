@@ -9,6 +9,7 @@ import 'package:flame_game/screens/view/inventory_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class UIView extends ConsumerWidget {
   late final MainGame game;
@@ -21,9 +22,26 @@ class UIView extends ConsumerWidget {
 
     final hud = _buildHud(ref);
 
+    final fab = SpeedDial(
+      child: Text("Menu", style: TextStyle(color: Colors.white)),
+      activeChild: Text("close", style: TextStyle(color: Colors.white)),
+      backgroundColor: Colors.grey[600]!.withOpacity(0.6),
+      spacing: 3,
+      spaceBetweenChildren: 4,
+      overlayOpacity: 0,
+      direction: SpeedDialDirection.down,
+      childrenButtonSize: Size(150, 50),
+      children: [
+        SpeedDialChild(child: Text('Inventory'), 
+          onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
+        SpeedDialChild(child: Text('Settings'))]);
+    const pos = FloatingActionButtonLocation.endTop;
+
     switch(uiState) {
       case UIViewDisplayType.game:
-        return SafeArea(child: Stack(children:[_gameOverlay(context, ref), hud]));
+        return SafeArea(child: Scaffold(backgroundColor: Colors.transparent, 
+        body: Stack(children:[_gameOverlay(context, ref), hud]), 
+        floatingActionButtonLocation: pos, floatingActionButton: fab));
       case UIViewDisplayType.shop:
         final stack = SafeArea(child: Stack(children: [ShopMenu(game), hud]));
         return stack;

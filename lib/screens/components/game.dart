@@ -54,20 +54,20 @@ class MainGame extends FlameGame with TapDetector {
       ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     }
     
-    if(state == UIViewDisplayType.game) { 
-      final items = ref.read(inventoryProvider).items;
-      if(items.isNotEmpty){
-        ref.read(inventoryItemProvider.notifier).set(items.first);
-      }
-    final firstItem = inventory.items.first;
-    firstItem.isSelected = true;
-    ref.read(inventoryItemProvider.notifier).set(firstItem);
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory);
-    }
+    // if(state == UIViewDisplayType.game) { 
+    //   final items = ref.read(inventoryProvider).items;
+    //   if(items.isNotEmpty){
+    //     ref.read(inventoryItemProvider.notifier).set(items.first);
+    //   }
+    // final firstItem = inventory.items.first;
+    // firstItem.isSelected = true;
+    // ref.read(inventoryItemProvider.notifier).set(firstItem);
+    //   ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory);
+    // }
 
-    if(state == UIViewDisplayType.inventory) {
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    }
+    // if(state == UIViewDisplayType.inventory) {
+    //   ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    // }
 
 
     super.onTap();

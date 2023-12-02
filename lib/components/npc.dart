@@ -4,19 +4,19 @@ import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 
 class NPC extends MeleeCharacter {
-  final NpcData data;
-  NPC(this.data) : super();
+  final NpcData npc;
+  NPC(this.npc) : super();
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    position = data.position;
+    position = npc.position;
   }
 
   @override
   Future<void> buildAnimations() async {
-    if (data.animationJsonFile.isNotEmpty) {
-      final json = await game.assets.readJson(data.animationJsonFile);
+    if (npc.animationJsonFile.isNotEmpty) {
+      final json = await game.assets.readJson(npc.animationJsonFile);
       final imageFilename = json['imageFile'] ?? '';
       final image = await game.images.load(imageFilename);
 
@@ -27,7 +27,7 @@ class NPC extends MeleeCharacter {
       }
 
       animation = animations[CharacterAnimationState.idleDown];
-    } else if (data.spriteFile.isNotEmpty) {}
+    } else if (npc.spriteFile.isNotEmpty) {}
   }
 }
 

@@ -7,21 +7,21 @@ import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/control/json/item.dart';
+import 'package:flame_game/control/json/player.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/screens/components/game.dart';
 
-class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> {
+class MeleeCharacter extends SpriteAnimationComponent
+    with HasGameRef<MainGame> {
   MeleeCharacter() : super(size: Vector2(TILESIZE, TILESIZE));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
   List<MeleeWeapon> weapons = [];
-  Item weapon = Item()..value=1;
+  Item weapon = Item()..value = 1;
   Item armor = Item();
-  int health = 10;
-  int maxHealth = 30;
   double moveDuration = 0.24;
-  int money = 200;
+  CharacterData data = CharacterData();
 
   @override
   Future<void> onLoad() async {
@@ -35,7 +35,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     final imageFilename = json['imageFile'] ?? '';
     final image = await game.images.load(imageFilename);
     for (final state in CharacterAnimationState.values) {
-      if(json.containsKey(state.name)) {
+      if (json.containsKey(state.name)) {
         animations[state] = animationFromJson(image, json, state.name);
       }
     }
@@ -205,12 +205,12 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   }
 
   void takeHit(int damage, Function onComplete, Function onKilled) {
-    health -= damage;
+    data.health -= damage;
 
     final flicker = OpacityEffect.fadeOut(
         EffectController(repeatCount: 2, duration: 0.1, alternate: true),
         onComplete: () {
-      if (health <= 0) {
+      if (data.health <= 0) {
         onKilled();
       } else {
         onComplete();
@@ -221,11 +221,15 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   }
 
   void drinkPotion(Item item) {
-    final newMax = health + item.value;
-    if(newMax > maxHealth) {
-      health = maxHealth;
+    final newMax = data.health + item.value;
+    if (newMax > data.maxHealth) {
+      data.health = data.maxHealth;
     } else {
-      health = newMax;
+      data.health = newMax;
     }
   }
+}
+
+class PlayerComponent extends MeleeCharacter {
+  
 }

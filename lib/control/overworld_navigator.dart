@@ -31,7 +31,7 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
 
   void loadNewGame() {
     worlds.clear();
-    game.player = MeleeCharacter();
+    game.player = PlayerComponent();
     loadMainWorld();    
   }
 }

@@ -1,14 +1,14 @@
-import 'package:flame_game/control/json/inventory.dart';
+import 'package:flame_game/control/json/player.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final inventoryProvider = StateNotifierProvider<InventoryState, Inventory>((ref) {
+final inventoryProvider = StateNotifierProvider<InventoryState, CharacterData>((ref) {
   return InventoryState();
 });
 
-class InventoryState extends StateNotifier<Inventory> {
-  InventoryState() : super(Inventory());
+class InventoryState extends StateNotifier<CharacterData> {
+  InventoryState() : super(CharacterData());
 
-  void set(Inventory inventory) {
+  void set(CharacterData inventory) {
     state = inventory;
   }
 }

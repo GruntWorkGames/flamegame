@@ -4,23 +4,36 @@ class Item {
   String name = '';
   ItemType type = ItemType.none;
   int value = 0;
-  String description = '';
-  bool isSelected = false;
-  String inventoryUseText = 'Use';
   String valueName = '';
+  String description = '';
   int cost = 0;
+  String inventoryUseText = '';
   bool isEquipped = false;
+  bool isSelected = false;
 
   Item();
 
   Item.fromJson(Map<String, dynamic> json) {
     name = json['name'] ?? '';
-    value = json['value'] ?? 0;
-    description = json['description'] ?? '';
     type = ItemType.typeFromString(json['type'] ?? '');
-    cost = json['cost'] ?? 0;
-    inventoryUseText = json['inventoryUseText'] ?? 'Use';
+    value = json['value'] ?? 0;
     valueName = json['valueName'] ?? '';
+    description = json['description'] ?? '';
+    cost = json['cost'] ?? 0;
+    inventoryUseText = json['inventoryUseText'] ?? '';
     isEquipped = json['isEquipped'] ?? false;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['type'] = this.type.name;
+    data['value'] = this.value;
+    data['valueName'] = this.valueName;
+    data['description'] = this.description;
+    data['cost'] = this.cost;
+    data['inventoryUseText'] = this.inventoryUseText;
+    data['isEquipped'] = this.isEquipped;
+    return data;
   }
 }

@@ -10,11 +10,11 @@ class Enemy extends MeleeCharacter {
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    health = 6;
+    data.health = 6;
     weapon = Item();
     weapon.value = 1;
     moveDuration = 0.15;
-    money = 4;
+    data.gold = 4;
   }
 
   @override
@@ -44,12 +44,12 @@ class Enemy extends MeleeCharacter {
 
   @override
   void takeHit(int damage, Function onComplete, Function onKilled) {
-    health -= damage;
+    data.health -= damage;
 
     final flicker = OpacityEffect.fadeOut(
         EffectController(repeatCount: 2, duration: 0.1, alternate: true),
         onComplete: () {
-      if (health <= 0) {
+      if (data.health <= 0) {
         onKilled();
       } else {
         onComplete();

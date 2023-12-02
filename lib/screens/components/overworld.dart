@@ -118,11 +118,11 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     enemy.playAttackDirectionAnim(playerDirection, () {
       game.player.takeHit(enemy.weapon.value, () {
-        game.ref.read(healthProvider.notifier).set(game.player.health);
+        game.ref.read(healthProvider.notifier).set(game.player.data.health);
         enemy.onMoveCompleted(enemy.position);
       }, () {
         // on death callback
-        game.ref.read(healthProvider.notifier).set(game.player.health);
+        game.ref.read(healthProvider.notifier).set(game.player.data.health);
         game.player.removeFromParent();
 
         final dialog = DialogData();
@@ -157,7 +157,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       enemy.takeHit(game.player.weapon.value, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
-        game.player.money += enemy.money;
+        game.player.data.gold += enemy.data.gold;
         updateUI();
         enemy.removeFromParent();
         _enemies.removeWhere((other) => other == enemy);
@@ -199,20 +199,20 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void showDialog(NPC npc) {
-    if (npc.data.shopJsonFile.isNotEmpty) {
+    if (npc.npc.shopJsonFile.isNotEmpty) {
       showShop(npc);
       return;
     }
 
     final dialog = DialogData();
-    dialog.title = npc.data.name;
-    dialog.message = npc.data.speech;
+    dialog.title = npc.npc.name;
+    dialog.message = npc.npc.speech;
     game.ref.read(dialogProvider.notifier).set(dialog);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
   }
 
   void showShop(NPC npc) async {
-    final json = await game.assets.readJson(npc.data.shopJsonFile);
+    final json = await game.assets.readJson(npc.npc.shopJsonFile);
     final shop = Shop.fromJson(json);
     game.ref.read(shopProvider.notifier).set(shop);
     final firstItem = shop.items.first;
@@ -437,7 +437,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
     final npcTiles = _npcs.map((npc) {
-      final tile = posToTile(npc.data.position);
+      final tile = posToTile(npc.npc.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
     }).toSet();
     final enemys = _enemies.where((other) => other != enemy);
@@ -546,29 +546,27 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void playerBoughtItem(Item item) {
-    if (game.player.money < item.cost) {
+    if (game.player.data.gold < item.cost) {
       final dialog = DialogData();
       dialog.title = 'Oops!';
       dialog.message = 'Sorry, you don\'t have enough gold!';
       game.ref.read(dialogProvider.notifier).set(dialog);
       game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     } else {
-      game.player.money -= item.cost;
+      game.player.data.gold -= item.cost;
       game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
 
       if (item.name == 'Heal') {
-        game.player.health = game.player.maxHealth;
+        game.player.data.health = game.player.data.maxHealth;
       } else {
-        game.inventory.items.add(item);
+        game.player.data.inventory.add(item);
       }
 
       updateUI();
     }
   }
 
-  void equipArmor(Item item) {
-
-  }
+  void equipArmor(Item item) {}
 
   void equipWeapon(Item item) {
     game.player.weapon.isEquipped = false;
@@ -577,7 +575,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void useItem(Item item) {
-    switch(item.type) {
+    switch (item.type) {
       case ItemType.heal:
         break;
       case ItemType.food:
@@ -590,7 +588,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         break;
       case ItemType.potion:
         game.player.drinkPotion(item);
-        game.inventory.delete(item);
+        game.player.data.delete(item);
         break;
       case ItemType.torch:
         break;
@@ -601,7 +599,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void updateUI() {
-    game.ref.read(healthProvider.notifier).set(game.player.health);
-    game.ref.read(goldProvider.notifier).set(game.player.money);
+    game.ref.read(healthProvider.notifier).set(game.player.data.health);
+    game.ref.read(goldProvider.notifier).set(game.player.data.gold);
+    game.save();
   }
 }

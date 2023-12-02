@@ -1,5 +1,7 @@
 {
-    "items": [
+    "health": 20,
+    "gold": 5,
+    "inventory": [
         {
             "name" : "Health Potion",
             "type" : "potion",

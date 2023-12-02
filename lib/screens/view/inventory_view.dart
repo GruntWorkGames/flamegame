@@ -14,10 +14,10 @@ class InventoryView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final inventoryData = ref.watch(inventoryProvider);
+    final playerData = ref.watch(inventoryProvider);
     final width = MediaQuery.of(context).size.width;
     final title = _title(context);
-    final cells = inventoryData.items.map((item) => _buildCell(context, item, ref)).toList();
+    final cells = playerData.inventory.map((item) => _buildCell(context, item, ref)).toList();
     final rightCol = SizedBox(height: 300, child: SingleChildScrollView(child: Column(children: cells),
       physics: AlwaysScrollableScrollPhysics()));
     final leftCol = Column(children: [_descriptionPane(context, ref)]);
@@ -124,18 +124,18 @@ class InventoryView extends ConsumerWidget {
     final deleteBtn = ElevatedButton(
       style: buttonStyle,
         onPressed: () {
-          game.inventory.delete(item);
+          game.player.data.delete(item);
           if(game.player.weapon == item) {
             game.player.weapon = Item()..value = 1;
           }
           if(game.player.armor == item) {
             game.player.armor = Item();
           }
-          ref.read(inventoryProvider.notifier).set(game.inventory);
-          if (game.inventory.items.isNotEmpty) {
+          ref.read(inventoryProvider.notifier).set(game.player.data);
+          if (game.player.data.inventory.isNotEmpty) {
             ref
                 .read(inventoryItemProvider.notifier)
-                .set(game.inventory.items.first);
+                .set(game.player.data.inventory.first);
           } else {
             ref.read(inventoryItemProvider.notifier).set(Item());
           }
@@ -146,11 +146,11 @@ class InventoryView extends ConsumerWidget {
       style: buttonStyle,
       onPressed: () {
         game.overworld?.useItem(item);
-        ref.read(inventoryProvider.notifier).set(game.inventory);
-        if (game.inventory.items.isNotEmpty) {
+        ref.read(inventoryProvider.notifier).set(game.player.data);
+        if (game.player.data.inventory.isNotEmpty) {
           ref
               .read(inventoryItemProvider.notifier)
-              .set(game.inventory.items.first);
+              .set(game.player.data.inventory.first);
         } else {
           ref.read(inventoryItemProvider.notifier).set(Item());
         }

@@ -5,7 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/player.dart';
+import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/overworld_navigator.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
@@ -34,7 +34,7 @@ class MainGame extends FlameGame with TapDetector {
     // fps.position = Vector2(25, size.y - 50);
     // add(fps);
   }
-  
+
   void save() async {
     print('save');
     final jsonString = jsonEncode(player.data.toJson());

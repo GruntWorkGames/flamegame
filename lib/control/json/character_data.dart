@@ -4,6 +4,12 @@ class CharacterData {
   int health = 10;
   int maxHealth = 30;
   int gold = 0;
+
+  int hit = 1;
+  int dodge = 1;
+  int str = 1;
+  int stam = 1;
+  
   List<Item> inventory = [];
 
   CharacterData();

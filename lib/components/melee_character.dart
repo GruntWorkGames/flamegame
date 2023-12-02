@@ -6,7 +6,7 @@ import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/control/json/item.dart';
-import 'package:flame_game/control/json/player.dart';
+import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/game.dart';
 

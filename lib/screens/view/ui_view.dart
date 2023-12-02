@@ -85,25 +85,25 @@ class UIView extends ConsumerWidget {
     return column;
   }
 
-  Widget _buildSwipeDetector() {
-    return GestureDetector(onHorizontalDragEnd: (drag) {
-      final v = drag.velocity.pixelsPerSecond;
-      if (v.dx > 0) {
-        game.directionPressed(Direction.right);
-      }
-      if (v.dx < 0) {
-        game.directionPressed(Direction.left);
-      }
-    }, onVerticalDragEnd: (drag) {
-      final v = drag.velocity.pixelsPerSecond;
-      if (v.dy > 0) {
-        game.directionPressed(Direction.down);
-      }
-      if (v.dy < 0) {
-        game.directionPressed(Direction.up);
-      }
-    });
-  }
+  // Widget _buildSwipeDetector() {
+  //   return GestureDetector(onHorizontalDragEnd: (drag) {
+  //     final v = drag.velocity.pixelsPerSecond;
+  //     if (v.dx > 0) {
+  //       game.directionPressed(Direction.right);
+  //     }
+  //     if (v.dx < 0) {
+  //       game.directionPressed(Direction.left);
+  //     }
+  //   }, onVerticalDragEnd: (drag) {
+  //     final v = drag.velocity.pixelsPerSecond;
+  //     if (v.dy > 0) {
+  //       game.directionPressed(Direction.down);
+  //     }
+  //     if (v.dy < 0) {
+  //       game.directionPressed(Direction.up);
+  //     }
+  //   });
+  // }
   
   Widget _gameOver(WidgetRef ref) {
     final dialog = GestureDetector(onTap: (){

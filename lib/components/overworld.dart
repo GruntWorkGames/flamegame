@@ -63,12 +63,26 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     _createNpcs();
     _enemies = _createEnemies(_tiledmap!.tileMap);
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
-    game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
+    
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
+    
 
+    game.player.data.tilePosition = posToTile(game.player.position);
+    final isSavedTileZero = game.player.data.tilePosition.isZero();
+    final isPlayerAtZero = game.player.position.isZero();
+    final isMapMatch = game.player.data.mapfile == _mapfile;
+    // new game?
+    if(!isSavedTileZero && isPlayerAtZero && isMapMatch) {
+      game.player.position = tileToPos(game.player.data.tilePosition);
+    } else {
+      game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
+    }
+    
+    game.player.data.mapfile = _mapfile;
+    game.player.data.tilePosition = posToTile(game.player.position);
     updateUI();
   }
 

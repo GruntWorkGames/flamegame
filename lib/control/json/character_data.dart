@@ -1,3 +1,4 @@
+import 'package:flame/game.dart';
 import 'package:flame_game/control/json/item.dart';
 
 class CharacterData {
@@ -9,6 +10,9 @@ class CharacterData {
   int dodge = 1;
   int str = 1;
   int stam = 1;
+
+  Vector2 tilePosition = Vector2(0,0);
+  String mapfile = 'map.tmx';
   
   List<Item> inventory = [];
 
@@ -22,6 +26,9 @@ class CharacterData {
     health = json['health'] ?? 10;
     maxHealth = json['maxHealth'] ?? 30;
     gold = json['gold'] ?? 0;
+    tilePosition.x = json['x'] ?? 0;
+    tilePosition.y = json['y'] ?? 0;
+    mapfile = json['mapfile'] ?? 'map.tmx';
     final inventoryNode = json['inventory'] ?? [];
     if (inventoryNode != null && inventoryNode.isNotEmpty) {
       json['inventory'].forEach((v) {
@@ -37,9 +44,14 @@ class CharacterData {
     data['health'] = this.health;
     data['maxHealth'] = this.maxHealth;
     data['gold'] = this.gold;
+    data['x'] = tilePosition.x;
+    data['y'] = tilePosition.y;
+    data['mapfile'] = mapfile;
     data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
     return data;
   }
+
+  
   
   void _addDefaultItems() {
     final hPotion = {

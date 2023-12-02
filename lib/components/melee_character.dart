@@ -87,6 +87,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     isMoving = false;
     actionFinished(CharacterAnimationState.beginIdle);
     game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+    data.tilePosition = posToTile(position);
   }
 
   void move(Direction direction) {

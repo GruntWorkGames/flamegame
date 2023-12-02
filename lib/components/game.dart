@@ -3,10 +3,11 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
+import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/control/overworld_navigator.dart';
+import 'package:flame_game/components/overworld_navigator.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -27,9 +28,10 @@ class MainGame extends FlameGame with TapDetector {
   Future<void> onLoad() async {
     add(overworldNavigator);
     instance = this;
-    overworldNavigator.loadMainWorld();
-    load();
-
+    await load();
+    // overworldNavigator.loadMainWorld();
+    overworldNavigator.loadWorld(player.data.mapfile);
+    
     // final fps = FpsTextComponent();
     // fps.position = Vector2(25, size.y - 50);
     // add(fps);
@@ -41,7 +43,7 @@ class MainGame extends FlameGame with TapDetector {
     prefs.setString('player', jsonString);
   }
 
-  void load() async {
+  Future<void> load() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('player') ?? '{}';
     final json = jsonDecode(jsonString);

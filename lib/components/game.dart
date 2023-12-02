@@ -11,7 +11,7 @@ import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/components/overworld.dart';
+import 'package:flame_game/components/overworld.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,33 +28,25 @@ class MainGame extends FlameGame with TapDetector {
     add(overworldNavigator);
     instance = this;
     overworldNavigator.loadMainWorld();
-    _buildInventory();
     load();
 
     // final fps = FpsTextComponent();
     // fps.position = Vector2(25, size.y - 50);
     // add(fps);
   }
-
-  void load() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('player') ?? '';
-    if (jsonString.isEmpty) {
-      return;
-    }
-    final json = jsonDecode(jsonString);
-    player.data = CharacterData.fromJson(json);
-  }
-
+  
   void save() async {
+    print('save');
     final jsonString = jsonEncode(player.data.toJson());
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('player', jsonString);
   }
 
-  void _buildInventory() async {
-    final inventoryJson = await assets.readJson('json/player.json');
-    player.data = CharacterData.fromJson(inventoryJson);
+  void load() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('player') ?? '{}';
+    final json = jsonDecode(jsonString);
+    player.data = CharacterData.fromJson(json);
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
     ref.read(inventoryProvider.notifier).set(player.data);
@@ -73,21 +65,6 @@ class MainGame extends FlameGame with TapDetector {
     if (state == UIViewDisplayType.dialog || state == UIViewDisplayType.shop) {
       ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     }
-
-    // if(state == UIViewDisplayType.game) {
-    //   final items = ref.read(inventoryProvider).items;
-    //   if(items.isNotEmpty){
-    //     ref.read(inventoryItemProvider.notifier).set(items.first);
-    //   }
-    // final firstItem = inventory.items.first;
-    // firstItem.isSelected = true;
-    // ref.read(inventoryItemProvider.notifier).set(firstItem);
-    //   ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory);
-    // }
-
-    // if(state == UIViewDisplayType.inventory) {
-    //   ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    // }
 
     super.onTap();
   }

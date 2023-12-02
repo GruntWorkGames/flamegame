@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:flame_game/screens/components/game.dart';
-import 'package:flame_game/screens/components/overworld.dart';
+import 'package:flame_game/components/game.dart';
+import 'package:flame_game/components/overworld.dart';
 
 enum TurnSystemState {
   initial, player, playerFinished, enemy, enemyFinished

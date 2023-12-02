@@ -9,6 +9,7 @@ class ShopItemProvider extends StateNotifier<Item>{
   ShopItemProvider() : super(Item());
   
   void set(Item item) {
+    state.isSelected = false;
     state = item;
   }
 }

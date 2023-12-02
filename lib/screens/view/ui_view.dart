@@ -3,7 +3,7 @@ import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/components/game.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
 import 'package:flame_game/screens/view/inventory_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';

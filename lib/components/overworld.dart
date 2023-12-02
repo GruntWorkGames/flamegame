@@ -4,7 +4,6 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_game/components/enemy.dart';
-import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
@@ -21,7 +20,7 @@ import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flame_game/screens/components/game.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
@@ -37,7 +36,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? _tiledmap;
-  final enemyCreator = EnemyCreator();
+  // final enemyCreator = EnemyCreator();
   late final TurnSystem turnSystem;
   List<math.Point<int>> _blockedTileList = [];
   List<Enemy> _enemiesToMove = [];
@@ -216,6 +215,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final shop = Shop.fromJson(json);
     game.ref.read(shopProvider.notifier).set(shop);
     final firstItem = shop.items.first;
+    firstItem.isSelected = true;
     game.ref.read(shopItemProvider.notifier).set(firstItem);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.shop);
   }
@@ -371,6 +371,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void playerEntered() async {
+    game.save();
     if (game.player.parent != null) {
       game.player.removeFromParent();
     }
@@ -601,6 +602,5 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void updateUI() {
     game.ref.read(healthProvider.notifier).set(game.player.data.health);
     game.ref.read(goldProvider.notifier).set(game.player.data.gold);
-    game.save();
   }
 }

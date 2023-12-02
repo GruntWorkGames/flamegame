@@ -4,7 +4,7 @@ import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/screens/components/game.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -158,7 +158,7 @@ class InventoryView extends ConsumerWidget {
       child: useText,
     );
 
-    final buttonRow = Row(children: [useButton, const Spacer(), deleteBtn]);
+    final buttonRow = Padding(padding: EdgeInsets.only(bottom: 7), child: Row(children: [useButton, const Spacer(), deleteBtn]));
     final col = Column(children: [label, const Spacer(), buttonRow]);
     return Padding(padding: EdgeInsets.only(right:1), child:Container(
         height: 300, width: width / 2, decoration: decoration, child: col));

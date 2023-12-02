@@ -1,23 +1,13 @@
-import 'dart:math';
-import 'package:flame/components.dart';
+// import 'dart:math';
+// import 'package:flame/components.dart';
+// import 'package:flame_game/components/game.dart';
 
-class EnemyCreator extends TimerComponent with HasGameRef {
-  final Random random = Random();
+// class EnemyCreator extends Component with HasGameRef<MainGame> {
+//   final Random random = Random();
 
-  EnemyCreator() : super(period: 0.1, repeat: true);
+//   EnemyCreator() : super();
 
-  @override
-  void onTick() {
-    // gameRef.addAll(
-    //   List.generate(
-    //     1,
-    //     (index) => Enemy(
-    //       position: Vector2(
-    //         16 + (gameRef.size.x - 16) * random.nextDouble(),
-    //         0,
-    //       ),
-    //     ),
-    //   ),
-    // );
-  }
-}
+//   void playerMoved() {
+
+//   }
+// }

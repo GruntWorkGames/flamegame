@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/game.dart';
-import 'package:flame_game/screens/components/game.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/ui_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -56,7 +56,7 @@ class CharacterData {
         inventory.add(Item.fromJson(v));
       });
     } else {
-      _addDefaultItems();
+      addDefaultItems();
     }
   }
 
@@ -72,7 +72,7 @@ class CharacterData {
     return data;
   }
   
-  void _addDefaultItems() {
+  void addDefaultItems() {
     final hPotion = {
         "name" : "Health Potion",
         "type" : "potion",

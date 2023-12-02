@@ -3,7 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
@@ -13,6 +13,7 @@ import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/overworld.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +30,6 @@ class MainGame extends FlameGame with TapDetector {
     add(overworldNavigator);
     instance = this;
     await load();
-    // overworldNavigator.loadMainWorld();
     overworldNavigator.loadWorld(player.data.mapfile);
     
     // final fps = FpsTextComponent();
@@ -62,11 +62,7 @@ class MainGame extends FlameGame with TapDetector {
 
   @override
   void onTap() {
-    final state = ref.read(uiProvider);
-    if (state == UIViewDisplayType.dialog || state == UIViewDisplayType.shop || state == UIViewDisplayType.inventory) {
-      ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    }
-
+    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     super.onTap();
   }
 
@@ -75,4 +71,63 @@ class MainGame extends FlameGame with TapDetector {
       overworld!.directionPressed(direction);
     }
   }
+
+  void command(String text, BuildContext context) {
+    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+
+    final command = parseCommand(text);
+    switch(command.command) {
+      case DebugCommand.none:
+      return;
+      case DebugCommand.reset:
+        overworldNavigator.loadNewGame();
+        return;
+      case DebugCommand.heal:
+        player.data.heal(int.parse(command.argument));
+        overworld?.updateUI();
+        return;
+      case DebugCommand.reload:
+        Navigator.pop(context);
+        return;
+      case DebugCommand.sethp:
+        player.data.health = int.parse(command.argument);
+        overworld?.updateUI();
+        return;
+    }
+    
+  }
+
+  ({String command, String argument}) getCommandAndParamStrings(String input) {
+    final strings = input.split(' ');
+    if(strings.length == 1) {
+      return (command: strings.first, argument: '');
+    } else if(strings.length == 2) {
+      return (command: strings.first, argument: strings.last);
+    }
+    return (command: '', argument: '');
+  }
+
+  ({DebugCommand command, String argument}) parseCommand(String input) {
+    final commandData = getCommandAndParamStrings(input);
+    final commands = DebugCommand.values.where((command) { 
+      final match = command.name == commandData.command;
+      return match;
+  }).toList();
+    if(commands.isEmpty) {
+      return (command:DebugCommand.none, argument: '');
+    }
+    return (command:commands.first, argument: commandData.argument);
+  }
+
+  // DebugCommand parseCommand(String input) {
+  //   final commandData = getCommandAndParamStrings(input);
+  //   final commands = DebugCommand.values.where((command) { 
+  //     final match = command.name == commandData.command;
+  //     return match;
+  // }).toList();
+  //   if(commands.isEmpty) {
+  //     return DebugCommand.none;
+  //   }
+  //   return commands.first;
+  // }
 }

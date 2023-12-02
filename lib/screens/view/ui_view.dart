@@ -43,7 +43,11 @@ class UIView extends ConsumerWidget {
           onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
-          child: Text('Settings', style: style))]);
+          child: Text('Settings', style: style)),
+        SpeedDialChild(
+          backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
+          child: Text('Debug', style: style), 
+          onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.debug))]);
     const pos = FloatingActionButtonLocation.endTop;
 
     switch(uiState) {
@@ -62,6 +66,8 @@ class UIView extends ConsumerWidget {
         return _gameOver(ref);
       case UIViewDisplayType.inventory:
         return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
+      case UIViewDisplayType.debug:
+        return SafeArea(child: Stack(children:[_debugView(context), hud]));
     }
   }
 
@@ -107,9 +113,33 @@ class UIView extends ConsumerWidget {
   
   Widget _gameOver(WidgetRef ref) {
     final dialog = GestureDetector(onTap: (){
-      game.overworldNavigator.loadNewGame();
+      // TODO
     }, child: DialogView());
     return Center(child: dialog);
+  }
+  
+  Widget _debugView(BuildContext context) {
+    final debugTextFieldController = TextEditingController();
+    final width = MediaQuery.of(context).size.width / 2;
+    final inputDecoration = InputDecoration(
+      hintText: 'Enter command',
+      border: OutlineInputBorder());
+    final button = IconButton(color: mainColor, onPressed: (){
+      game.command(debugTextFieldController.text, context);
+    }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: borderColor));
+    final containerDecoration = BoxDecoration(
+      color: mainColor, 
+      border: Border.all(
+        color: borderColor, 
+        width: borderWidth), 
+        borderRadius: BorderRadius.circular(borderRadius));
+    final textField = Container(decoration: containerDecoration, width: width, child: TextField(
+      controller: debugTextFieldController,
+      decoration: inputDecoration, 
+      cursorColor: Colors.white,));
+    const spacer = SizedBox(width: 10);
+    return Center(child:Row(mainAxisAlignment: MainAxisAlignment.center, 
+    children: [textField, spacer, button]));
   }
 }
 

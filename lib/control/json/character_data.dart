@@ -2,19 +2,40 @@ import 'package:flame/game.dart';
 import 'package:flame_game/control/json/item.dart';
 
 class CharacterData {
-  int health = 10;
-  int maxHealth = 30;
+  int _health = 10;
+  int _maxHealth = 30;
   int gold = 0;
-
   int hit = 1;
   int dodge = 1;
   int str = 1;
   int stam = 1;
-
   Vector2 tilePosition = Vector2(0,0);
   String mapfile = 'map.tmx';
-  
   List<Item> inventory = [];
+  
+  int get maxHealth {
+    return (stam * 5) + _maxHealth;
+  }
+
+  void heal(int hp) {
+    final newMax = _health + hp;
+    if (newMax > maxHealth) {
+      _health = maxHealth;
+    } else {
+      _health = newMax;
+    }
+  }
+
+  void set health(int h) {
+    _health = h;
+    if(_health > maxHealth) {
+      _health = maxHealth;
+    }
+  }
+
+  int get health {
+    return _health;
+  }
 
   CharacterData();
 
@@ -24,7 +45,7 @@ class CharacterData {
 
   CharacterData.fromJson(Map<String, dynamic> json) {
     health = json['health'] ?? 10;
-    maxHealth = json['maxHealth'] ?? 30;
+    _maxHealth = json['maxHealth'] ?? 30;
     gold = json['gold'] ?? 0;
     tilePosition.x = json['x'] ?? 0;
     tilePosition.y = json['y'] ?? 0;
@@ -42,7 +63,7 @@ class CharacterData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['health'] = this.health;
-    data['maxHealth'] = this.maxHealth;
+    data['maxHealth'] = this._maxHealth;
     data['gold'] = this.gold;
     data['x'] = tilePosition.x;
     data['y'] = tilePosition.y;
@@ -50,8 +71,6 @@ class CharacterData {
     data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
     return data;
   }
-
-  
   
   void _addDefaultItems() {
     final hPotion = {

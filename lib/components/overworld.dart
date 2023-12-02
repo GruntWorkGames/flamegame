@@ -68,7 +68,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
-    
 
     game.player.data.tilePosition = posToTile(game.player.position);
     final isSavedTileZero = game.player.data.tilePosition.isZero();

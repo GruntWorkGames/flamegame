@@ -36,7 +36,6 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void save() async {
-    print('save');
     final jsonString = jsonEncode(player.data.toJson());
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('player', jsonString);
@@ -62,7 +61,7 @@ class MainGame extends FlameGame with TapDetector {
   @override
   void onTap() {
     final state = ref.read(uiProvider);
-    if (state == UIViewDisplayType.dialog || state == UIViewDisplayType.shop) {
+    if (state == UIViewDisplayType.dialog || state == UIViewDisplayType.shop || state == UIViewDisplayType.inventory) {
       ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     }
 

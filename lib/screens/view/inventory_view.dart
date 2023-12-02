@@ -161,6 +161,6 @@ class InventoryView extends ConsumerWidget {
     final buttonRow = Padding(padding: EdgeInsets.only(bottom: 7), child: Row(children: [useButton, const Spacer(), deleteBtn]));
     final col = Column(children: [label, const Spacer(), buttonRow]);
     return Padding(padding: EdgeInsets.only(right:1), child:Container(
-        height: 300, width: width / 2, decoration: decoration, child: col));
+        height: 400, width: width / 2, decoration: decoration, child: col));
   }
 }

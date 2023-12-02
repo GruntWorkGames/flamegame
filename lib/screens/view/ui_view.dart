@@ -1,4 +1,6 @@
+import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/provider/button_opacity.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -20,21 +22,28 @@ class UIView extends ConsumerWidget {
     final uiState = ref.watch(uiProvider);
     game.ref = ref;
 
+    final buttonOpacity = ref.watch(buttonOpacityProvider);
+    final style = TextStyle(color: Colors.white);
     final hud = _buildHud(ref);
-
+    final gearIcon = Icon(Icons.menu, color: Colors.white);
+    final xIcon = Icon(Icons.close, color: Colors.white);
     final fab = SpeedDial(
-      child: Text("Menu", style: TextStyle(color: Colors.white)),
-      activeChild: Text("close", style: TextStyle(color: Colors.white)),
-      backgroundColor: Colors.grey[600]!.withOpacity(0.6),
+      child: gearIcon,
+      activeChild: xIcon,
+      backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity + 0.1),
       spacing: 3,
       spaceBetweenChildren: 4,
       overlayOpacity: 0,
       direction: SpeedDialDirection.down,
       childrenButtonSize: Size(150, 50),
       children: [
-        SpeedDialChild(child: Text('Inventory'), 
+        SpeedDialChild(
+          backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
+          child: Text('Inventory', style: style), 
           onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
-        SpeedDialChild(child: Text('Settings'))]);
+        SpeedDialChild(
+          backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
+          child: Text('Settings', style: style))]);
     const pos = FloatingActionButtonLocation.endTop;
 
     switch(uiState) {
@@ -111,6 +120,7 @@ class ControlPad extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final buttonOpacity = ref.watch(buttonOpacityProvider);
     final color = Colors.white;
     final upIcon = Padding(padding: EdgeInsets.all(10), child: Transform.rotate(
         angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color)));
@@ -122,9 +132,9 @@ class ControlPad extends ConsumerWidget {
 
     final style = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
       if(states.contains(MaterialState.pressed)) {
-        return Colors.grey[700]!.withOpacity(0.3);
+        return Colors.grey[700]!.withOpacity(buttonOpacity);
       } else {
-        return Colors.grey[400]!.withOpacity(0.3);
+        return Colors.grey[buttonId]!.withOpacity(buttonOpacity);
       }
     }));
 
@@ -133,7 +143,7 @@ class ControlPad extends ConsumerWidget {
     final leftButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.left);}, child: leftIcon, style: style);
     final rightButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.right);}, child: rightIcon, style: style);
 
-    final topRow =Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
+    final topRow = Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
     final middleRow = Padding(padding: EdgeInsets.symmetric(horizontal: 10), 
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [leftButton, rightButton]));
     final bottomRow = Padding(padding: EdgeInsets.only(bottom: 10),

@@ -8,6 +8,7 @@ final borderColor = mat.Colors.grey[700]!;
 final selectedColor = mat.Color.fromARGB(255, 49, 49, 49);
 final borderRadius = 5.0;
 final borderWidth = 2.0;
+final buttonId = 400;
 
 Vector2 posToTile(Vector2 pos) {
   return Vector2(pos.x / TILESIZE, pos.y / TILESIZE);

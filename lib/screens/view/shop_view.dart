@@ -125,6 +125,6 @@ class ShopMenu extends ConsumerWidget {
     final buttonRow = Padding(padding: EdgeInsets.only(bottom: 10), child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [useButton]));
     final col = Column(children: [label, const Spacer(), buttonRow]);
     return Padding(padding: EdgeInsets.only(right:1), child:Container(
-        height: 300, width: width / 2, decoration: decoration, child: col));
+        height: 400, width: width / 2, decoration: decoration, child: col));
   }
 }

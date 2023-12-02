@@ -33,7 +33,6 @@ class CharacterData {
   }
 
   Map<String, dynamic> toJson() {
-    print('toJson');
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['health'] = this.health;
     data['maxHealth'] = this.maxHealth;

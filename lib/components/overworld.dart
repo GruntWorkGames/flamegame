@@ -554,6 +554,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       game.ref.read(dialogProvider.notifier).set(dialog);
       game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     } else {
+      item.isSelected = false;
       game.player.data.gold -= item.cost;
       game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
 

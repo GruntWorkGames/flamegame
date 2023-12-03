@@ -1,3 +1,3 @@
 enum DebugCommand {
-  none, reload, reset, heal, sethp;
+  none, reload, reset, heal, sethp, setstam;
 }

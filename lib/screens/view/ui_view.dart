@@ -124,15 +124,16 @@ class UIView extends ConsumerWidget {
     final inputDecoration = InputDecoration(
       hintText: 'Enter command',
       border: OutlineInputBorder());
-    final button = IconButton(color: mainColor, onPressed: (){
-      game.command(debugTextFieldController.text, context);
-    }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: borderColor));
-    final containerDecoration = BoxDecoration(
+      final containerDecoration = BoxDecoration(
       color: mainColor, 
       border: Border.all(
         color: borderColor, 
         width: borderWidth), 
         borderRadius: BorderRadius.circular(borderRadius));
+    final button = Container(decoration: containerDecoration, child:IconButton(color: mainColor, onPressed: (){
+      game.command(debugTextFieldController.text, context);
+    }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: Colors.white)));
+    
     final textField = Container(decoration: containerDecoration, width: width, child: TextField(
       controller: debugTextFieldController,
       decoration: inputDecoration, 

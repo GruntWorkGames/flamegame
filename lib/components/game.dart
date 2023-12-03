@@ -93,8 +93,11 @@ class MainGame extends FlameGame with TapDetector {
         player.data.health = int.parse(command.argument);
         overworld?.updateUI();
         return;
+      case DebugCommand.setstam:
+        player.data.stam = int.parse(command.argument);
+        overworld?.updateUI();
+        return;
     }
-    
   }
 
   ({String command, String argument}) getCommandAndParamStrings(String input) {

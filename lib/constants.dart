@@ -1,11 +1,13 @@
+import 'package:flame/components.dart';
 import 'package:flame_game/direction.dart';
-import 'package:flutter/material.dart' as mat;
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flutter/material.dart';
 
 const double TILESIZE = 16;
-final mainColor = mat.Colors.grey[600]!;
-final borderColor = mat.Colors.grey[700]!;
-final selectedColor = mat.Color.fromARGB(255, 49, 49, 49);
+final mainColor = Colors.grey[600]!;
+final borderColor = Colors.grey[700]!;
+// final mainColor = Colors.grey[400]!;
+// final borderColor = Colors.blue;
+final selectedColor = Color.fromARGB(255, 49, 49, 49);
 final borderRadius = 5.0;
 final borderWidth = 2.0;
 final buttonId = 400;
@@ -48,12 +50,12 @@ Direction directionFromPosToPos(Vector2 posA, Vector2 posB) {
   }
 }
 
-final phoneTextTheme = mat.TextTheme();
+final phoneTextTheme = TextTheme();
 
-final mainTheme = mat.ThemeData(
-    textTheme: mat.TextTheme(),
-    textButtonTheme: mat.TextButtonThemeData(),
-    iconButtonTheme: mat.IconButtonThemeData(),
-    iconTheme: mat.IconThemeData(),
-    actionIconTheme: mat.ActionIconThemeData(),
-    inputDecorationTheme: mat.InputDecorationTheme());
+final mainTheme = ThemeData(
+    textTheme: TextTheme(),
+    textButtonTheme: TextButtonThemeData(),
+    iconButtonTheme: IconButtonThemeData(),
+    iconTheme: IconThemeData(),
+    actionIconTheme: ActionIconThemeData(),
+    inputDecorationTheme: InputDecorationTheme());

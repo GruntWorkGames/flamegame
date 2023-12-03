@@ -5,10 +5,11 @@ class CharacterData {
   int _health = 10;
   int _maxHealth = 30;
   int gold = 0;
-  int hit = 1;
-  int dodge = 1;
-  int str = 1;
-  int stam = 1;
+  int hit = 0;
+  int dodge = 0;
+  int str = 0;
+  int stam = 0;
+  int armor = 0;
   Vector2 tilePosition = Vector2(0,0);
   String mapfile = 'map.tmx';
   List<Item> inventory = [];

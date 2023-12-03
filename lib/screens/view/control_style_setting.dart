@@ -1,4 +1,3 @@
-import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/enum/control_style.dart';
 import 'package:flame_game/control/provider/control_style_provider.dart';
 import 'package:flutter/material.dart';

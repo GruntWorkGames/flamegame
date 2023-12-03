@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:a_star_algorithm/a_star_algorithm.dart' as AStarAlgorithm;
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
+import 'package:flame/text.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
@@ -143,6 +145,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref.read(dialogProvider.notifier).set(dialog);
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
+      showCombatMessage(game.player.position.clone(), '-${game.player.weapon.value}', Color.fromARGB(250, 250, 0, 0));
     });
   }
 
@@ -175,6 +178,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         _enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
+      showCombatMessage(enemy.position.clone(), '-${game.player.weapon.value}', Color.fromARGB(250, 250, 250, 250));
     });
   }
 
@@ -616,5 +620,15 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   void updateUI() {
     game.ref.read(healthProvider.notifier).set(game.player.data.health);
     game.ref.read(goldProvider.notifier).set(game.player.data.gold);
+  }
+
+  void showCombatMessage(Vector2 pos, String message, Color color) {
+    final paint = TextPaint(style: TextStyle(color: color, fontSize: 12));
+    final text = TextComponent(textRenderer: paint, text: message, position: pos);
+    final moveUp = MoveEffect.by(Vector2(0,-30), EffectController(duration: 2.0), onComplete: (){
+      text.removeFromParent();
+    });
+    text.add(moveUp);
+    add(text);
   }
 }

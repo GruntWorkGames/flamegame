@@ -49,19 +49,14 @@ class InventoryView extends ConsumerWidget {
     final label = Padding(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
         child: Text('Inventory', style: titleStyle));
-    final decoration = BoxDecoration(
-        border: Border.all(color: borderColor, width: borderWidth),
-        borderRadius: BorderRadius.circular(borderRadius),
-        color: mainColor);
     return Padding(padding: EdgeInsets.only(bottom: 1), child:Container(
         constraints: BoxConstraints(maxWidth: width),
-        decoration: decoration,
+        decoration: boxDecoration,
         child: label));
   }
 
   Widget _buildCell(BuildContext context, Item item, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
-    final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final isEquipped = item.isEquipped ? ' *' : '';
     final name = Padding(padding: EdgeInsets.all(5), child: Text('${item.name} $isEquipped', style: titleStyle));
     final row = Row(children: [name]);

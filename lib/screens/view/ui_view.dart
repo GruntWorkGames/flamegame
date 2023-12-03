@@ -1,6 +1,8 @@
 import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/enum/control_style.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/button_opacity.dart';
+import 'package:flame_game/control/provider/control_style_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -8,6 +10,7 @@ import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
 import 'package:flame_game/screens/view/inventory_view.dart';
+import 'package:flame_game/screens/view/settings_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +46,7 @@ class UIView extends ConsumerWidget {
           onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
-          child: Text('Settings', style: style)),
+          child: Text('Settings', style: style), onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.settings)),
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
           child: Text('Debug', style: style), 
@@ -68,11 +71,19 @@ class UIView extends ConsumerWidget {
         return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
       case UIViewDisplayType.debug:
         return SafeArea(child: Stack(children:[_debugView(context), hud]));
+      case UIViewDisplayType.settings:
+        return SafeArea(child: Stack(children:[SettingsView(), hud]));
     }
   }
 
   Widget _gameOverlay(BuildContext context, WidgetRef ref) {
-    return Center(child: ControlPad(game));
+    final controlStyle = ref.watch(controlStyleState);
+    switch(controlStyle) {
+      case ControlStyle.directional:
+        return Center(child: ControlPad(game));
+      case ControlStyle.swipe:
+        return Center(child: _buildSwipeDetector());
+    }
   }
 
   Widget _buildHud(WidgetRef ref) {
@@ -91,25 +102,25 @@ class UIView extends ConsumerWidget {
     return column;
   }
 
-  // Widget _buildSwipeDetector() {
-  //   return GestureDetector(onHorizontalDragEnd: (drag) {
-  //     final v = drag.velocity.pixelsPerSecond;
-  //     if (v.dx > 0) {
-  //       game.directionPressed(Direction.right);
-  //     }
-  //     if (v.dx < 0) {
-  //       game.directionPressed(Direction.left);
-  //     }
-  //   }, onVerticalDragEnd: (drag) {
-  //     final v = drag.velocity.pixelsPerSecond;
-  //     if (v.dy > 0) {
-  //       game.directionPressed(Direction.down);
-  //     }
-  //     if (v.dy < 0) {
-  //       game.directionPressed(Direction.up);
-  //     }
-  //   });
-  // }
+  Widget _buildSwipeDetector() {
+    return GestureDetector(onHorizontalDragEnd: (drag) {
+      final v = drag.velocity.pixelsPerSecond;
+      if (v.dx > 0) {
+        game.directionPressed(Direction.right);
+      }
+      if (v.dx < 0) {
+        game.directionPressed(Direction.left);
+      }
+    }, onVerticalDragEnd: (drag) {
+      final v = drag.velocity.pixelsPerSecond;
+      if (v.dy > 0) {
+        game.directionPressed(Direction.down);
+      }
+      if (v.dy < 0) {
+        game.directionPressed(Direction.up);
+      }
+    });
+  }
   
   Widget _gameOver(WidgetRef ref) {
     final dialog = GestureDetector(onTap: (){

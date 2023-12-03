@@ -59,3 +59,10 @@ final mainTheme = ThemeData(
     iconTheme: IconThemeData(),
     actionIconTheme: ActionIconThemeData(),
     inputDecorationTheme: InputDecorationTheme());
+
+final boxDecoration = BoxDecoration(
+  border: Border.all(color: borderColor, width: borderWidth),
+  borderRadius: BorderRadius.circular(borderRadius),
+  color: mainColor);
+
+  final titleStyle = TextStyle(fontSize: 18, color: Colors.white);

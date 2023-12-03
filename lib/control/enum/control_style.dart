@@ -1,0 +1,1 @@
+enum ControlStyle { directional, swipe }

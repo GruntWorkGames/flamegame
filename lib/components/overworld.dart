@@ -63,6 +63,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
+    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
     add(enemyCreator);
     add(tiledmap!);
     _generateTiles(tiledmap!.tileMap.map);
@@ -179,6 +180,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     if (!listenToInput) {
       return;
     }
+
     game.player.playAttackDirectionAnim(direction, () {
       enemy.takeHit(game.player.weapon.value, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
@@ -345,20 +347,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;
     return Vector2(spawnObject.x, spawnObject.y);
-  }
-
-  List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
-    final List<Vector2> spawns = [];
-    final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
-    if (objectGroup == null) {
-      return spawns;
-    }
-
-    for (final object in objectGroup.objects) {
-      spawns.add(Vector2(object.x, object.y));
-    }
-
-    return spawns;
   }
 
   List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {

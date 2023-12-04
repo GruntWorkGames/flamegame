@@ -11,6 +11,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   // co effecient on how likely this zone is to spawn a monster
   int spawnChance = 0;
   int maxEnemies = 0;
+  int spawnRadius = 0;
 
   EnemyCreator() : super();
 
@@ -26,19 +27,22 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       return;
     }
 
-    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), 9).map((point) => Vector2(point.x.toDouble(), point.y.toDouble())).toList() ?? [];
+    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), spawnRadius).map((point) => Vector2(point.x.toDouble(), point.y.toDouble())).toList() ?? [];
     if(spawnArea.isEmpty) {
       throw Exception('Spawn Area is empty');
     }
-
-    spawnArea.removeWhere((tile) => game.overworld!.isTileBlocked(tile));
 
     final enemyTiles = game.overworld?.enemies.map((enemy) {
       final tile = posToTile(enemy.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
     }).toList() ?? [];
 
-    spawnArea.removeWhere((tilePos) => enemyTiles.contains(tilePos));
+    spawnArea.removeWhere((tile) { 
+      return 
+        tile == posToTile(game.player.position)
+          || enemyTiles.contains(tile)
+          || game.overworld!.isTileBlocked(tile);
+    });
 
     final index = Random().nextInt(spawnArea.length);
     final spawnTile = spawnArea[index];

@@ -3,6 +3,7 @@
  <properties>
   <property name="maxEnemies" type="int" value="4"/>
   <property name="spawnChance" type="int" value="7"/>
+  <property name="spawnRadius" type="int" value="9"/>
  </properties>
  <tileset firstgid="1" source="Grass.tsx"/>
  <tileset firstgid="6" source="Rocks.tsx"/>

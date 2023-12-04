@@ -27,6 +27,8 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+
 class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<dynamic>> _blockedTiles = [];
   List<List<dynamic>> _triggerTiles = [];
@@ -623,12 +625,25 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void showCombatMessage(Vector2 pos, String message, Color color) {
-    final paint = TextPaint(style: TextStyle(color: color, fontSize: 12));
+    const fontSize = 16.0;
+    final paint = TextPaint(style: TextStyle(color: color, fontSize: fontSize, fontWeight: FontWeight.bold));
     final text = TextComponent(textRenderer: paint, text: message, position: pos);
     final moveUp = MoveEffect.by(Vector2(0,-30), EffectController(duration: 2.0), onComplete: (){
       text.removeFromParent();
     });
     text.add(moveUp);
     add(text);
+
+    final foregroundPaint = Paint();
+    foregroundPaint.style = PaintingStyle.stroke;
+    foregroundPaint.strokeWidth = 0.75;
+    foregroundPaint.color = Colors.black;
+    final textOutlinePaint = TextPaint(style: TextStyle(foreground: foregroundPaint, fontSize: fontSize, fontWeight: FontWeight.bold));
+    final textOutline = TextComponent(textRenderer: textOutlinePaint, text: message, position: pos);
+    final outlineMoveup = MoveEffect.by(Vector2(0,-30), EffectController(duration: 2.0), onComplete: (){
+      textOutline.removeFromParent();
+    });
+    textOutline.add(outlineMoveup);
+    add(textOutline);
   }
 }

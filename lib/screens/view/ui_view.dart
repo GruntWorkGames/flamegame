@@ -59,8 +59,7 @@ class UIView extends ConsumerWidget {
         body: Stack(children:[_gameOverlay(context, ref), hud]), 
         floatingActionButtonLocation: pos, floatingActionButton: fab));
       case UIViewDisplayType.shop:
-        final stack = SafeArea(child: Stack(children: [ShopMenu(game), hud]));
-        return stack;
+        return SafeArea(child: Stack(children: [ShopMenu(game), hud]));
       case UIViewDisplayType.dialog:
         return SafeArea(child: Stack(children:[DialogView(), hud]));
       case UIViewDisplayType.invisible:

@@ -70,13 +70,12 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
     _createNpcs();
+    enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
-    
     game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
-
     game.player.data.tilePosition = posToTile(game.player.position);
     final isSavedTileZero = game.player.data.tilePosition.isZero();
     final isPlayerAtZero = game.player.position.isZero();
@@ -85,7 +84,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     if(!isSavedTileZero && isPlayerAtZero && isMapMatch) {
       game.player.position = tileToPos(game.player.data.tilePosition);
     } else {
-      game.player.position = _readSpawnPoint(tiledmap!.tileMap);
+      game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
     
     game.player.data.mapfile = _mapfile;
@@ -343,12 +342,25 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
   }
 
-  Vector2 _readSpawnPoint(RenderableTiledMap tileMap) {
+  Vector2 _readPlayerSpawnPoint(RenderableTiledMap tileMap) {
     final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;
     return Vector2(spawnObject.x, spawnObject.y);
   }
 
+  List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
+    final List<Vector2> spawns = [];
+    final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
+    if (objectGroup == null) {
+      return spawns;
+    }
+
+    for (final object in objectGroup.objects) {
+      spawns.add(Vector2(object.x, object.y));
+    }
+
+    return spawns;
+  }
   List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
     List<NpcData> spawnData = [];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
@@ -416,6 +428,17 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     }
   }
 
+  List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
+    final List<Enemy> enemies = [];
+    final spawns = _readEnemySpawns(tiledmap!.tileMap);
+    for (final spawnPos in spawns) {
+      final enemy = Enemy();
+      enemy.position = spawnPos;
+      enemies.add(enemy);
+      add(enemy);
+    }
+    return enemies;
+  }
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
     try {
       return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];

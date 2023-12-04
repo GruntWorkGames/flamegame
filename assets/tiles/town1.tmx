@@ -213,7 +213,7 @@
    <properties>
     <property name="locX" value="560"/>
     <property name="locY" value="416"/>
-    <property name="map" value="mainmap.tmx"/>
+    <property name="map" value="well.tmx"/>
    </properties>
   </object>
  </objectgroup>

@@ -146,13 +146,13 @@
   <object id="4" name="Taco" x="176" y="320" width="16" height="16">
    <properties>
     <property name="animationFile" value="json/FarmerRed.json"/>
-    <property name="shop" value="json/taco.json"/>
+    <property name="speech" value="Go to bed."/>
    </properties>
   </object>
   <object id="5" name="Popo" x="224" y="304" width="16" height="16">
    <properties>
     <property name="animationFile" value="json/FarmerRed.json"/>
-    <property name="speech" value="How do ya like me now!?"/>
+    <property name="shop" value="json/popo.json"/>
    </properties>
   </object>
   <object id="7" name="Floof" x="272" y="272" width="16" height="16">

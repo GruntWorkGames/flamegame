@@ -21,6 +21,7 @@ class TurnSystem extends Component with HasGameRef<MainGame> {
         overworld.listenToInput = true;
         break;
       case TurnSystemState.playerFinished:
+        overworld.playerMoved();
         overworld.listenToInput = false;
         if(playerFinishedCallback != null) {
           playerFinishedCallback!();

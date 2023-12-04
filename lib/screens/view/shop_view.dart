@@ -1,6 +1,7 @@
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
+import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -16,7 +17,7 @@ class ShopMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final shop = ref.watch(shopProvider);
     final width = MediaQuery.of(context).size.width;
-    final title = _title(context);
+    final title = _title(context, shop);
     final cells = shop.items.map((item) => _buildCell(context, item, ref)).toList();
     final rightCol = SizedBox(height: 300, child: SingleChildScrollView(child: Column(children: cells),
       physics: AlwaysScrollableScrollPhysics()));
@@ -44,12 +45,12 @@ class ShopMenu extends ConsumerWidget {
     return box;
   }
 
-  Widget _title(context) {
+  Widget _title(BuildContext context, Shop shop) {
     final width = MediaQuery.of(context).size.width;
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final label = Padding(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-        child: Text('Merchant', style: titleStyle));
+        child: Text(shop.owner, style: titleStyle));
     final decoration = BoxDecoration(
         border: Border.all(color: borderColor, width: borderWidth),
         borderRadius: BorderRadius.circular(borderRadius),

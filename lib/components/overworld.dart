@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_game/components/enemy.dart';
+import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
@@ -30,23 +31,23 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
-  List<List<dynamic>> _blockedTiles = [];
+  List<List<dynamic>> blockedTiles = [];
+  List<Vector2> openTiles = [];
   List<List<dynamic>> _triggerTiles = [];
   List<List<dynamic>> _npcTiles = [];
-  List<List<dynamic>> _enemyTiles = [];
-  List<Enemy> _enemies = [];
+  List<Enemy> enemies = [];
   List<NPC> _npcs = [];
   bool listenToInput = false;
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
-  TiledComponent? _tiledmap;
-  // final enemyCreator = EnemyCreator();
+  TiledComponent? tiledmap;
+  final enemyCreator = EnemyCreator();
   late final TurnSystem turnSystem;
   List<math.Point<int>> _blockedTileList = [];
   List<Enemy> _enemiesToMove = [];
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
-  final _aggroDistance = 8;
+  final _aggroDistance = 6;
 
   Overworld(this._mapfile);
 
@@ -58,14 +59,15 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   FutureOr<void> onLoad() async {
-    _tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
-    _tiledmap?.anchor = Anchor.topLeft;
-    add(_tiledmap!);
-    _generateTiles(_tiledmap!.tileMap.map);
-    _buildBlockedTiles(_tiledmap!.tileMap);
-    _buildPortals(_tiledmap!.tileMap);
+    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
+    tiledmap?.anchor = Anchor.topLeft;
+    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
+    add(enemyCreator);
+    add(tiledmap!);
+    _generateTiles(tiledmap!.tileMap.map);
+    _buildBlockedTiles(tiledmap!.tileMap);
+    _buildPortals(tiledmap!.tileMap);
     _createNpcs();
-    _enemies = _createEnemies(_tiledmap!.tileMap);
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
     
     game.camera.follow(game.player);
@@ -81,12 +83,17 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     if(!isSavedTileZero && isPlayerAtZero && isMapMatch) {
       game.player.position = tileToPos(game.player.data.tilePosition);
     } else {
-      game.player.position = _readSpawnPoint(_tiledmap!.tileMap);
+      game.player.position = _readSpawnPoint(tiledmap!.tileMap);
     }
     
     game.player.data.mapfile = _mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
     updateUI();
+
+
+
+    // openTiles
+    
   }
 
   @override
@@ -177,7 +184,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.player.data.gold += enemy.data.gold;
         updateUI();
         enemy.removeFromParent();
-        _enemies.removeWhere((other) => other == enemy);
+        enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
       showCombatMessage(enemy.position.clone(), '-${game.player.weapon.value}', Color.fromARGB(250, 250, 250, 250));
@@ -187,7 +194,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   Enemy? getEnemyInDirection(Direction direction) {
     final playerTile = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerTile);
-    for (final enemy in _enemies) {
+    for (final enemy in enemies) {
       final npcTile = posToTile(enemy.position);
       if (nextTile == npcTile) {
         return enemy;
@@ -241,7 +248,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   bool isTileBlocked(Vector2 pos) {
     try {
-      return _blockedTiles[pos.x.toInt()][pos.y.toInt()];
+      return blockedTiles[pos.x.toInt()][pos.y.toInt()];
     } catch (e) {
       print('error checking if tile is blocked at: ${pos.x}, ${pos.y}');
       print(e.toString());
@@ -257,7 +264,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _generateTiles(TiledMap map) {
-    _blockedTiles = List<List>.generate(
+    blockedTiles = List<List>.generate(
         map.width,
         (index) => List<dynamic>.generate(map.height, (index) => false,
             growable: false),
@@ -265,7 +272,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
     _triggerTiles = _generate2dArray(map.width, map.height);
     _npcTiles = _generate2dArray(map.width, map.height);
-    _enemyTiles = _generate2dArray(map.width, map.height);
   }
 
   List<List<dynamic>> _generate2dArray(int width, int height) {
@@ -384,7 +390,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
     int x = t.x.toInt();
     int y = t.y.toInt();
-    _blockedTiles[x][y] = true;
+    blockedTiles[x][y] = true;
 
     _blockedTileList.add(math.Point<int>(x, y));
   }
@@ -395,7 +401,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       game.player.removeFromParent();
     }
 
-    _tiledmap?.add(game.player);
+    tiledmap?.add(game.player);
 
     if (_reEntryPos.isZero()) {
       return;
@@ -404,7 +410,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _createNpcs() {
-    final spawns = _readNpcSpawnPoints(_tiledmap!.tileMap);
+    final spawns = _readNpcSpawnPoints(tiledmap!.tileMap);
     for (final spawnData in spawns) {
       final npc = NPC(spawnData);
       add(npc);
@@ -412,20 +418,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       final tile = posToTile(npc.position);
       _npcTiles[tile.x.toInt()][tile.y.toInt()] = npc;
     }
-  }
-
-  List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
-    final List<Enemy> enemies = [];
-    final spawns = _readEnemySpawns(_tiledmap!.tileMap);
-    for (final spawnPos in spawns) {
-      final enemy = Enemy();
-      enemy.position = spawnPos;
-      final tile = posToTile(enemy.position);
-      _enemyTiles[tile.x.toInt()][tile.y.toInt()] = enemy;
-      enemies.add(enemy);
-      add(enemy);
-    }
-    return enemies;
   }
 
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
@@ -447,7 +439,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   Direction findPath(Enemy enemy) {
-    final map = _tiledmap!.tileMap.map;
+    final map = tiledmap!.tileMap.map;
     final endVec = posToTile(game.player.position);
     final startVec = posToTile(enemy.position);
     final math.Point<int> end = math.Point(endVec.x.toInt(), endVec.y.toInt());
@@ -460,7 +452,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       final tile = posToTile(npc.npc.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
     }).toSet();
-    final enemys = _enemies.where((other) => other != enemy);
+    final enemys = enemies.where((other) => other != enemy);
     final enemyTiles = enemys.map((enemy) {
       final tile = posToTile(enemy.position);
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
@@ -500,7 +492,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<math.Point<int>> tilesArroundPosition(Vector2 playerTile, int distance) {
-    final map = _tiledmap!.tileMap.map;
+    final map = tiledmap!.tileMap.map;
     // get left boundary
     final int farthestTileXLeftAvailable =
         playerTile.x > distance ? playerTile.x.toInt() - distance : 0;
@@ -556,7 +548,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<Enemy> getEnemiesWithinRange(int distance) {
-    final list = _enemies.where((npc) {
+    final list = enemies.where((npc) {
       final enemyTile = posToTile(npc.position);
       final playerTile = posToTile(game.player.position);
       final dist = enemyTile.distanceTo(playerTile);
@@ -645,5 +637,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     });
     textOutline.add(outlineMoveup);
     add(textOutline);
+  }
+
+  void playerMoved() {
+    enemyCreator.playerMoved();
   }
 }

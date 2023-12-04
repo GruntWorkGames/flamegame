@@ -62,6 +62,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
+    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
     add(enemyCreator);
     add(tiledmap!);
     _generateTiles(tiledmap!.tileMap.map);
@@ -89,11 +90,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.player.data.mapfile = _mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
     updateUI();
-
-
-
-    // openTiles
-    
   }
 
   @override
@@ -154,7 +150,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref.read(dialogProvider.notifier).set(dialog);
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
-      showCombatMessage(game.player.position.clone(), '-${enemy.weapon.value}', Color.fromARGB(249, 255, 96, 96));
+      
+      final pos = game.player.position.clone();
+      if(enemy.position.x == game.player.position.x) {
+        pos.x -= TILESIZE;
+      }
+
+      showCombatMessage(pos, '-${enemy.weapon.value}', Color.fromARGB(249, 255, 96, 96));
     });
   }
 
@@ -187,7 +189,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
-      showCombatMessage(enemy.position.clone(), '-${game.player.weapon.value}', Color.fromARGB(250, 250, 250, 250));
+
+      final pos = enemy.position.clone();
+      if(enemy.position.x == game.player.position.x) {
+        pos.x += TILESIZE;
+      }
+      
+      showCombatMessage(pos, '-${game.player.weapon.value}', Color.fromARGB(250, 255, 255, 255));
     });
   }
 

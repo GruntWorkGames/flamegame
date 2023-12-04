@@ -9,7 +9,8 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();
 
   // co effecient on how likely this zone is to spawn a monster
-  int spawnChance = 10;
+  int spawnChance = 0;
+  int maxEnemies = 0;
 
   EnemyCreator() : super();
 
@@ -21,7 +22,11 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   }
 
   void _createEnemy() {
-    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), 13).map((point) => Vector2(point.x.toDouble(), point.y.toDouble())).toList() ?? [];
+    if((game.overworld?.enemies.length ?? 0) >= maxEnemies) {
+      return;
+    }
+
+    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), 9).map((point) => Vector2(point.x.toDouble(), point.y.toDouble())).toList() ?? [];
     if(spawnArea.isEmpty) {
       throw Exception('Spawn Area is empty');
     }

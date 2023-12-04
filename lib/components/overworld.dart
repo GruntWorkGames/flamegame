@@ -147,7 +147,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref.read(dialogProvider.notifier).set(dialog);
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
-      showCombatMessage(game.player.position.clone(), '-${enemy.weapon.value}', Color.fromARGB(250, 250, 0, 0));
+      showCombatMessage(game.player.position.clone(), '-${enemy.weapon.value}', Color.fromARGB(249, 255, 96, 96));
     });
   }
 

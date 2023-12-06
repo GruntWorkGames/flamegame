@@ -1,5 +1,6 @@
 import 'package:flame/effects.dart';
 import 'package:flame_game/components/melee_character.dart';
+import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -33,13 +34,9 @@ class Enemy extends MeleeCharacter {
   }
 
   @override
-  void update(double dt) {
-    super.update(dt);
-  }
-
-  @override
   void onMoveCompleted(Vector2 newTile) {
     game.overworld!.moveNextEnemy();
+    data.tilePosition = posToTile(position);
   }
 
   @override

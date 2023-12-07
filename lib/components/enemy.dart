@@ -2,6 +2,7 @@ import 'package:flame/effects.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
+import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -13,7 +14,8 @@ class Enemy extends MeleeCharacter {
     super.onLoad();
     data.health = 6;
     weapon = Item();
-    weapon.value = 1;
+    weapon.type = ItemType.weapon;
+    weapon.value = 3;
     moveDuration = 0.15;
     data.gold = 4;
   }
@@ -37,22 +39,5 @@ class Enemy extends MeleeCharacter {
   void onMoveCompleted(Vector2 newTile) {
     game.overworld!.moveNextEnemy();
     data.tilePosition = posToTile(position);
-  }
-
-  @override
-  void takeHit(double damage, Function onComplete, Function onKilled) {
-    data.health -= damage;
-
-    final flicker = OpacityEffect.fadeOut(
-        EffectController(repeatCount: 2, duration: 0.1, alternate: true),
-        onComplete: () {
-      if (data.health <= 0) {
-        onKilled();
-      } else {
-        onComplete();
-      }
-    });
-    flicker.removeOnFinish = true;
-    add(flicker);
   }
 }

@@ -11,6 +11,8 @@ enum ItemType {
 
   static ItemType typeFromString(String name) {
     switch (name) {
+      case 'armor':
+        return ItemType.armor;
       case 'heal':
         return ItemType.heal;
       case 'weapon':

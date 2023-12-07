@@ -89,6 +89,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     
     game.player.data.mapfile = _mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
+
     updateUI();
   }
 
@@ -136,7 +137,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     enemy.playAttackDirectionAnim(playerDirection, () {
-      game.player.takeHit(enemy.weapon.value, () {
+      final damageDone = game.player.takeHit(enemy.weapon.value, () {
         game.ref.read(healthProvider.notifier).set(game.player.data.health);
         enemy.onMoveCompleted(enemy.position);
       }, () {
@@ -156,7 +157,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         pos.x -= TILESIZE;
       }
 
-      showCombatMessage(pos, '-${enemy.weapon.value.toInt()}', Color.fromARGB(249, 255, 96, 96));
+      showCombatMessage(pos, '-${damageDone.toInt()}', Color.fromARGB(249, 255, 96, 96));
     });
   }
 
@@ -181,7 +182,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     }
 
     game.player.playAttackDirectionAnim(direction, () {
-      enemy.takeHit(game.player.weapon.value, () {
+      final damageDone = enemy.takeHit(game.player.weapon.value, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.data.gold += enemy.data.gold;
@@ -196,7 +197,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         pos.x += TILESIZE;
       }
       
-      showCombatMessage(pos, '-${game.player.weapon.value.toInt()}', Color.fromARGB(250, 255, 255, 255));
+      showCombatMessage(pos, '-${damageDone.toInt()}', Color.fromARGB(250, 255, 255, 255));
     });
   }
 
@@ -603,7 +604,11 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     }
   }
 
-  void equipArmor(Item item) {}
+  void equipArmor(Item item) {
+    game.player.armor.isEquipped = false;
+    game.player.armor = item;
+    item.isEquipped = true;
+  }
 
   void equipWeapon(Item item) {
     game.player.weapon.isEquipped = false;

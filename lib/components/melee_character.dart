@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
@@ -5,6 +7,7 @@ import 'package:flame/sprite.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
+import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/direction.dart';
@@ -16,8 +19,8 @@ class MeleeCharacter extends SpriteAnimationComponent
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
-  Item weapon = Item()..value = 1;
-  Item armor = Item();
+  Item weapon = Item()..type = ItemType.weapon ..value = 3 ..isEquipped = true;
+  Item armor = Item()..type = ItemType.armor ..value = 1 ..isEquipped = true;
   double moveDuration = 0.24;
   CharacterData data = CharacterData();
 
@@ -208,7 +211,15 @@ class MeleeCharacter extends SpriteAnimationComponent
     return false;
   }
 
-  void takeHit(double damage, Function onComplete, Function onKilled) {
+  double mitigatedDamage(double rawDamage) {
+    final items = game.player.data.inventory;
+    final armor = items.where((item) => item.type == ItemType.armor).toList().firstOrNull ?? Item();
+    return max(0, rawDamage - armor.value);
+  }
+
+  // returns amount of damage done
+  double takeHit(double damage, Function onComplete, Function onKilled) {
+    damage = mitigatedDamage(damage);
     data.health -= damage;
 
     final flicker = OpacityEffect.fadeOut(
@@ -222,6 +233,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     });
     flicker.removeOnFinish = true;
     add(flicker);
+    return damage;
   }
 
   void drinkPotion(Item item) {

@@ -33,10 +33,11 @@ class MainGame extends FlameGame with TapDetector {
     instance = this;
     await load();
     overworldNavigator.loadWorld(player.data.mapfile);
-    
-    // final fps = FpsTextComponent();
-    // fps.position = Vector2(25, size.y - 50);
-    // add(fps);
+    overworld?.equipWeapon(player.weapon);
+    overworld?.equipArmor(player.armor);
+    final fps = FpsTextComponent();
+    fps.position = Vector2(25, size.y - 50);
+    add(fps);
   }
 
   void save() async {

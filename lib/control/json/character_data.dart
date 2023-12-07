@@ -75,26 +75,37 @@ class CharacterData {
   
   void addDefaultItems() {
     final hPotion = {
-        "name" : "Health Potion",
-        "type" : "potion",
-        "value" : 10.0,
-        "valueName": "health",
-        "description": "The thick red liquid reminds you of cough syrup.", 
-        "cost" : 10.0,
-        "inventoryUseText" : "Drink"
+      "name" : "Health Potion",
+      "type" : "potion",
+      "value" : 10.0,
+      "valueName": "health",
+      "description": "The thick red liquid reminds you of cough syrup.", 
+      "cost" : 10.0,
+      "inventoryUseText" : "Drink"
     };
     final sword = {
-        "name" : "Dull Short Sword",
-        "type" : "weapon",
-        "value" : 2.0,
-        "valueName": "damage",
-        "description": "A nearly useless weapon. A kids toy.",
-        "cost" : 11.0,
-        "inventoryUseText" : "Equip",
-        "isEquipped": true
+      "name" : "Dull Short Sword",
+      "type" : "weapon",
+      "value" : 5.0,
+      "valueName": "damage",
+      "description": "A nearly useless weapon. A kids toy.",
+      "cost" : 30.0,
+      "inventoryUseText" : "Equip",
+      "isEquipped": true
+    };
+    final helmet = {
+      "name" : "Armor Helm",
+      "type" : "armor",
+      "value" : 2.0,
+      "valueName": "mitigation",
+      "description": "Tarnished and flimsy.",
+      "cost" : 20.0,
+      "inventoryUseText" : "Equip",
+      "isEquipped": true
     };
 
     inventory.add(Item.fromJson(hPotion));
     inventory.add(Item.fromJson(sword));
+    inventory.add(Item.fromJson(helmet));
   }
 }

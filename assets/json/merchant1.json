@@ -6,28 +6,28 @@
             {
                 "name" : "Health Potion",
                 "type" : "potion",
-                "value" : 10,
+                "value" : 10.0,
                 "valueName": "health",
                 "description": "The thick red liquid reminds you of cough syrup.", 
-                "cost" : 10,
+                "cost" : 10.0,
                 "inventoryUseText" : "Drink"
             },
             {
                 "name" : "Dull Short Sword",
                 "type" : "weapon",
-                "value" : 2,
+                "value" : 2.0,
                 "valueName": "damage",
                 "description": "A nearly useless weapon. A kids toy.",
-                "cost" : 1,
+                "cost" : 1.0,
                 "inventoryUseText" : "Equip"
             },
             {
                 "name" : "Dull Axe",
                 "type" : "weapon",
-                "value" : 4,
+                "value" : 4.0,
                 "valueName": "damage",
                 "description": "A double sided axe. Looks like it's pretty old and worn.",
-                "cost" : 5,
+                "cost" : 5.0,
                 "inventoryUseText" : "Equip"
             }
         ]

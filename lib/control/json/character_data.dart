@@ -2,23 +2,23 @@ import 'package:flame/game.dart';
 import 'package:flame_game/control/json/item.dart';
 
 class CharacterData {
-  int _health = 10;
-  int _maxHealth = 30;
-  int gold = 0;
-  int hit = 0;
-  int dodge = 0;
-  int str = 0;
-  int stam = 0;
-  int armor = 0;
+  double _health = 10;
+  double _maxHealth = 30;
+  double gold = 0;
+  double hit = 0;
+  double dodge = 0;
+  double str = 0;
+  double stam = 0;
+  double armor = 0;
   Vector2 tilePosition = Vector2(0,0);
   String mapfile = 'map.tmx';
   List<Item> inventory = [];
   
-  int get maxHealth {
+  double get maxHealth {
     return (stam * 5) + _maxHealth;
   }
 
-  void heal(int hp) {
+  void heal(double hp) {
     final newMax = _health + hp;
     if (newMax > maxHealth) {
       _health = maxHealth;
@@ -27,14 +27,14 @@ class CharacterData {
     }
   }
 
-  void set health(int h) {
+  void set health(double h) {
     _health = h;
     if(_health > maxHealth) {
       _health = maxHealth;
     }
   }
 
-  int get health {
+  double get health {
     return _health;
   }
 
@@ -45,8 +45,8 @@ class CharacterData {
   }
 
   CharacterData.fromJson(Map<String, dynamic> json) {
-    health = json['health'] ?? 10;
-    _maxHealth = json['maxHealth'] ?? 30;
+    health = json['health'] ?? 10.0;
+    _maxHealth = json['maxHealth'] ?? 30.0;
     gold = json['gold'] ?? 0;
     tilePosition.x = json['x'] ?? 0;
     tilePosition.y = json['y'] ?? 0;
@@ -77,19 +77,19 @@ class CharacterData {
     final hPotion = {
         "name" : "Health Potion",
         "type" : "potion",
-        "value" : 10,
+        "value" : 10.0,
         "valueName": "health",
         "description": "The thick red liquid reminds you of cough syrup.", 
-        "cost" : 10,
+        "cost" : 10.0,
         "inventoryUseText" : "Drink"
     };
     final sword = {
         "name" : "Dull Short Sword",
         "type" : "weapon",
-        "value" : 2,
+        "value" : 2.0,
         "valueName": "damage",
         "description": "A nearly useless weapon. A kids toy.",
-        "cost" : 11,
+        "cost" : 11.0,
         "inventoryUseText" : "Equip",
         "isEquipped": true
     };

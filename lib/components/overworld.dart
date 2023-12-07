@@ -156,7 +156,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         pos.x -= TILESIZE;
       }
 
-      showCombatMessage(pos, '-${enemy.weapon.value}', Color.fromARGB(249, 255, 96, 96));
+      showCombatMessage(pos, '-${enemy.weapon.value.toInt()}', Color.fromARGB(249, 255, 96, 96));
     });
   }
 
@@ -196,7 +196,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         pos.x += TILESIZE;
       }
       
-      showCombatMessage(pos, '-${game.player.weapon.value}', Color.fromARGB(250, 255, 255, 255));
+      showCombatMessage(pos, '-${game.player.weapon.value.toInt()}', Color.fromARGB(250, 255, 255, 255));
     });
   }
 
@@ -439,6 +439,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     }
     return enemies;
   }
+
   NPC? _isTileBlockedNpc(Vector2 nextTile) {
     try {
       return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
@@ -479,6 +480,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final barriers =
         Set<math.Point<int>>.from([...wallTiles, ...npcTiles, ...enemyTiles])
             .toList();
+    try{
     final result = AStarAlgorithm.AStar(
             rows: map.width,
             columns: map.height,
@@ -506,6 +508,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       final direction = directionFromPosToPos(enemy.position, tile);
       return direction;
     }
+  } catch (e) {
+    
+  }
 
     return Direction.none;
   }

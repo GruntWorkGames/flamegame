@@ -228,7 +228,7 @@
  <objectgroup color="#000000" id="9" name="enemy"/>
  <objectgroup color="#0000ff" id="10" name="npc"/>
  <objectgroup color="#ff0000" id="7" name="spawn">
-  <object id="3" x="224" y="304" width="16" height="16"/>
+  <object id="3" x="512" y="368" width="16" height="16"/>
  </objectgroup>
  <objectgroup color="#55007f" id="8" name="portal">
   <object id="5" x="560" y="384" width="16" height="16">

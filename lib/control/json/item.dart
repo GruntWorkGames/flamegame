@@ -3,10 +3,10 @@ import 'package:flame_game/control/enum/item_type.dart';
 class Item {
   String name = '';
   ItemType type = ItemType.none;
-  int value = 0;
+  double value = 0;
   String valueName = '';
   String description = '';
-  int cost = 0;
+  double cost = 0;
   String inventoryUseText = '';
   bool isEquipped = false;
   bool isSelected = false;

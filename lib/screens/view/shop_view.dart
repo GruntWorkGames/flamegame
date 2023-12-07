@@ -96,7 +96,7 @@ class ShopMenu extends ConsumerWidget {
     final item = ref.watch(shopItemProvider);
     final style = TextStyle(fontSize: 18, color: Colors.white);
     final value = item.value == 0 ? '' : '+${item.value} ${item.valueName}';
-    final description = '${item.name}\n\n${item.description}\n\n$value\n\nCost: ${item.cost} gold';
+    final description = '${item.name}\n\n${item.description}\n\n$value\n\nCost: ${item.cost.toInt()} gold';
     final label = Padding(
         padding: EdgeInsets.all(5),
         child: Text(description, style: style));

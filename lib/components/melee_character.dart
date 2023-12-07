@@ -203,7 +203,12 @@ class MeleeCharacter extends SpriteAnimationComponent
     add(emptyEffect);
   }
 
-  void takeHit(int damage, Function onComplete, Function onKilled) {
+  bool dodge() {
+
+    return false;
+  }
+
+  void takeHit(double damage, Function onComplete, Function onKilled) {
     data.health -= damage;
 
     final flicker = OpacityEffect.fadeOut(

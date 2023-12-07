@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final healthProvider = StateNotifierProvider<HealthProvider, int>((ref) {
+final healthProvider = StateNotifierProvider<HealthProvider, double>((ref) {
   return HealthProvider();
 });
 
-class HealthProvider extends StateNotifier<int> {
+class HealthProvider extends StateNotifier<double> {
   HealthProvider() : super(0);
-  void set(int value) {
+  void set(double value) {
     state = value;
   }
 }

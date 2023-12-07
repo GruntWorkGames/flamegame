@@ -93,7 +93,7 @@ class UIView extends ConsumerWidget {
 
     final coins = ref.watch(goldProvider);
     final coinImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/coin.png'));
-    final coinText = Padding(padding: EdgeInsets.only(left: 20), child: Text(coins.toString(), style: style));
+    final coinText = Padding(padding: EdgeInsets.only(left: 20), child: Text(coins.toInt().toString(), style: style));
 
     final healthRow = Row(children: [heartImg, healthText]);
     final goldRow = Row(children: [coinImg, coinText]);

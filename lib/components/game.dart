@@ -27,6 +27,8 @@ class MainGame extends FlameGame with TapDetector {
 
   @override
   Future<void> onLoad() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('player', '{}');
     add(overworldNavigator);
     instance = this;
     await load();
@@ -83,18 +85,18 @@ class MainGame extends FlameGame with TapDetector {
         overworldNavigator.loadNewGame();
         return;
       case DebugCommand.heal:
-        player.data.heal(int.parse(command.argument));
+        player.data.heal(double.parse(command.argument));
         overworld?.updateUI();
         return;
       case DebugCommand.reload:
         Navigator.pop(context);
         return;
       case DebugCommand.sethp:
-        player.data.health = int.parse(command.argument);
+        player.data.health = double.parse(command.argument);
         overworld?.updateUI();
         return;
       case DebugCommand.setstam:
-        player.data.stam = int.parse(command.argument);
+        player.data.stam = double.parse(command.argument);
         overworld?.updateUI();
         return;
       case DebugCommand.map:

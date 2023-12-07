@@ -40,7 +40,7 @@ class Enemy extends MeleeCharacter {
   }
 
   @override
-  void takeHit(int damage, Function onComplete, Function onKilled) {
+  void takeHit(double damage, Function onComplete, Function onKilled) {
     data.health -= damage;
 
     final flicker = OpacityEffect.fadeOut(

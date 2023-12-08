@@ -27,8 +27,6 @@ class MainGame extends FlameGame with TapDetector {
 
   @override
   Future<void> onLoad() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('player', '{}');
     add(overworldNavigator);
     instance = this;
     overworldNavigator.loadWorld(player.data.mapfile);
@@ -55,9 +53,7 @@ class MainGame extends FlameGame with TapDetector {
     firstItem.isSelected = true;
     ref.read(inventoryProvider.notifier).set(player.data);
     ref.read(inventoryItemProvider.notifier).set(firstItem);
-    final weapon = player.data.inventory
-        .where((item) => item.isEquipped && item.type == ItemType.weapon)
-        .firstOrNull;
+    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
     }

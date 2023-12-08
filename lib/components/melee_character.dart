@@ -232,6 +232,7 @@ class MeleeCharacter extends SpriteAnimationComponent
   // returns amount of damage done
   ({MeleeAttackResult result, double value}) takeHit(double damage, Function onComplete, Function onKilled) {
     if(dodge()) {
+      onComplete();
       return (result: MeleeAttackResult.dodged, value: 0);
     }
 

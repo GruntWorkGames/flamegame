@@ -8,6 +8,7 @@ import 'package:flame/text.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/enemy_creator.dart';
 import 'package:flame_game/components/melee_attack_result.dart';
+import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
@@ -145,15 +146,19 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
-    final pos = enemy.position.clone();
+    final pos = game.player.position.clone();
+    if(enemy.position.y == game.player.position.y) {
+      pos.y -= TILESIZE;
+    }
+
+    if(!enemy.attemptAttack()) {
+      enemyMissed(enemy, playerDirection);
+      return;
+    }
+
     var damage = enemy.weapon.value;
     if (enemy.position.x == game.player.position.x) {
       pos.x += TILESIZE;
-    }
-
-    final missed = !enemy.attemptAttack();
-    if(missed) {
-      damage = 0;
     }
 
     enemy.playAttackDirectionAnim(playerDirection, () {
@@ -172,13 +177,9 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
 
-      if(missed) {
-        showCombatMessage(pos,'miss', Color.fromARGB(249, 255, 96, 96));
-      } else {
-        final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
-        final resultString = attackResult.result == MeleeAttackResult.success ? '' : attackResult.result.name;  
-        showCombatMessage(pos,'$resultString $damageString', Color.fromARGB(249, 255, 96, 96));
-      }
+      final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
+      final resultString = attackResult.result == MeleeAttackResult.success ? '' : attackResult.result.name;  
+      showCombatMessage(pos,'$resultString $damageString', Color.fromARGB(249, 255, 96, 96));
     });
   }
 
@@ -202,19 +203,21 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       return;
     }
 
+    if(game.player.attemptAttack()) {
+      playerMissed(enemy, direction);
+      return;
+    }
+
     final pos = enemy.position.clone();
+    if(enemy.position.y == game.player.position.y) {
+      pos.y -= TILESIZE;
+    }
     if (enemy.position.x == game.player.position.x) {
-      pos.x += TILESIZE;
+      pos.x -= TILESIZE;
     }
-    var damage = game.player.weapon.value;
-    final missed = !game.player.attemptAttack();
-
-    if(missed) {
-      damage = 0;
-    }
-
+    
     game.player.playAttackDirectionAnim(direction, () {
-      final damageDone = enemy.takeHit(damage, () {
+      final damageDone = enemy.takeHit(game.player.weapon.value, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.data.gold += enemy.data.gold;
@@ -223,14 +226,37 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         enemies.removeWhere((other) => other == enemy);
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
-
-      if(missed) {
-          showCombatMessage(pos, 'miss',Color.fromARGB(250, 255, 255, 255));
-      } else {
         final damageString = damageDone.value == 0 ? '' : '-${damageDone.value.toInt()}';
         final resultString = damageDone.result == MeleeAttackResult.success ? '' : damageDone.result.name;
         showCombatMessage(pos, '$resultString $damageString',Color.fromARGB(250, 255, 255, 255));
-      }
+      });
+  }
+ 
+  void playerMissed(MeleeCharacter enemy, Direction direction) {
+    final pos = enemy.position.clone();
+    if(enemy.position.y == game.player.position.y) {
+      pos.y -= TILESIZE;
+    }
+    if (enemy.position.x == game.player.position.x) {
+      pos.x -= TILESIZE;
+    }
+    game.player.playAttackDirectionAnim(direction, () {
+      game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+      showCombatMessage(pos, 'miss',Color.fromARGB(250, 255, 255, 255));
+    });
+  }
+
+  void enemyMissed(MeleeCharacter enemy, Direction direction) {
+    final pos = game.player.position.clone();
+    if(enemy.position.y == game.player.position.y) {
+      pos.y -= TILESIZE;
+    }
+    if (enemy.position.x == game.player.position.x) {
+      pos.x += TILESIZE;
+    }
+    enemy.playAttackDirectionAnim(direction, () {
+      showCombatMessage(pos,'miss', Color.fromARGB(249, 255, 96, 96));
+      enemy.onMoveCompleted(enemy.position);
     });
   }
 

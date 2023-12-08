@@ -86,7 +86,7 @@ class CharacterData {
     final sword = {
       "name" : "Dull Short Sword",
       "type" : "weapon",
-      "value" : 5.0,
+      "value" : 4.0,
       "valueName": "damage",
       "description": "A nearly useless weapon. A kids toy.",
       "cost" : 30.0,

@@ -24,7 +24,7 @@
             {
                 "name" : "Dull Axe",
                 "type" : "weapon",
-                "value" : 4.0,
+                "value" : 5.0,
                 "valueName": "damage",
                 "description": "A double sided axe. Looks like it's pretty old and worn.",
                 "cost" : 5.0,

@@ -1,3 +1,6 @@
 enum MeleeAttackResult {
-  success, dodged, missed, killed
+  success,
+  dodged,
+  missed,
+  killed;
 }

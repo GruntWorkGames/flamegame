@@ -1,4 +1,3 @@
-import 'package:flame/effects.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';

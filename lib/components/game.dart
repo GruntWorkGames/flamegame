@@ -31,8 +31,8 @@ class MainGame extends FlameGame with TapDetector {
     prefs.setString('player', '{}');
     add(overworldNavigator);
     instance = this;
-    await load();
     overworldNavigator.loadWorld(player.data.mapfile);
+    await load();
     overworld?.equipWeapon(player.weapon);
     overworld?.equipArmor(player.armor);
     final fps = FpsTextComponent();

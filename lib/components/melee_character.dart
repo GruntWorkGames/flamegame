@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_game/components/melee_attack_result.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
@@ -19,8 +20,14 @@ class MeleeCharacter extends SpriteAnimationComponent
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
-  Item weapon = Item()..type = ItemType.weapon ..value = 3 ..isEquipped = true;
-  Item armor = Item()..type = ItemType.armor ..value = 1 ..isEquipped = true;
+  Item weapon = Item()
+    ..type = ItemType.weapon
+    ..value = 3
+    ..isEquipped = true;
+  Item armor = Item()
+    ..type = ItemType.armor
+    ..value = 1
+    ..isEquipped = true;
   double moveDuration = 0.24;
   CharacterData data = CharacterData();
 
@@ -206,9 +213,14 @@ class MeleeCharacter extends SpriteAnimationComponent
     add(emptyEffect);
   }
 
-  bool dodge() {
+  bool attemptAttack() {
+    final random = (Random().nextDouble() * 100) + 1;
+    return random <= data.hit;
+  }
 
-    return false;
+  bool dodge() {
+    final random = (Random().nextDouble() * 100) + 1;
+    return random <= data.dodge;
   }
 
   double mitigatedDamage(double rawDamage) {
@@ -218,22 +230,27 @@ class MeleeCharacter extends SpriteAnimationComponent
   }
 
   // returns amount of damage done
-  double takeHit(double damage, Function onComplete, Function onKilled) {
+  ({MeleeAttackResult result, double value}) takeHit(double damage, Function onComplete, Function onKilled) {
+    if(dodge()) {
+      return (result: MeleeAttackResult.dodged, value: 0);
+    }
+
     damage = mitigatedDamage(damage);
     data.health -= damage;
-
-    final flicker = OpacityEffect.fadeOut(
-        EffectController(repeatCount: 2, duration: 0.1, alternate: true),
-        onComplete: () {
-      if (data.health <= 0) {
-        onKilled();
-      } else {
-        onComplete();
-      }
-    });
-    flicker.removeOnFinish = true;
-    add(flicker);
-    return damage;
+    if(damage > 0) {
+      final flicker = OpacityEffect.fadeOut(
+          EffectController(repeatCount: 2, duration: 0.1, alternate: true),
+          onComplete: () {
+        if (data.health <= 0) {
+          onKilled();
+        } else {
+          onComplete();
+        }
+      });
+      flicker.removeOnFinish = true;
+      add(flicker);
+    }
+    return (result: MeleeAttackResult.success, value: damage);
   }
 
   void drinkPotion(Item item) {
@@ -247,5 +264,11 @@ class MeleeCharacter extends SpriteAnimationComponent
 }
 
 class PlayerComponent extends MeleeCharacter {
-  
+  PlayerComponent() {
+    data.armor = 2;
+    data.dodge = 5;
+    data.hit = 40;
+    data.str = 1;
+    data.stam = 1;
+  }
 }

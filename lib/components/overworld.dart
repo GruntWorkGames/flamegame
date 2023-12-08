@@ -7,6 +7,7 @@ import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/enemy_creator.dart';
+import 'package:flame_game/components/melee_attack_result.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
@@ -27,7 +28,6 @@ import 'package:flame_game/components/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
@@ -61,9 +61,18 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   FutureOr<void> onLoad() async {
     tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE));
     tiledmap?.anchor = Anchor.topLeft;
-    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
-    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
-    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
+    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties
+            .getProperty<IntProperty>('spawnChance')
+            ?.value ??
+        0;
+    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties
+            .getProperty<IntProperty>('maxEnemies')
+            ?.value ??
+        0;
+    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties
+            .getProperty<IntProperty>('spawnRadius')
+            ?.value ??
+        0;
     add(enemyCreator);
     add(tiledmap!);
     _generateTiles(tiledmap!.tileMap.map);
@@ -81,12 +90,12 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final isPlayerAtZero = game.player.position.isZero();
     final isMapMatch = game.player.data.mapfile == _mapfile;
     // new game?
-    if(!isSavedTileZero && isPlayerAtZero && isMapMatch) {
+    if (!isSavedTileZero && isPlayerAtZero && isMapMatch) {
       game.player.position = tileToPos(game.player.data.tilePosition);
     } else {
       game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
-    
+
     game.player.data.mapfile = _mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
 
@@ -136,8 +145,19 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
+    final pos = enemy.position.clone();
+    var damage = enemy.weapon.value;
+    if (enemy.position.x == game.player.position.x) {
+      pos.x += TILESIZE;
+    }
+
+    final missed = !enemy.attemptAttack();
+    if(missed) {
+      damage = 0;
+    }
+
     enemy.playAttackDirectionAnim(playerDirection, () {
-      final damageDone = game.player.takeHit(enemy.weapon.value, () {
+      var attackResult = game.player.takeHit(damage, () {
         game.ref.read(healthProvider.notifier).set(game.player.data.health);
         enemy.onMoveCompleted(enemy.position);
       }, () {
@@ -151,13 +171,14 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref.read(dialogProvider.notifier).set(dialog);
         game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
-      
-      final pos = game.player.position.clone();
-      if(enemy.position.x == game.player.position.x) {
-        pos.x -= TILESIZE;
-      }
 
-      showCombatMessage(pos, '-${damageDone.toInt()}', Color.fromARGB(249, 255, 96, 96));
+      if(missed) {
+        showCombatMessage(pos,'miss', Color.fromARGB(249, 255, 96, 96));
+      } else {
+        final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
+        final resultString = attackResult.result == MeleeAttackResult.success ? '' : attackResult.result.name;  
+        showCombatMessage(pos,'$resultString $damageString', Color.fromARGB(249, 255, 96, 96));
+      }
     });
   }
 
@@ -181,8 +202,19 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       return;
     }
 
+    final pos = enemy.position.clone();
+    if (enemy.position.x == game.player.position.x) {
+      pos.x += TILESIZE;
+    }
+    var damage = game.player.weapon.value;
+    final missed = !game.player.attemptAttack();
+
+    if(missed) {
+      damage = 0;
+    }
+
     game.player.playAttackDirectionAnim(direction, () {
-      final damageDone = enemy.takeHit(game.player.weapon.value, () {
+      final damageDone = enemy.takeHit(damage, () {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.data.gold += enemy.data.gold;
@@ -192,12 +224,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
 
-      final pos = enemy.position.clone();
-      if(enemy.position.x == game.player.position.x) {
-        pos.x += TILESIZE;
+      if(missed) {
+          showCombatMessage(pos, 'miss',Color.fromARGB(250, 255, 255, 255));
+      } else {
+        final damageString = damageDone.value == 0 ? '' : '-${damageDone.value.toInt()}';
+        final resultString = damageDone.result == MeleeAttackResult.success ? '' : damageDone.result.name;
+        showCombatMessage(pos, '$resultString $damageString',Color.fromARGB(250, 255, 255, 255));
       }
-      
-      showCombatMessage(pos, '-${damageDone.toInt()}', Color.fromARGB(250, 255, 255, 255));
     });
   }
 
@@ -362,6 +395,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
     return spawns;
   }
+
   List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
     List<NpcData> spawnData = [];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
@@ -481,37 +515,35 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final barriers =
         Set<math.Point<int>>.from([...wallTiles, ...npcTiles, ...enemyTiles])
             .toList();
-    try{
-    final result = AStarAlgorithm.AStar(
-            rows: map.width,
-            columns: map.height,
-            start: start,
-            end: end,
-            withDiagonal: false,
-            barriers: barriers)
-        .findThePath(doneList: (doneList) {});
+    try {
+      final result = AStarAlgorithm.AStar(
+              rows: map.width,
+              columns: map.height,
+              start: start,
+              end: end,
+              withDiagonal: false,
+              barriers: barriers)
+          .findThePath(doneList: (doneList) {});
 
-    if (result.isEmpty) {
-      return Direction.none;
-    }
-
-    final tilePath = result.map((point) {
-      return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
-    }).toList();
-
-    if (tilePath.length > 1) {
-      final tile = tilePath[1];
-      // prevent from running over player
-      if (posToTile(tile) == posToTile(game.player.position)) {
+      if (result.isEmpty) {
         return Direction.none;
       }
 
-      final direction = directionFromPosToPos(enemy.position, tile);
-      return direction;
-    }
-  } catch (e) {
-    
-  }
+      final tilePath = result.map((point) {
+        return tileToPos(Vector2(point.x.toDouble(), point.y.toDouble()));
+      }).toList();
+
+      if (tilePath.length > 1) {
+        final tile = tilePath[1];
+        // prevent from running over player
+        if (posToTile(tile) == posToTile(game.player.position)) {
+          return Direction.none;
+        }
+
+        final direction = directionFromPosToPos(enemy.position, tile);
+        return direction;
+      }
+    } catch (e) {}
 
     return Direction.none;
   }
@@ -647,9 +679,13 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void showCombatMessage(Vector2 pos, String message, Color color) {
     const fontSize = 16.0;
-    final paint = TextPaint(style: TextStyle(color: color, fontSize: fontSize, fontWeight: FontWeight.bold));
-    final text = TextComponent(textRenderer: paint, text: message, position: pos);
-    final moveUp = MoveEffect.by(Vector2(0,-30), EffectController(duration: 2.0), onComplete: (){
+    final paint = TextPaint(
+        style: TextStyle(
+            color: color, fontSize: fontSize, fontWeight: FontWeight.bold));
+    final text =
+        TextComponent(textRenderer: paint, text: message, position: pos);
+    final moveUp = MoveEffect.by(
+        Vector2(0, -30), EffectController(duration: 2.0), onComplete: () {
       text.removeFromParent();
     });
     text.add(moveUp);
@@ -659,9 +695,15 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     foregroundPaint.style = PaintingStyle.stroke;
     foregroundPaint.strokeWidth = 0.75;
     foregroundPaint.color = Colors.black;
-    final textOutlinePaint = TextPaint(style: TextStyle(foreground: foregroundPaint, fontSize: fontSize, fontWeight: FontWeight.bold));
-    final textOutline = TextComponent(textRenderer: textOutlinePaint, text: message, position: pos);
-    final outlineMoveup = MoveEffect.by(Vector2(0,-30), EffectController(duration: 2.0), onComplete: (){
+    final textOutlinePaint = TextPaint(
+        style: TextStyle(
+            foreground: foregroundPaint,
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold));
+    final textOutline = TextComponent(
+        textRenderer: textOutlinePaint, text: message, position: pos);
+    final outlineMoveup = MoveEffect.by(
+        Vector2(0, -30), EffectController(duration: 2.0), onComplete: () {
       textOutline.removeFromParent();
     });
     textOutline.add(outlineMoveup);

@@ -53,12 +53,13 @@ Direction directionFromPosToPos(Vector2 posA, Vector2 posB) {
 final phoneTextTheme = TextTheme();
 
 final mainTheme = ThemeData(
-    textTheme: TextTheme(),
-    textButtonTheme: TextButtonThemeData(),
-    iconButtonTheme: IconButtonThemeData(),
-    iconTheme: IconThemeData(),
-    actionIconTheme: ActionIconThemeData(),
-    inputDecorationTheme: InputDecorationTheme());
+  textTheme: TextTheme(),
+  textButtonTheme: TextButtonThemeData(), 
+  iconButtonTheme: IconButtonThemeData(),
+  iconTheme: IconThemeData(),
+  actionIconTheme: ActionIconThemeData(),
+  inputDecorationTheme: InputDecorationTheme()
+);
 
 final boxDecoration = BoxDecoration(
   border: Border.all(color: borderColor, width: borderWidth),

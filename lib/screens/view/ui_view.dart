@@ -154,42 +154,47 @@ class UIView extends ConsumerWidget {
   }
 }
 
-class ControlPad extends ConsumerWidget {
+class ControlPad extends ConsumerStatefulWidget {
   final MainGame game;
-
   ControlPad(this.game);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final buttonOpacity = ref.watch(buttonOpacityProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() {
+    return _ControlPadState(game);
+  }
+}
+
+class _ControlPadState extends ConsumerState {
+  final MainGame game;
+
+  _ControlPadState(this.game);
+
+  @override
+  Widget build(BuildContext context) {
     final color = Colors.white;
-    final upIcon = Padding(padding: EdgeInsets.all(10), child: Transform.rotate(
-        angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color)));
-
-    final downIcon = Padding(padding: EdgeInsets.all(10), child: Transform.rotate(
-        angle: -90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color)));
-    final leftIcon = Padding(padding: EdgeInsets.all(10), child: Icon(Icons.chevron_left, color: color));
-    final rightIcon = Padding(padding: EdgeInsets.all(10), child: Icon(Icons.chevron_right, color: color));
-
-    final style = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-      if(states.contains(MaterialState.pressed)) {
-        return Colors.grey[700]!.withOpacity(buttonOpacity);
-      } else {
-        return Colors.grey[buttonId]!.withOpacity(buttonOpacity);
-      }
-    }));
-
-    final upButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.up);}, child: upIcon, style: style);
-    final downButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.down);}, child: downIcon, style: style);
-    final leftButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.left);}, child: leftIcon, style: style);
-    final rightButton = ElevatedButton(onPressed: (){game.directionPressed(Direction.right);}, child: rightIcon, style: style);
+    final leftIcon = Icon(Icons.chevron_left, color: color);
+    final rightIcon = Icon(Icons.chevron_right, color: color);
+    final upIcon = Transform.rotate(angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color));
+    final downIcon = Transform.rotate(angle: -90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color));
+    final upButton = _buildButton(Direction.up, upIcon);
+    final downButton = _buildButton(Direction.down, downIcon); 
+    final leftButton = _buildButton(Direction.left, leftIcon);
+    final rightButton = _buildButton(Direction.right, rightIcon);
 
     final topRow = Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
     final middleRow = Padding(padding: EdgeInsets.symmetric(horizontal: 10), 
     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [leftButton, rightButton]));
     final bottomRow = Padding(padding: EdgeInsets.only(bottom: 10),
     child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [downButton]));
-
     return Column(children: [const Spacer(), topRow, middleRow, bottomRow]);
+  }
+
+  Widget _buildButton(Direction direction, Widget child) {
+    final padding = EdgeInsets.fromLTRB(30, 10, 30, 10);
+    final buttonOpacity = ref.watch(buttonOpacityProvider);
+    final icon = Padding(padding: padding, child: child);
+    final dec = BoxDecoration(color: Colors.grey.withOpacity(buttonOpacity), borderRadius: BorderRadius.circular(30));
+    final border = BorderRadius.circular(30.0);
+    return Material(color: Colors.transparent, child: InkWell(customBorder: RoundedRectangleBorder(borderRadius: border), onTap: (){game.directionPressed(direction);}, child: Ink(decoration: dec, child: icon)));
   }
 }

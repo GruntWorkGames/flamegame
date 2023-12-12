@@ -11,7 +11,7 @@ class MainMenuFlutter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mapImage = ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), child:Transform.scale(scale: 5, filterQuality: FilterQuality.high, child: Image.asset('assets/images/map.png')));
+    final mapImage = ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Transform.scale(scale: 5, filterQuality: FilterQuality.high, child: Image.asset('assets/images/map.png')));
     final tween = TweenAnimationBuilder(tween: Tween<Offset>(begin: Offset(-530, -100), end: Offset(400, 500)), duration: const Duration(seconds: 60), 
     builder: (_, offset, __){
       return Transform.translate(offset: offset, child: mapImage);

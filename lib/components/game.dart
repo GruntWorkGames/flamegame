@@ -122,16 +122,4 @@ class MainGame extends FlameGame with TapDetector {
     }
     return (command:commands.first, argument: commandData.argument);
   }
-
-  // DebugCommand parseCommand(String input) {
-  //   final commandData = getCommandAndParamStrings(input);
-  //   final commands = DebugCommand.values.where((command) { 
-  //     final match = command.name == commandData.command;
-  //     return match;
-  // }).toList();
-  //   if(commands.isEmpty) {
-  //     return DebugCommand.none;
-  //   }
-  //   return commands.first;
-  // }
 }

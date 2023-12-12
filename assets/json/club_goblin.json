@@ -1,5 +1,5 @@
 {
-    "imageFile": "ClubGoblin.png",
+    "imageFile": "clubGoblin.png",
     "idleDown": {
         "timePerFrame": 0.4,
         "frames": [

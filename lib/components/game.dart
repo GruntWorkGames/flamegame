@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
@@ -17,13 +16,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainGame extends FlameGame with TapDetector {
+class MainGame extends FlameGame {
   PlayerComponent player = PlayerComponent();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
   Component? currentSpeechBubble;
   late WidgetRef ref;
   static late MainGame instance;
+  bool isMoveKeyDown = false;
 
   @override
   Future<void> onLoad() async {
@@ -57,12 +57,6 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
-  }
-
-  @override
-  void onTap() {
-    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    super.onTap();
   }
 
   void directionPressed(Direction direction) {
@@ -122,4 +116,6 @@ class MainGame extends FlameGame with TapDetector {
     }
     return (command:commands.first, argument: commandData.argument);
   }
+
+  onTapDownPressed(Direction direction) {}
 }

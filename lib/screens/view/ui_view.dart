@@ -99,7 +99,8 @@ class UIView extends ConsumerWidget {
     final healthRow = Row(children: [heartImg, healthText]);
     final goldRow = Row(children: [coinImg, coinText]);
     final column = Padding(padding: EdgeInsets.all(10), child: Column(children: [healthRow, goldRow]));
-    return column;
+    final touchableColumn = GestureDetector(onTap: ()=>ref.read(uiProvider.notifier).set(UIViewDisplayType.game), child: column);
+    return touchableColumn;
   }
 
   Widget _buildSwipeDetector() {

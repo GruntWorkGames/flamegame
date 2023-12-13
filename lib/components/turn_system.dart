@@ -34,6 +34,9 @@ class TurnSystem extends Component with HasGameRef<MainGame> {
       case TurnSystemState.enemyFinished:
         overworld.listenToInput = true;
         _state = TurnSystemState.player;
+        if(overworld.shouldContinue) {
+          overworld.directionPressed(overworld.lastDirection);
+        }
         return;
       case TurnSystemState.initial:
     }

@@ -67,11 +67,12 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void directionDown(Direction direction) {
-    print('d down');
+    overworld?.directionPressed(direction);
+    overworld?.shouldContinue = true;
   }
 
   void directionUp(Direction direction) {
-    print('d up');
+    overworld?.shouldContinue = false;
   }
 
   void directionPressed(Direction direction) {

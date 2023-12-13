@@ -49,6 +49,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
   final _aggroDistance = 6;
+  bool shouldContinue = false; // player continuoue movement
+  Direction lastDirection = Direction.none;
 
   Overworld(this._mapfile);
 
@@ -196,6 +198,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       game.player.move(direction);
       listenToInput = false;
     }
+    lastDirection = direction;
   }
 
   void fightDirectionPressed(Enemy enemy, Direction direction) {

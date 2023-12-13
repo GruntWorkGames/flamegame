@@ -11,7 +11,7 @@ class CharacterData {
   double stam = 1;
   double armor = 1;
   Vector2 tilePosition = Vector2(0,0);
-  String mapfile = 'map.tmx';
+  String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
   
   double get maxHealth {
@@ -50,7 +50,7 @@ class CharacterData {
     gold = json['gold'] ?? 0;
     tilePosition.x = json['x'] ?? 0;
     tilePosition.y = json['y'] ?? 0;
-    mapfile = json['mapfile'] ?? 'map.tmx';
+    mapfile = json['mapfile'] ?? 'bigmap.tmx';
     final inventoryNode = json['inventory'] ?? [];
     if (inventoryNode != null && inventoryNode.isNotEmpty) {
       json['inventory'].forEach((v) {

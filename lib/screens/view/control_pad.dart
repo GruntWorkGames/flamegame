@@ -47,9 +47,10 @@ class _ControlPadState extends ConsumerState {
     final dec = BoxDecoration(color: Colors.grey.withOpacity(buttonOpacity), borderRadius: BorderRadius.circular(30));
     final border = BorderRadius.circular(30.0);
     return Material(color: Colors.transparent, child: InkWell(customBorder: RoundedRectangleBorder(borderRadius: border), 
-    onTap: (){game.directionPressed(direction);}, 
+    // onTap: (){game.directionPressed(direction);}, 
     onTapDown: (_)=>game.directionDown(direction),
     onTapUp: (_)=>game.directionUp(direction),
+    onTapCancel: ()=>game.directionUp(direction),
     child: Ink(decoration: dec, child: icon)));
   }
 }

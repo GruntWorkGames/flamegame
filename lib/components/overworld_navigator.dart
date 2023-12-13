@@ -8,7 +8,7 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
   Overworld? lastWorld;
 
   void loadMainWorld() {
-    loadWorld('map.tmx');
+    loadWorld('bigmap.tmx');
   }
 
   Future<void> loadWorld(String mapfile) async {

@@ -182,7 +182,7 @@
   </object>
   <object id="12" x="160" y="160" width="16" height="16">
    <properties>
-    <property name="map" value="map.tmx"/>
+    <property name="map" value="bigmap.tmx"/>
     <property name="x" value="560"/>
     <property name="y" value="416"/>
    </properties>
@@ -206,7 +206,7 @@
    <properties>
     <property name="locX" value="560"/>
     <property name="locY" value="416"/>
-    <property name="map" value="map.tmx"/>
+    <property name="map" value="bigmap.tmx"/>
    </properties>
   </object>
   <object id="20" x="512" y="320" width="16" height="16">

@@ -33,7 +33,7 @@ class MeleeCharacter extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
-    anchor = Anchor.topLeft;
+    anchor = Anchor(0, 0.3);
     buildAnimations();
     actionFinished(CharacterAnimationState.idleDown);
   }

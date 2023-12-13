@@ -288,6 +288,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
     if (portal != null) {
       _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
+      shouldContinue = false;
       portal();
       return false;
     }
@@ -390,6 +391,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void _addPortal(Portal portal) {
     final func = () async {
+      shouldContinue = false;
       final map = portal.map;
       await game.overworldNavigator.loadWorld(map);
     };

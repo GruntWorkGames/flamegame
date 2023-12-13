@@ -45,7 +45,7 @@ class CharacterData {
   }
 
   CharacterData.fromJson(Map<String, dynamic> json) {
-    health = json['health'] ?? 10.0;
+    _health = json['health'] ?? 10.0;
     _maxHealth = json['maxHealth'] ?? 30.0;
     gold = json['gold'] ?? 0;
     tilePosition.x = json['x'] ?? 0;

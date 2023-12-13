@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
@@ -16,7 +17,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainGame extends FlameGame {
+class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
@@ -57,6 +58,20 @@ class MainGame extends FlameGame {
     if (weapon != null) {
       player.weapon = weapon;
     }
+  }
+
+  @override
+  void onTap() {
+    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    super.onTap();
+  }
+
+  void directionDown(Direction direction) {
+    print('d down');
+  }
+
+  void directionUp(Direction direction) {
+    print('d up');
   }
 
   void directionPressed(Direction direction) {

@@ -36,6 +36,9 @@ class MeleeCharacter extends SpriteAnimationComponent
     anchor = Anchor(0, 0.3);
     buildAnimations();
     actionFinished(CharacterAnimationState.idleDown);
+    for(int i=0; i<100; i++) {
+      print(getDamage().toString());
+    }
   }
 
   Future<void> buildAnimations() async {
@@ -262,6 +265,15 @@ class MeleeCharacter extends SpriteAnimationComponent
       data.health = newMax;
     }
   }
+
+  // get a randomized damage calculated with stats and weapon
+  double getDamage() {
+    final r = Random().nextDouble() + 1;
+    final str = data.str;
+    final wepDmg = weapon.value;
+
+    return (wepDmg + str * r).ceilToDouble();
+  }
 }
 
 class PlayerComponent extends MeleeCharacter {
@@ -269,7 +281,7 @@ class PlayerComponent extends MeleeCharacter {
     data.armor = 2;
     data.dodge = 5;
     data.hit = 40;
-    data.str = 1;
+    data.str = 5;
     data.stam = 1;
   }
 }

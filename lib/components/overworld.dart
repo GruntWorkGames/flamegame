@@ -216,7 +216,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       pos.y -= TILESIZE;
     }
     if (enemy.position.x == game.player.position.x) {
-      pos.x -= TILESIZE;
+      pos.x -= TILESIZE + TILESIZE/2;
     }
     
     game.player.playAttackDirectionAnim(direction, () {

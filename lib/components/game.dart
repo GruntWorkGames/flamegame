@@ -108,6 +108,7 @@ class MainGame extends FlameGame with TapDetector {
         return;
       case DebugCommand.setstr:
         player.data.str = double.parse(command.argument);
+        save();
         return;
       case DebugCommand.map:
         overworldNavigator.loadWorld(command.argument);

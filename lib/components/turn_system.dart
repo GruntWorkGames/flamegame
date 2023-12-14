@@ -13,7 +13,7 @@ class TurnSystem extends Component with HasGameRef<MainGame> {
   Function? enemyFinishedCallback = null;
 
   TurnSystem({required this.overworld, this.playerFinishedCallback = null, this.enemyFinishedCallback});
-
+ 
   void updateState(TurnSystemState newState) {
 
     switch(newState) {

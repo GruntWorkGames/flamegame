@@ -47,6 +47,10 @@ class CharacterData {
   CharacterData.fromJson(Map<String, dynamic> json) {
     _health = json['health'] ?? 10.0;
     _maxHealth = json['maxHealth'] ?? 30.0;
+    hit = json['hit'] ?? 40.0;
+    dodge = json['dodge'] ?? 5.0;
+    str = json['str'] ?? 1.0;
+    stam = json['stam'] ?? 1.0;
     gold = json['gold'] ?? 0;
     tilePosition.x = json['x'] ?? 0;
     tilePosition.y = json['y'] ?? 0;
@@ -68,6 +72,10 @@ class CharacterData {
     data['gold'] = this.gold;
     data['x'] = tilePosition.x;
     data['y'] = tilePosition.y;
+    data['hit'] = hit;
+    data['str'] = str;
+    data['stam'] = stam;
+    data['dodge'] = dodge;
     data['mapfile'] = mapfile;
     data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
     return data;

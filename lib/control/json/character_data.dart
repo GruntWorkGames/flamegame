@@ -10,6 +10,7 @@ class CharacterData {
   double str = 1;
   double stam = 1;
   double armor = 1;
+  double experience = 0;
   Vector2 tilePosition = Vector2(0,0);
   String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
@@ -47,6 +48,7 @@ class CharacterData {
   CharacterData.fromJson(Map<String, dynamic> json) {
     _health = json['health'] ?? 10.0;
     _maxHealth = json['maxHealth'] ?? 30.0;
+    experience = json['experience'] ?? 0.0;
     hit = json['hit'] ?? 40.0;
     dodge = json['dodge'] ?? 5.0;
     str = json['str'] ?? 1.0;
@@ -77,6 +79,7 @@ class CharacterData {
     data['stam'] = stam;
     data['dodge'] = dodge;
     data['mapfile'] = mapfile;
+    data['experience'] = experience;
     data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
     return data;
   }

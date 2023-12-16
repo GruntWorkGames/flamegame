@@ -6,6 +6,7 @@ import 'package:flame_game/control/json/item.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class Enemy extends MeleeCharacter {
+  double experience = 10;
   Enemy();
 
   @override

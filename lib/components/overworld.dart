@@ -18,7 +18,6 @@ import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
-import 'package:flame_game/control/provider/debug_label.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
@@ -112,8 +111,16 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final minDistanceY = (game.size.y / (TILESIZE * zoomFactor)) * 8;
     final maxDistX = (tiledmap?.width ?? 1000) - game.size.x / 4.8;
     final maxDistanceY = (tiledmap?.height ?? 1000) - game.size.y / 4.8;
-    
     final camPos = game.player.position.clone();
+
+    if(camPos.x < minDistanceX 
+    && camPos.x > maxDistX
+    && camPos.y < minDistanceY
+    && camPos.y > maxDistanceY) {
+      game.camera.viewfinder.position = Vector2(80, 96);
+      return;
+    }
+    
     if(camPos.x < minDistanceX) {
       camPos.x = minDistanceX;
     }
@@ -127,11 +134,6 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     if(camPos.y > maxDistanceY) {
       camPos.y = maxDistanceY;
     }
-
-    game.debugLabel.text = 
-      '${camPos.x.round()}, ${camPos.y.round()}';
-    game.debugLabel.text += 
-      '\n\n${game.player.position.x.round()}, ${game.player.position.y.round()}';
     
     game.camera.viewfinder.position = camPos;
   }

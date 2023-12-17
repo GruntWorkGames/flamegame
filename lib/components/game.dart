@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/text.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/item_type.dart';

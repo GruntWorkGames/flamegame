@@ -107,16 +107,19 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   void update(double dt) {
-    final minDistanceX = (game.size.x / (TILESIZE * zoomFactor)) * 8;
-    final minDistanceY = (game.size.y / (TILESIZE * zoomFactor)) * 8;
-    final maxDistX = (tiledmap?.width ?? 1000) - game.size.x / 4.8;
-    final maxDistanceY = (tiledmap?.height ?? 1000) - game.size.y / 4.8;
+    final minDistanceX = (game.size.x / 2 / zoomFactor);
+    final minDistanceY = (game.size.y / 2 / zoomFactor);
+    final maxDistX = (tiledmap?.width ?? 0) - game.size.x / 2 / zoomFactor;
+    final maxDistanceY = (tiledmap?.height ?? 0) - game.size.y / 2 / zoomFactor;
     final camPos = game.player.position.clone();
 
     if(camPos.x < minDistanceX 
     && camPos.x > maxDistX
     && camPos.y < minDistanceY
     && camPos.y > maxDistanceY) {
+      game.camera.viewfinder.position = Vector2(80, 96);
+      return;
+    } else if (maxDistanceY < 0) {
       game.camera.viewfinder.position = Vector2(80, 96);
       return;
     }

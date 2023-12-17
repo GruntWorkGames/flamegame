@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/text.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/item_type.dart';
@@ -13,6 +14,7 @@ import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/overworld.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +27,7 @@ class MainGame extends FlameGame with TapDetector {
   late WidgetRef ref;
   static late MainGame instance;
   bool isMoveKeyDown = false;
+  TextComponent debugLabel = TextComponent();
 
   @override
   Future<void> onLoad() async {
@@ -37,6 +40,12 @@ class MainGame extends FlameGame with TapDetector {
     final fps = FpsTextComponent();
     fps.position = Vector2(25, size.y - 50);
     add(fps);
+
+    debugLabel.position = Vector2(size.x / 2, 100);
+    debugLabel.textRenderer = TextPaint();
+    debugLabel.priority = double.maxFinite.toInt();
+    debugLabel.anchor = Anchor.center;
+    add(debugLabel);
   }
 
   void save() async {
@@ -63,6 +72,7 @@ class MainGame extends FlameGame with TapDetector {
   @override
   void onTap() {
     ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    // ref.read(screenTransitionState.notifier).set(true);
     super.onTap();
   }
 

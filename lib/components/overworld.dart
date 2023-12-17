@@ -18,6 +18,7 @@ import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/portal.dart';
+import 'package:flame_game/control/provider/debug_label.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
@@ -84,7 +85,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     _createNpcs();
     enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
-    game.camera.follow(game.player);
+    // game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
@@ -103,6 +104,36 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     game.player.data.tilePosition = posToTile(game.player.position);
 
     updateUI();
+  }
+
+  @override
+  void update(double dt) {
+    final minDistanceX = (game.size.x / (TILESIZE * zoomFactor)) * 8;
+    final minDistanceY = (game.size.y / (TILESIZE * zoomFactor)) * 8;
+    final maxDistX = (tiledmap?.width ?? 1000) - game.size.x / 4.8;
+    final maxDistanceY = (tiledmap?.height ?? 1000) - game.size.y / 4.8;
+    
+    final camPos = game.player.position.clone();
+    if(camPos.x < minDistanceX) {
+      camPos.x = minDistanceX;
+    }
+    if(camPos.x > maxDistX) {
+      camPos.x = maxDistX;
+    }
+
+    if(camPos.y < minDistanceY) {
+      camPos.y = minDistanceY;
+    }
+    if(camPos.y > maxDistanceY) {
+      camPos.y = maxDistanceY;
+    }
+
+    game.debugLabel.text = 
+      '${camPos.x.round()}, ${camPos.y.round()}';
+    game.debugLabel.text += 
+      '\n\n${game.player.position.x.round()}, ${game.player.position.y.round()}';
+    
+    game.camera.viewfinder.position = camPos;
   }
 
   @override

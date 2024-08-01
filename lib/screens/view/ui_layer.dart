@@ -17,9 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class UIView extends ConsumerWidget {
+class UILayer extends ConsumerWidget {
   late final MainGame game;
-  UIView(this.game);
+  UILayer(this.game);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -143,7 +143,7 @@ class UIView extends ConsumerWidget {
         width: borderWidth), 
         borderRadius: BorderRadius.circular(borderRadius));
     final button = Container(decoration: containerDecoration, child:IconButton(color: mainColor, onPressed: (){
-      game.command(debugTextFieldController.text, context);
+      // game.command(debugTextFieldController.text, context);
     }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: Colors.white)));
     
     final textField = Container(decoration: containerDecoration, width: width, child: TextField(

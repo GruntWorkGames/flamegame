@@ -1,3 +1,3 @@
-# Flame Performance Test Game
+# Dungeon Game
 
-Simple scrolling shooter game used for testing the performance of Flame.
+A turn based topdown game written using Flutter and Flame.

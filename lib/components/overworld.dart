@@ -86,7 +86,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
     // game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
-    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
     game.player.data.tilePosition = posToTile(game.player.position);
     final isSavedTileZero = game.player.data.tilePosition.isZero();
@@ -201,18 +201,18 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
     enemy.playAttackDirectionAnim(playerDirection, () {
       var attackResult = game.player.takeHit(damage, () {
-        game.ref.read(healthProvider.notifier).set(game.player.data.health);
+        game.ref?.read(healthProvider.notifier).set(game.player.data.health);
         enemy.onMoveCompleted(enemy.position);
       }, () {
         // on death callback
-        game.ref.read(healthProvider.notifier).set(game.player.data.health);
+        game.ref?.read(healthProvider.notifier).set(game.player.data.health);
         game.player.removeFromParent();
 
         final dialog = DialogData();
         dialog.title = 'You have died';
         dialog.message = 'Press here to restart';
-        game.ref.read(dialogProvider.notifier).set(dialog);
-        game.ref.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
+        game.ref?.read(dialogProvider.notifier).set(dialog);
+        game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
 
       final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
@@ -342,18 +342,18 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final dialog = DialogData();
     dialog.title = npc.npc.name;
     dialog.message = npc.npc.speech;
-    game.ref.read(dialogProvider.notifier).set(dialog);
-    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+    game.ref?.read(dialogProvider.notifier).set(dialog);
+    game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
   }
 
   void showShop(NPC npc) async {
     final json = await game.assets.readJson(npc.npc.shopJsonFile);
     final shop = Shop.fromJson(json);
-    game.ref.read(shopProvider.notifier).set(shop);
+    game.ref?.read(shopProvider.notifier).set(shop);
     final firstItem = shop.items.first;
     firstItem.isSelected = true;
-    game.ref.read(shopItemProvider.notifier).set(firstItem);
-    game.ref.read(uiProvider.notifier).set(UIViewDisplayType.shop);
+    game.ref?.read(shopItemProvider.notifier).set(firstItem);
+    game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.shop);
   }
 
   bool isTileBlocked(Vector2 pos) {
@@ -687,12 +687,12 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
       final dialog = DialogData();
       dialog.title = 'Oops!';
       dialog.message = 'Sorry, you don\'t have enough gold!';
-      game.ref.read(dialogProvider.notifier).set(dialog);
-      game.ref.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+      game.ref?.read(dialogProvider.notifier).set(dialog);
+      game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     } else {
       item.isSelected = false;
       game.player.data.gold -= item.cost;
-      game.ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+      game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
 
       if (item.name == 'Heal') {
         game.player.data.health = game.player.data.maxHealth;
@@ -741,8 +741,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void updateUI() {
-    game.ref.read(healthProvider.notifier).set(game.player.data.health);
-    game.ref.read(goldProvider.notifier).set(game.player.data.gold);
+    game.ref?.read(healthProvider.notifier).set(game.player.data.health);
+    game.ref?.read(goldProvider.notifier).set(game.player.data.gold);
   }
 
   void showCombatMessage(Vector2 pos, String message, Color color) {

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame_game/components/game.dart';
-import 'package:flame_game/screens/view/ui_view.dart';
+import 'package:flame_game/screens/view/ui_layer.dart';
 import 'package:flame_tiled/flame_tiled.dart' as flame;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +28,7 @@ class MainMenuFlutter extends ConsumerWidget {
       Navigator.push(context, MaterialPageRoute(builder: (context) { 
         final game = MainGame();
         final gameWidget = GameWidget(game: game);
-        final stack = Stack(children: [gameWidget, UIView(game)]);
+        final stack = Stack(children: [gameWidget, UILayer(game)]);
         final scaffold = Scaffold(body: stack);
         return scaffold;
       }));

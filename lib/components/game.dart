@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/text.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/item_type.dart';
@@ -14,7 +15,6 @@ import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/overworld.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,25 +23,25 @@ class MainGame extends FlameGame with TapDetector {
   Overworld? overworld;
   final overworldNavigator = OverworldNavigator();
   Component? currentSpeechBubble;
-  late WidgetRef ref;
+  WidgetRef? ref;
   static late MainGame instance;
   bool isMoveKeyDown = false;
   TextComponent debugLabel = TextComponent();
 
   @override
   Future<void> onLoad() async {
+    super.onLoad();
     add(overworldNavigator);
     instance = this;
     overworldNavigator.loadWorld(player.data.mapfile);
-    await load();
+    await loadSavedPlayerData();
     overworld?.equipWeapon(player.weapon);
     overworld?.equipArmor(player.armor);
-    final fps = FpsTextComponent();
-    fps.position = Vector2(25, size.y - 50);
-    add(fps);
 
+    TextComponent debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
-    debugLabel.textRenderer = TextPaint();
+    debugLabel.text = '';
+    debugLabel.textRenderer = TextPaint(style: TextStyle(color: Colors.red));
     debugLabel.priority = double.maxFinite.toInt();
     debugLabel.anchor = Anchor.center;
     add(debugLabel);
@@ -53,15 +53,15 @@ class MainGame extends FlameGame with TapDetector {
     prefs.setString('player', jsonString);
   }
 
-  Future<void> load() async {
+  Future<void> loadSavedPlayerData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('player') ?? '{}';
     final json = jsonDecode(jsonString);
     player.data = CharacterData.fromJson(json);
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
-    ref.read(inventoryProvider.notifier).set(player.data);
-    ref.read(inventoryItemProvider.notifier).set(firstItem);
+    ref?.read(inventoryProvider.notifier).set(player.data);
+    ref?.read(inventoryItemProvider.notifier).set(firstItem);
     final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
@@ -70,7 +70,7 @@ class MainGame extends FlameGame with TapDetector {
 
   @override
   void onTap() {
-    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
     // ref.read(screenTransitionState.notifier).set(true);
     super.onTap();
   }
@@ -91,7 +91,7 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void command(String text, BuildContext context) {
-    ref.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
 
     final command = parseCommand(text);
     switch(command.command) {

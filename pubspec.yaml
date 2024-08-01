@@ -9,9 +9,9 @@ environment:
 
 dependencies:
   a_star_algorithm: ^0.3.1
-  flame: ^1.10.0
-  flame_tiled: ^1.15.0
-  flame_tiled_utils: ^1.1.1
+  flame: ^1.18.0
+  flame_tiled: ^1.20.2
+  flame_tiled_utils: ^1.2.0
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.4.8

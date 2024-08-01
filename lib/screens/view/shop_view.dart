@@ -106,9 +106,8 @@ class ShopMenu extends ConsumerWidget {
         color: mainColor);
     final useText =
         Padding(padding: EdgeInsets.all(5), child: Text('Buy', style: style));
-
-    final buttonStyle = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-      if(states.contains(MaterialState.pressed)) {
+    final buttonStyle = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+      if(states.contains(WidgetState.pressed)) {
         return mainColor;
       } else {
         return borderColor;

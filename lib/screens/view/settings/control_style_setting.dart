@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ControlStyleSetting extends ConsumerWidget {
   final buttonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-      if(states.contains(MaterialState.selected)) {
+    backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+      if(states.contains(WidgetState.selected)) {
         return Colors.grey[400]!;
       } else {
         return Colors.grey[700]!;

@@ -183,6 +183,17 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     return Direction.none;
   }
 
+  Vector2 combatTextPositionForEntity(PositionComponent entity) {
+    final pos = game.player.position.clone();
+    if(entity.position.y == game.player.position.y) {
+      pos.y -= TILESIZE;
+    }
+    if (entity.position.x == game.player.position.x) {
+      pos.x += TILESIZE;
+    }
+    return pos;
+  }
+
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     final pos = game.player.position.clone();
     if(enemy.position.y == game.player.position.y) {
@@ -730,6 +741,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
         break;
       case ItemType.potion:
         game.player.drinkPotion(item);
+        final pos = combatTextPositionForEntity(game.player);
+        showCombatMessage(pos, '+${item.value}', Colors.lightGreen);
         game.player.data.delete(item);
         break;
       case ItemType.torch:

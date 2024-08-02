@@ -102,14 +102,14 @@ class InventoryView extends ConsumerWidget {
     final deleteIcon = Icon(Icons.delete, size: 24, color: Colors.white);
     final useText = Padding(padding: EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
 
-    final buttonStyle = ButtonStyle(elevation: MaterialStateProperty.resolveWith<double>((states) {
-      if(states.contains(MaterialState.pressed)) {
+    final buttonStyle = ButtonStyle(elevation: WidgetStateProperty.resolveWith<double>((states) {
+      if(states.contains(WidgetState.pressed)) {
         return 0;
       } else {
         return 5;
       }
-    }), backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-      if(states.contains(MaterialState.pressed)) {
+    }), backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+      if(states.contains(WidgetState.pressed)) {
         return mainColor;
       } else {
         return borderColor;

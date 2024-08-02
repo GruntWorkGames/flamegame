@@ -15,8 +15,8 @@ class MainMenuFlutter extends ConsumerWidget {
     final game = GameWidget(game: _MapBackground());
     final titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: "Times New Roman", shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: const Offset(2, 2))]);
     final buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
-    final buttonColors = ButtonStyle(backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-      if(states.contains(MaterialState.pressed)) {
+    final buttonColors = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
+      if(states.contains(WidgetState.pressed)) {
         return Colors.grey[700]!;
       } else {
         return Colors.grey[400]!;

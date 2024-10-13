@@ -404,15 +404,25 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _buildBlockedTiles(RenderableTiledMap tileMap) async {
-    await TileProcessor.processTileType(
+    final layerNames = tileMap.renderableLayers.map((element) {
+      return element.layer.name;
+    },).toList();
+    
+    try{
+    final what = await TileProcessor.processTileType(
         tileMap: tileMap,
         processorByType: <String, TileProcessorFunc>{
           'blocked': ((tile, position, size) async {
             _addBlockedCell(position);
           }),
         },
-        layersToLoad: ['grass', 'trees', 'rocks', 'building'],
+        layersToLoad: layerNames,
         clear: false);
+        print(what);
+    } on Exception catch(e, st) {
+      print(e);
+      print(st);
+    }
   }
 
   void _buildPortals(RenderableTiledMap tileMap) {

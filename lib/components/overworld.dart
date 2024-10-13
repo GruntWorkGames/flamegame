@@ -26,6 +26,7 @@ import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/game.dart';
+import 'package:flame_game/screens/view/debug/enemies_enabled_provider.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
@@ -802,6 +803,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void playerMoved() {
-    enemyCreator.playerMoved();
+    if(game.ref?.read(enemiesEnabled) ?? true) {
+      enemyCreator.playerMoved();
+    }
   }
 }

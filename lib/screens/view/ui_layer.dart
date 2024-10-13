@@ -9,6 +9,7 @@ import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/direction.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/control_pad.dart';
+import 'package:flame_game/screens/view/debug_view.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
 import 'package:flame_game/screens/view/inventory_view.dart';
 import 'package:flame_game/screens/view/settings_view.dart';
@@ -69,8 +70,8 @@ class UILayer extends ConsumerWidget {
         return _gameOver(ref);
       case UIViewDisplayType.inventory:
         return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
-      case UIViewDisplayType.debug:
-        return SafeArea(child: Stack(children:[_debugView(context), hud]));
+      case UIViewDisplayType.debug: 
+        return SafeArea(child: Stack(children:[DebugView(game), hud]));
       case UIViewDisplayType.settings:
         return SafeArea(child: Stack(children:[SettingsView(), hud]));
     }
@@ -130,28 +131,4 @@ class UILayer extends ConsumerWidget {
     return Center(child: dialog);
   }
   
-  Widget _debugView(BuildContext context) {
-    final debugTextFieldController = TextEditingController();
-    final width = MediaQuery.of(context).size.width / 2;
-    final inputDecoration = InputDecoration(
-      hintText: 'Enter command',
-      border: OutlineInputBorder());
-      final containerDecoration = BoxDecoration(
-      color: mainColor, 
-      border: Border.all(
-        color: borderColor, 
-        width: borderWidth), 
-        borderRadius: BorderRadius.circular(borderRadius));
-    final button = Container(decoration: containerDecoration, child:IconButton(color: mainColor, onPressed: (){
-      // game.command(debugTextFieldController.text, context);
-    }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: Colors.white)));
-    
-    final textField = Container(decoration: containerDecoration, width: width, child: TextField(
-      controller: debugTextFieldController,
-      decoration: inputDecoration, 
-      cursorColor: Colors.white,));
-    const spacer = SizedBox(width: 10);
-    return Center(child:Row(mainAxisAlignment: MainAxisAlignment.center, 
-    children: [textField, spacer, button]));
-  }
 }

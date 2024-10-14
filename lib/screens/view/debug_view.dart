@@ -59,7 +59,7 @@ class DebugView extends ConsumerWidget {
         width: borderWidth), 
         borderRadius: BorderRadius.circular(borderRadius));
     final button = Container(decoration: containerDecoration, child:IconButton(color: mainColor, onPressed: (){
-      // game.command(debugTextFieldController.text, context);
+      game.command(debugTextFieldController.text, context);
     }, icon: Icon(Icons.check_circle_outline_outlined, size: 34, color: Colors.white)));
     
     final textField = Container(decoration: containerDecoration, width: width, child: TextField(

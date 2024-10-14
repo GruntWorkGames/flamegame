@@ -33,7 +33,7 @@ class MainGame extends FlameGame with TapDetector {
     super.onLoad();
     add(overworldNavigator);
     instance = this;
-    overworldNavigator.loadWorld(player.data.mapfile);
+    await overworldNavigator.pushWorld(player.data.mapfile);
     await loadSavedPlayerData();
     overworld?.equipWeapon(player.weapon);
     overworld?.equipArmor(player.armor);
@@ -120,7 +120,7 @@ class MainGame extends FlameGame with TapDetector {
         save();
         return;
       case DebugCommand.map:
-        overworldNavigator.loadWorld(command.argument);
+        overworldNavigator.pushWorld(command.argument);
     }
   }
 

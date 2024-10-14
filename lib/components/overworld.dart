@@ -452,7 +452,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     final func = () async {
       shouldContinue = false;
       final map = portal.map;
-      await game.overworldNavigator.loadWorld(map);
+      await game.overworldNavigator.pushWorld(map);
     };
     final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
     _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
@@ -460,7 +460,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void _addExit(Vector2 exit) {
     final func = () async {
-      game.overworldNavigator.loadMainWorld();
+      game.overworldNavigator.popWorld();
     };
     final tilePos = posToTile(Vector2(exit.x, exit.y));
     _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;

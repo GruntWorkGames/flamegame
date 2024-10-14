@@ -640,8 +640,16 @@
  </layer>
  <objectgroup color="#000000" id="9" name="enemy"/>
  <objectgroup color="#ffa885" id="14" name="warp">
-  <object id="20" x="1248" y="832" width="16" height="16"/>
-  <object id="21" x="1312" y="784" width="16" height="16"/>
+  <object id="20" x="1248" y="832" width="16" height="16">
+   <properties>
+    <property name="id" value="a1"/>
+   </properties>
+  </object>
+  <object id="21" x="1312" y="784" width="16" height="16">
+   <properties>
+    <property name="id" value="b1"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#0000ff" id="10" name="npc"/>
  <objectgroup color="#ff0000" id="7" name="spawn">

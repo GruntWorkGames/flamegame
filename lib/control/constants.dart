@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:flame_game/direction.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flutter/material.dart';
 
 const double TILESIZE = 16;

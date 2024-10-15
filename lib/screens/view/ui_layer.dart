@@ -1,4 +1,4 @@
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/control_style.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/button_opacity.dart';
@@ -6,7 +6,7 @@ import 'package:flame_game/control/provider/control_style_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/direction.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/control_pad.dart';
 import 'package:flame_game/screens/view/debug_view.dart';

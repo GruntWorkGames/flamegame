@@ -1,5 +1,5 @@
 import 'package:flame_game/components/game.dart';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/screens/view/debug/enemies_enabled_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/game.dart';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'dart:math' as math;
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {

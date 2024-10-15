@@ -1,7 +1,7 @@
 
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/provider/button_opacity.dart';
-import 'package:flame_game/direction.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

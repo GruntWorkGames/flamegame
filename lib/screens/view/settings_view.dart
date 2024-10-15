@@ -1,4 +1,4 @@
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/screens/view/settings/control_style_setting.dart';
 import 'package:flame_game/screens/view/settings/fx_setting.dart';
 import 'package:flame_game/screens/view/settings/music_setting.dart';

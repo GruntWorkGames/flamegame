@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

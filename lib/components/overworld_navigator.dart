@@ -5,10 +5,9 @@ import 'package:flame_game/components/overworld.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
   final Map<String, Overworld> worlds = {};
-  Overworld? lastWorld;
   List<Overworld> stack = [];
 
-  void loadMainWorld() {
+  void _loadMainWorld() {
     pushWorld('bigmap.tmx');
   }
 
@@ -35,11 +34,18 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
   }
 
   void loadNewGame() {
-    worlds.clear();
     game.player = PlayerComponent();
     game.player.data.addDefaultItems();
     stack.clear();
     worlds.clear();
-    loadMainWorld();    
+    _loadMainWorld();    
+  }
+
+  void pushDungeon(Vector2 location) {
+    
+  }
+
+  void popDungeon() {
+    
   }
 }

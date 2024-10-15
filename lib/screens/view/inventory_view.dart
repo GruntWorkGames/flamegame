@@ -1,4 +1,4 @@
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';

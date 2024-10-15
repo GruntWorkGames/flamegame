@@ -6,12 +6,12 @@ import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_game/components/melee_attack_result.dart';
 import 'package:flame_game/components/turn_system.dart';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/direction.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/components/game.dart';
 
 class MeleeCharacter extends SpriteAnimationComponent

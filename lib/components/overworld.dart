@@ -12,25 +12,52 @@ import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/npc.dart';
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
-import 'package:flame_game/constants.dart';
+import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
-import 'package:flame_game/control/portal.dart';
+import 'package:flame_game/control/objects/portal.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/direction.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/debug/enemies_enabled_provider.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+
+
+// mixin Map {
+//   List<List<dynamic>> blockedTiles = [];
+//   List<Vector2> openTiles = [];
+//   List<List<dynamic>> _triggerTiles = [];
+//   List<List<dynamic>> _npcTiles = [];
+//   List<Enemy> enemies = [];
+//   List<NPC> _npcs = [];
+//   String _mapfile = '';
+//   Vector2 _reEntryPos = Vector2.zero();
+//   TiledComponent? tiledmap;
+//   final enemyCreator = EnemyCreator();
+//   final List<Square> _squares = [];
+//   List<math.Point<int>> _blockedTileList = [];
+//   double zoomFactor = 2.4;
+
+//   _generateTiles(tiledmap!.tileMap.map);
+//   _buildBlockedTiles(tiledmap!.tileMap);
+//   _buildPortals(tiledmap!.tileMap);
+//   _createNpcs();
+//   _createEnemies(tiledmap!.tileMap);
+// }
+
+// class Dungeon with Map {
+
+// }
 
 class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<dynamic>> blockedTiles = [];
@@ -39,17 +66,18 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<dynamic>> _npcTiles = [];
   List<Enemy> enemies = [];
   List<NPC> _npcs = [];
-  bool listenToInput = false;
   String _mapfile = '';
   Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? tiledmap;
   final enemyCreator = EnemyCreator();
-  late final TurnSystem turnSystem;
-  List<math.Point<int>> _blockedTileList = [];
-  List<Enemy> _enemiesToMove = [];
   final List<Square> _squares = [];
+  List<math.Point<int>> _blockedTileList = [];
   double zoomFactor = 2.4;
+
   final _aggroDistance = 6;
+  bool listenToInput = false;
+  late final TurnSystem turnSystem;
+  List<Enemy> _enemiesToMove = [];
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
 
@@ -84,6 +112,8 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildPortals(tiledmap!.tileMap);
     _createNpcs();
     enemies = _createEnemies(tiledmap!.tileMap);
+
+
     turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
     // game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);

@@ -20,7 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
-  Overworld? overworld;
+  MapRunner? overworld;
   final overworldNavigator = OverworldNavigator();
   Component? currentSpeechBubble;
   WidgetRef? ref;

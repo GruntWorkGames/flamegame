@@ -33,33 +33,35 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 
-// mixin Map {
-//   List<List<dynamic>> blockedTiles = [];
-//   List<Vector2> openTiles = [];
-//   List<List<dynamic>> _triggerTiles = [];
-//   List<List<dynamic>> _npcTiles = [];
-//   List<Enemy> enemies = [];
-//   List<NPC> _npcs = [];
-//   String _mapfile = '';
-//   Vector2 _reEntryPos = Vector2.zero();
-//   TiledComponent? tiledmap;
-//   final enemyCreator = EnemyCreator();
-//   final List<Square> _squares = [];
-//   List<math.Point<int>> _blockedTileList = [];
-//   double zoomFactor = 2.4;
+mixin GameMap {
+  List<List<dynamic>> blockedTiles = [];
+  List<Vector2> openTiles = [];
+  List<List<dynamic>> _triggerTiles = [];
+  List<List<dynamic>> _npcTiles = [];
+  List<Enemy> enemies = [];
+  List<NPC> _npcs = [];
+  String _mapfile = '';
+  Vector2 _reEntryPos = Vector2.zero();
+  TiledComponent? tiledmap;
+  final enemyCreator = EnemyCreator();
+  final List<Square> _squares = [];
+  List<math.Point<int>> _blockedTileList = [];
+  double zoomFactor = 2.4;
 
-//   _generateTiles(tiledmap!.tileMap.map);
-//   _buildBlockedTiles(tiledmap!.tileMap);
-//   _buildPortals(tiledmap!.tileMap);
-//   _createNpcs();
-//   _createEnemies(tiledmap!.tileMap);
-// }
+  // _generateTiles(tiledmap!.tileMap.map);
+  // _buildBlockedTiles(tiledmap!.tileMap);
+  // _buildPortals(tiledmap!.tileMap);
+  // _createNpcs();
+  // _createEnemies(tiledmap!.tileMap);
+}
+
+
 
 // class Dungeon with Map {
 
 // }
 
-class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
+class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<dynamic>> blockedTiles = [];
   List<Vector2> openTiles = [];
   List<List<dynamic>> _triggerTiles = [];
@@ -81,7 +83,7 @@ class Overworld extends World with HasGameRef<MainGame>, TapCallbacks {
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
 
-  Overworld(this._mapfile);
+  MapRunner(this._mapfile);
 
   @override
   void onMount() {

@@ -4,20 +4,20 @@ import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/overworld.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
-  final Map<String, Overworld> worlds = {};
-  List<Overworld> stack = [];
+  final Map<String, MapRunner> worlds = {};
+  List<MapRunner> stack = [];
 
   void _loadMainWorld() {
     pushWorld('bigmap.tmx');
   }
 
   Future<void> pushWorld(String mapfile) async {
-    late Overworld? world;
+    late MapRunner? world;
 
     if(worlds.containsKey(mapfile)) {
       world = worlds[mapfile];
     } else {
-      world = await Overworld(mapfile);
+      world = await MapRunner(mapfile);
       worlds[mapfile] = world;
     }
 

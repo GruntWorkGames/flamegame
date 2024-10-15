@@ -7,7 +7,7 @@ enum TurnSystemState {
 }
 
 class TurnSystem extends Component with HasGameRef<MainGame> {
-  final Overworld overworld;
+  final MapRunner overworld;
   TurnSystemState _state = TurnSystemState.initial;
   Function? playerFinishedCallback = null;
   Function? enemyFinishedCallback = null;

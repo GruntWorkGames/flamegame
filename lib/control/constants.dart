@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/control/enum/direction.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:flame_game/control/objects/tile.dart' as k;
 
 const int TILESIZE = 16;

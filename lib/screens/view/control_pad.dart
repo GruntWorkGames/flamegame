@@ -34,9 +34,9 @@ class _ControlPadState extends ConsumerState {
 
     final topRow = Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
     final middleRow = Padding(padding: EdgeInsets.symmetric(horizontal: 10), 
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [leftButton, rightButton]));
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [leftButton, const SizedBox(width: 50), rightButton]));
     final bottomRow = Padding(padding: EdgeInsets.only(bottom: 10),
-    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [downButton]));
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [downButton]));
     return Column(children: [const Spacer(), topRow, middleRow, bottomRow]);
   }
 
@@ -47,7 +47,6 @@ class _ControlPadState extends ConsumerState {
     final dec = BoxDecoration(color: Colors.grey.withOpacity(buttonOpacity), borderRadius: BorderRadius.circular(30));
     final border = BorderRadius.circular(30.0);
     return Material(color: Colors.transparent, child: InkWell(customBorder: RoundedRectangleBorder(borderRadius: border), 
-    // onTap: (){game.directionPressed(direction);}, 
     onTapDown: (_)=>game.directionDown(direction),
     onTapUp: (_)=>game.directionUp(direction),
     onTapCancel: ()=>game.directionUp(direction),

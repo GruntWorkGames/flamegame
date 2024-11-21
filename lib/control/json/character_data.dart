@@ -1,5 +1,5 @@
-import 'package:flame/game.dart';
 import 'package:flame_game/control/json/item.dart';
+import 'package:flame_game/control/objects/tile.dart' as k;
 
 class CharacterData {
   double _health = 10;
@@ -11,10 +11,10 @@ class CharacterData {
   double stam = 1;
   double armor = 1;
   double experience = 0;
-  Vector2 tilePosition = Vector2(0,0);
+  k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
-  
+
   double get maxHealth {
     return (stam * 5) + _maxHealth;
   }

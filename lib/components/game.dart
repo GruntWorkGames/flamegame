@@ -13,7 +13,7 @@ import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/components/overworld.dart';
+import 'package:flame_game/components/map_runner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

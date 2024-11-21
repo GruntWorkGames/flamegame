@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
@@ -13,10 +12,11 @@ import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/components/game.dart';
+import 'package:flame_game/control/objects/tile.dart' as k;
 
 class MeleeCharacter extends SpriteAnimationComponent
     with HasGameRef<MainGame> {
-  MeleeCharacter() : super(size: Vector2(TILESIZE, TILESIZE));
+  MeleeCharacter() : super(size: Vector2(TILESIZE.toDouble(), TILESIZE.toDouble()));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
@@ -92,7 +92,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     }
   }
 
-  void onMoveCompleted(Vector2 newTile) {
+  void onMoveCompleted(k.Tile newTile) {
     game.overworld?.steppedOnTile(newTile);
     isMoving = false;
     actionFinished(CharacterAnimationState.beginIdle);

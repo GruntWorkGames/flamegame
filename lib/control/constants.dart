@@ -1,8 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/control/enum/direction.dart';
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
+import 'package:flame_game/control/objects/tile.dart' as k;
 
-const double TILESIZE = 16;
+const int TILESIZE = 16;
 final mainColor = Colors.grey[600]!;
 final borderColor = Colors.grey[700]!;
 // final mainColor = Colors.grey[400]!;
@@ -12,30 +14,40 @@ final borderRadius = 5.0;
 final borderWidth = 2.0;
 final buttonId = 400;
 
-Vector2 posToTile(Vector2 pos) {
-  return Vector2(pos.x / TILESIZE, pos.y / TILESIZE);
+k.Tile posToTile(Vector2 pos) {
+  final x = (pos.x / TILESIZE).toInt();
+  final y = (pos.y / TILESIZE).toInt();
+  return k.Tile(x, y);
 }
 
-Vector2 tileToPos(Vector2 tile) {
-  return Vector2(tile.x * TILESIZE, tile.y * TILESIZE);
+Vector2 tileToPos(k.Tile tile) {
+  return Vector2(tile.x.toDouble() * TILESIZE, tile.y.toDouble() * TILESIZE);
 }
 
-Vector2 getNextTile(Direction direction, Vector2 pos) {
+k.Tile getNextTile(Direction direction, k.Tile pos) {
   switch (direction) {
     case Direction.up:
-      return Vector2(pos.x, pos.y - 1);
+      return k.Tile(pos.x, pos.y - 1);
     case Direction.down:
-      return Vector2(pos.x, pos.y + 1);
+      return k.Tile(pos.x, pos.y + 1);
     case Direction.left:
-      return Vector2(pos.x - 1, pos.y);
+      return k.Tile(pos.x - 1, pos.y);
     case Direction.right:
-      return Vector2(pos.x + 1, pos.y);
+      return k.Tile(pos.x + 1, pos.y);
     case Direction.none:
       return pos;
   }
 }
 
-Direction directionFromPosToPos(Vector2 posA, Vector2 posB) {
+k.Tile toTile(Vector2 vec) {
+  return k.Tile(vec.x.toInt(), vec.y.toInt());
+}
+
+Vector2 toVec2(k.Tile point) {
+  return Vector2(point.x.toDouble(), point.y.toDouble());
+}
+
+Direction directionFromPosToPos(k.Tile posA, k.Tile posB) {
   if (posA == posB) {
     return Direction.none;
   }

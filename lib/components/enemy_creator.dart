@@ -27,7 +27,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       return;
     }
 
-    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), spawnRadius).map((point) => Vector2(point.x.toDouble(), point.y.toDouble())).toList() ?? [];
+    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), spawnRadius) ?? [];
     if(spawnArea.isEmpty) {
       throw Exception('Spawn Area is empty');
     }
@@ -37,7 +37,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       return math.Point<int>(tile.x.toInt(), tile.y.toInt());
     }).toList() ?? [];
 
-    spawnArea.removeWhere((tile) { 
+    spawnArea.removeWhere((tile) {
       return 
         tile == posToTile(game.player.position)
           || enemyTiles.contains(tile)

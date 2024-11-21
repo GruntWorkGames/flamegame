@@ -3,7 +3,7 @@ import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/json/item.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:flame_game/control/objects/tile.dart' as k;
 
 class Enemy extends MeleeCharacter {
   double experience = 10;
@@ -36,7 +36,7 @@ class Enemy extends MeleeCharacter {
   }
 
   @override
-  void onMoveCompleted(Vector2 newTile) {
+  void onMoveCompleted(k.Tile newTile) {
     game.overworld!.moveNextEnemy();
     data.tilePosition = posToTile(position);
   }

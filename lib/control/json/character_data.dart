@@ -54,8 +54,10 @@ class CharacterData {
     str = json['str'] ?? 1.0;
     stam = json['stam'] ?? 1.0;
     gold = json['gold'] ?? 0;
-    tilePosition.x = json['x'].toInt() ?? 0;
-    tilePosition.y = json['y'].toInt() ?? 0;
+    num x = json['x'];
+    num y = json['y'];
+    tilePosition.x = x.toInt();
+    tilePosition.y = y.toInt();
     mapfile = json['mapfile'] ?? 'bigmap.tmx';
     final inventoryNode = json['inventory'] ?? [];
     if (inventoryNode != null && inventoryNode.isNotEmpty) {

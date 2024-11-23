@@ -218,7 +218,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Direction lastDirection = Direction.none;
 
   MapRunner(this._mapfile);
-
+ 
   @override
   void onMount() {
     super.onMount();
@@ -570,24 +570,27 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _buildBlockedTiles(RenderableTiledMap tileMap) async {
-    final layerNames = tileMap.renderableLayers.map((element) {
+    final tileLayers = tileMap.renderableLayers.where((element) {
+      return element.layer.type == LayerType.tileLayer;
+    });
+
+    final layerNames = tileLayers.map((element) {
       return element.layer.name;
     },).toList();
     
     try{
-    final what = await TileProcessor.processTileType(
+      await TileProcessor.processTileType(
         tileMap: tileMap,
-        processorByType: <String, TileProcessorFunc>{
+        processorByType: <String, TileProcessorFunc> {
           'blocked': ((tile, position, size) async {
             _addBlockedCell(position);
           }),
         },
         layersToLoad: layerNames,
         clear: false);
-        print(what);
     } on Exception catch(e, st) {
-      print(e);
-      print(st);
+      debugPrint(e.toString());
+      debugPrint(st.toString());
     }
   }
 

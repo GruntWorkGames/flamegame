@@ -56,11 +56,7 @@ class MainGame extends FlameGame with TapDetector {
   Future<void> loadSavedPlayerData() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('player') ?? '{}';
-    final json = jsonDecode(jsonString);
-    final isJson = json is Map<String, dynamic>;
-    if(!isJson) {
-      return;
-    }
+    final json = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
     player.data = CharacterData.fromJson(json);
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;

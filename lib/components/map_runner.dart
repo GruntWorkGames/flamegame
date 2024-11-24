@@ -515,6 +515,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Future<void> showShop(NPC npc) async {
     final json = await game.assets.readJson(npc.npc.shopJsonFile);
     final shop = Shop.fromJson(json);
+    final items = shop.items;
+    if(items.isEmpty) {
+      return;
+    }
     game.ref?.read(shopProvider.notifier).set(shop);
     final firstItem = shop.items.first;
     firstItem.isSelected = true;

@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:a_star_algorithm/a_star_algorithm.dart' as AStarAlgorithm;
+import 'dart:math' as math;
+import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -7,31 +8,30 @@ import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/enemy_creator.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/components/melee_attack_result.dart';
 import 'package:flame_game/components/melee_character.dart';
-import 'package:flame_game/components/npc.dart';
+import 'package:flame_game/components/npc.dart'; 
 import 'package:flame_game/components/square.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/control/constants.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/objects/portal.dart';
+import 'package:flame_game/control/objects/tile.dart' as k;
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/healthProvider.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/debug/enemies_enabled_provider.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flame_game/control/objects/tile.dart' as k;
 
 mixin GameMap {
   List<k.Tile> blockedTileList = [];
@@ -46,9 +46,7 @@ mixin GameMap {
   // List<Vector2> readEnemySpawns(RenderableTiledMap tileMap);
   // List<NpcData> readNpcSpawnPoints(RenderableTiledMap tilemap);
 
-  /** 
-   * Creates a 2D array of Vector2 objects for each array
-   */
+  /// Creates a 2D array of Vector2 objects for each array
   void allocateArrays(int width, int height) {
     blockedTiles = _generate2dArray(width, height);
     triggerTiles = _generate2dArray(width, height);
@@ -64,31 +62,29 @@ mixin GameMap {
   }
 
   void addBlockedCell(Vector2 position) {
-    final t = posToTile(position);
-    int x = t.x.toInt();
-    int y = t.y.toInt();
-    blockedTiles[x][y] = true;
-    blockedTileList.add(k.Tile(x, y));
+    final tile = posToTile(position);
+    blockedTiles[tile.x][tile.y] = true;
+    blockedTileList.add(tile);
   }
 
   void addPortal(Portal portal, Function onTrigger) {
-    // TODO: move this to map runner logic
+    // TODO(Kris): move this to map runner logic
     // final func = () async {
     //   // shouldContinue = false;
     //   // final map = portal.map;
     //   // await game.overworldNavigator.pushWorld(map);
     // };
     final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
-    triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = onTrigger;
+    triggerTiles[tilePos.x][tilePos.y] = onTrigger;
   }
 
   void addExit(Vector2 exit, Function onTrigger) {
     // final func = () async {
-      // TODO: move this to map runner logic
+      // TODO(Kris): move this to map runner logic
       // game.overworldNavigator.popWorld();
     // };
     final tilePos = posToTile(Vector2(exit.x, exit.y));
-    triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = onTrigger;
+    triggerTiles[tilePos.x][tilePos.y] = onTrigger;
   }
 }
 
@@ -121,7 +117,7 @@ class CraftedMap with GameMap {
   }
 
   List<Vector2> readEnemySpawns(RenderableTiledMap tileMap) {
-    final List<Vector2> spawns = [];
+    final spawns = <Vector2>[];
     final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
     if (objectGroup == null) {
       return spawns;
@@ -135,14 +131,14 @@ class CraftedMap with GameMap {
   }
 
   List<NpcData> readNpcSpawnPoints(RenderableTiledMap tilemap) {
-    List<NpcData> spawnData = [];
+    final spawnData = <NpcData>[];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
     if (objectGroup == null) {
       return spawnData;
     }
 
     for (final object in objectGroup.objects) {
-      NpcData data = NpcData();
+      final data = NpcData();
       final speech = object.properties.getProperty<StringProperty>('speech');
       if (speech != null) {
         data.speech = speech.value;
@@ -172,48 +168,46 @@ class CraftedMap with GameMap {
     return Vector2(spawnObject.x, spawnObject.y);
   }
 
-  void buildBlockedTiles(RenderableTiledMap tileMap) async {
+  Future<void> buildBlockedTiles(RenderableTiledMap tileMap) async {
     final layerNames = tileMap.renderableLayers.map((element) {
       return element.layer.name;
     },).toList();
     
     try{
-    final what = await TileProcessor.processTileType(
+      await TileProcessor.processTileType(
         tileMap: tileMap,
         processorByType: <String, TileProcessorFunc>{
-          'blocked': ((tile, position, size) async {
+          'blocked': (tile, position, size) async {
             addBlockedCell(position);
-          }),
+          },
         },
         layersToLoad: layerNames,
         clear: false);
-        print(what);
     } on Exception catch(e, st) {
-      print(e);
-      print(st);
+      debugPrint(e.toString());
+      debugPrint(st.toString());
     }
   }
 }
 
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
-  List<List<dynamic>> blockedTiles = [];
+  List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
-  List<List<dynamic>> _triggerTiles = [];
-  List<List<dynamic>> _npcTiles = [];
+  List<List<Function?>> _triggerTiles = [];
+  List<List<NPC?>> _npcTiles = [];
   List<Enemy> enemies = [];
-  List<NPC> _npcs = [];
-  String _mapfile = '';
+  final List<NPC> _npcs = [];
+  final String _mapfile;
   Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? tiledmap;
   final enemyCreator = EnemyCreator();
   final List<Square> _squares = [];
-  List<k.Tile> _blockedTileList = [];
+  final List<k.Tile> _blockedTileList = [];
   double zoomFactor = 2.4;
-
   final _aggroDistance = 6;
   bool listenToInput = false;
   late final TurnSystem turnSystem;
-  List<Enemy> _enemiesToMove = [];
+  final List<Enemy> _enemiesToMove = [];
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
 
@@ -227,7 +221,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   FutureOr<void> onLoad() async {
-    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(TILESIZE.toDouble()));
+    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties
             .getProperty<IntProperty>('spawnChance')
@@ -270,11 +264,11 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     updateUI();
   }
 
-  // TODO: change tilemap.height to a map bounds, so that generated maps work too.
+  // TODO(Kris): change tilemap.height to a map bounds, so that generated maps work too.
   @override
   void update(double dt) {
-    final minDistanceX = (game.size.x / 2 / zoomFactor);
-    final minDistanceY = (game.size.y / 2 / zoomFactor);
+    final minDistanceX = game.size.x / 2 / zoomFactor;
+    final minDistanceY = game.size.y / 2 / zoomFactor;
     final maxDistX = (tiledmap?.width ?? 0) - game.size.x / 2 / zoomFactor;
     final maxDistanceY = (tiledmap?.height ?? 0) - game.size.y / 2 / zoomFactor;
     final camPos = game.player.position.clone();
@@ -305,11 +299,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
     
     game.camera.viewfinder.position = camPos;
-  }
-
-  @override
-  void onTapUp(TapUpEvent event) {
-    super.onTapUp(event);
   }
 
   void enemyTurn() {
@@ -352,10 +341,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Vector2 combatTextPositionForEntity(PositionComponent entity) {
     final pos = game.player.position.clone();
     if(entity.position.y == game.player.position.y) {
-      pos.y -= TILESIZE;
+      pos.y -= kTileSize;
     }
     if (entity.position.x == game.player.position.x) {
-      pos.x += TILESIZE;
+      pos.x += kTileSize;
     }
     return pos;
   }
@@ -363,7 +352,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   void enemyAttackPlayer(Enemy enemy, Direction playerDirection) {
     final pos = game.player.position.clone();
     if(enemy.position.y == game.player.position.y) {
-      pos.y -= TILESIZE;
+      pos.y -= kTileSize;
     }
 
     if(!enemy.attemptAttack()) {
@@ -371,13 +360,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       return;
     }
 
-    var damage = enemy.weapon.value;
+    final damage = enemy.weapon.value;
     if (enemy.position.x == game.player.position.x) {
-      pos.x += TILESIZE;
+      pos.x += kTileSize;
     }
 
     enemy.playAttackDirectionAnim(playerDirection, () {
-      var attackResult = game.player.takeHit(damage, () {
+      final attackResult = game.player.takeHit(damage, () {
         game.ref?.read(healthProvider.notifier).set(game.player.data.health);
         enemy.onMoveCompleted(posToTile(enemy.position));
       }, () {
@@ -388,13 +377,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         final dialog = DialogData();
         dialog.title = 'You have died';
         dialog.message = 'Press here to restart';
-        game.ref?.read(dialogProvider.notifier).set(dialog);
+        game.ref?.read(dialogProvider.notifier).state = dialog;
         game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
 
       final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
       final resultString = attackResult.result == MeleeAttackResult.success ? '' : attackResult.result.name;  
-      showCombatMessage(pos,'$resultString $damageString', Color.fromARGB(249, 255, 96, 96));
+      showCombatMessage(pos,'$resultString $damageString', const Color.fromARGB(249, 255, 96, 96));
     });
   }
 
@@ -426,10 +415,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     final pos = enemy.position.clone();
     if(enemy.position.y == game.player.position.y) {
-      pos.y -= TILESIZE;
+      pos.y -= kTileSize;
     }
     if (enemy.position.x == game.player.position.x) {
-      pos.x -= TILESIZE + TILESIZE/2;
+      pos.x -= kTileSize + kTileSize/2;
     }
     
     game.player.playAttackDirectionAnim(direction, () {
@@ -445,34 +434,34 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       });
         final damageString = damageDone.value == 0 ? '' : '-${damageDone.value.toInt()}';
         final resultString = damageDone.result == MeleeAttackResult.success ? '' : damageDone.result.name;
-        showCombatMessage(pos, '$resultString $damageString',Color.fromARGB(250, 255, 255, 255));
+        showCombatMessage(pos, '$resultString $damageString',const Color.fromARGB(250, 255, 255, 255));
       });
   }
  
   void playerMissed(MeleeCharacter enemy, Direction direction) {
     final pos = enemy.position.clone();
     if(enemy.position.y == game.player.position.y) {
-      pos.y -= TILESIZE;
+      pos.y -= kTileSize;
     }
     if (enemy.position.x == game.player.position.x) {
-      pos.x -= TILESIZE;
+      pos.x -= kTileSize;
     }
     game.player.playAttackDirectionAnim(direction, () {
       game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
-      showCombatMessage(pos, 'miss',Color.fromARGB(250, 255, 255, 255));
+      showCombatMessage(pos, 'miss',const Color.fromARGB(250, 255, 255, 255));
     });
   }
 
   void enemyMissed(MeleeCharacter enemy, Direction direction) {
     final pos = game.player.position.clone();
     if(enemy.position.y == game.player.position.y) {
-      pos.y -= TILESIZE;
+      pos.y -= kTileSize;
     }
     if (enemy.position.x == game.player.position.x) {
-      pos.x += TILESIZE;
+      pos.x += kTileSize;
     }
     enemy.playAttackDirectionAnim(direction, () {
-      showCombatMessage(pos,'miss', Color.fromARGB(249, 255, 96, 96));
+      showCombatMessage(pos,'miss', const Color.fromARGB(249, 255, 96, 96));
       enemy.onMoveCompleted(posToTile(enemy.position));
     });
   }
@@ -519,11 +508,11 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final dialog = DialogData();
     dialog.title = npc.npc.name;
     dialog.message = npc.npc.speech;
-    game.ref?.read(dialogProvider.notifier).set(dialog);
+    game.ref?.read(dialogProvider.notifier).state = dialog;
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
   }
 
-  void showShop(NPC npc) async {
+  Future<void> showShop(NPC npc) async {
     final json = await game.assets.readJson(npc.npc.shopJsonFile);
     final shop = Shop.fromJson(json);
     game.ref?.read(shopProvider.notifier).set(shop);
@@ -536,9 +525,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   bool isTileBlocked(k.Tile pos) {
     try {
       return blockedTiles[pos.x][pos.y];
-    } catch (e) {
-      print('error checking if tile is blocked at: ${pos.x}, ${pos.y}');
-      print(e.toString());
+    } on Exception catch (e) {
+      debugPrint('error checking if tile is blocked at: ${pos.x}, ${pos.y}');
+      debugPrint(e.toString());
     }
     return false;
   }
@@ -551,25 +540,26 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _generateTiles(TiledMap map) {
-    blockedTiles = List<List>.generate(
+    blockedTiles = List<List<bool>>.generate(
         map.width,
-        (index) => List<dynamic>.generate(map.height, (index) => false,
+        (index) => List<bool>.generate(map.height, (index) => false,
             growable: false),
         growable: false);
 
-    _triggerTiles = _generate2dArray(map.width, map.height);
-    _npcTiles = _generate2dArray(map.width, map.height);
-  }
-
-  List<List<dynamic>> _generate2dArray(int width, int height) {
-    return List<List>.generate(
-        width,
+    _triggerTiles = List<List<Function?>>.generate(
+        map.width,
         (index) =>
-            List<dynamic>.generate(height, (index) => null, growable: false),
+            List<Function?>.generate(map.height, (index) => null, growable: false),
+        growable: false);
+
+    _npcTiles = List<List<NPC?>>.generate(
+        map.width,
+        (index) =>
+            List<NPC?>.generate(map.height, (index) => null, growable: false),
         growable: false);
   }
 
-  void _buildBlockedTiles(RenderableTiledMap tileMap) async {
+  Future<void> _buildBlockedTiles(RenderableTiledMap tileMap) async {
     final tileLayers = tileMap.renderableLayers.where((element) {
       return element.layer.type == LayerType.tileLayer;
     });
@@ -582,9 +572,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       await TileProcessor.processTileType(
         tileMap: tileMap,
         processorByType: <String, TileProcessorFunc> {
-          'blocked': ((tile, position, size) async {
+          'blocked': (tile, position, size) async {
             _addBlockedCell(position);
-          }),
+          },
         },
         layersToLoad: layerNames,
         clear: false);
@@ -622,16 +612,16 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       final map = portal.map;
       await game.overworldNavigator.pushWorld(map);
     };
-    final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
-    _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
+    final tilePos = posToTile(portal.position);
+    _triggerTiles[tilePos.x][tilePos.y] = func;
   }
 
   void _addExit(Vector2 exit) {
-    final func = () async {
+    void func() {
       game.overworldNavigator.popWorld();
-    };
+    }
     final tilePos = posToTile(Vector2(exit.x, exit.y));
-    _triggerTiles[tilePos.x.toInt()][tilePos.y.toInt()] = func;
+    _triggerTiles[tilePos.x][tilePos.y] = func;
   }
 
   Vector2 _readPlayerSpawnPoint(RenderableTiledMap tileMap) {
@@ -641,7 +631,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
-    final List<Vector2> spawns = [];
+    final spawns = <Vector2>[];
     final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
     if (objectGroup == null) {
       return spawns;
@@ -655,14 +645,14 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
-    List<NpcData> spawnData = [];
+    final spawnData = <NpcData>[];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
     if (objectGroup == null) {
       return spawnData;
     }
 
     for (final object in objectGroup.objects) {
-      NpcData data = NpcData();
+      final data = NpcData();
       final speech = object.properties.getProperty<StringProperty>('speech');
       if (speech != null) {
         data.speech = speech.value;
@@ -687,16 +677,12 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _addBlockedCell(Vector2 position) {
-    final t = posToTile(position);
-
-    int x = t.x.toInt();
-    int y = t.y.toInt();
-    blockedTiles[x][y] = true;
-
-    _blockedTileList.add(k.Tile(x, y));
+    final tile = posToTile(position);
+    blockedTiles[tile.x][tile.y] = true;
+    _blockedTileList.add(tile);
   }
 
-  void playerEntered() async {
+  void playerEntered() {
     game.save();
     if (game.player.parent != null) {
       game.player.removeFromParent();
@@ -717,12 +703,12 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       add(npc);
       _npcs.add(npc);
       final tile = posToTile(npc.position);
-      _npcTiles[tile.x.toInt()][tile.y.toInt()] = npc;
+      _npcTiles[tile.x][tile.y] = npc;
     }
   }
 
   List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
-    final List<Enemy> enemies = [];
+    final enemies = <Enemy>[];
     final spawns = _readEnemySpawns(tiledmap!.tileMap);
     for (final spawnPos in spawns) {
       final enemy = Enemy();
@@ -735,46 +721,42 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   NPC? _isTileBlockedNpc(k.Tile nextTile) {
     try {
-      return _npcTiles[nextTile.x.toInt()][nextTile.y.toInt()];
-    } catch (e) {
-      print('error checking tile');
+      return _npcTiles[nextTile.x][nextTile.y];
+    } on Exception catch (e) {
+      debugPrint('error checking tile $e');
     }
     return null;
   }
 
   Function? _getTilePortal(k.Tile nextTile) {
     try {
-      return _triggerTiles[nextTile.x.toInt()][nextTile.y.toInt()];
-    } catch (e) {
-      print('error checking tile');
+      return _triggerTiles[nextTile.x][nextTile.y];
+    } on Exception catch (e) {
+      debugPrint('error checking tile $e');
     }
     return null;
   }
 
   Direction findPath(Enemy enemy) {
     final map = tiledmap!.tileMap.map;
-    final endVec = posToTile(game.player.position);
-    final startVec = posToTile(enemy.position);
-    final k.Tile end = k.Tile(endVec.x.toInt(), endVec.y.toInt());
-    final k.Tile start = k.Tile(startVec.x.toInt(), startVec.y.toInt());
+    final end = posToTile(game.player.position);
+    final start = posToTile(enemy.position);
     final playerTile = posToTile(game.player.position);
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
     final npcTiles = _npcs.map((npc) {
-      final tile = posToTile(npc.npc.position);
-      return k.Tile(tile.x.toInt(), tile.y.toInt());
+      return posToTile(npc.npc.position);
     }).toSet();
     final enemys = enemies.where((other) => other != enemy);
     final enemyTiles = enemys.map((enemy) {
-      final tile = posToTile(enemy.position);
-      return k.Tile(tile.x.toInt(), tile.y.toInt());
+      return posToTile(enemy.position);
     }).toSet();
-    final barrierTiles = Set<k.Tile>.from([...wallTiles, ...npcTiles, ...enemyTiles]).toList();
+    final barrierTiles = {...wallTiles, ...npcTiles, ...enemyTiles}.toList();
     final barrierPoints = barrierTiles.map((tile) {
       return math.Point(tile.x, tile.y);
     }).toList();
     try {
-      final result = AStarAlgorithm.AStar(
+      final result = a_star.AStar(
               rows: map.width,
               columns: map.height,
               start: start.toPoint(),
@@ -804,7 +786,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         final direction = directionFromPosToPos(enemyPoint, tilePoint);
         return direction;
       }
-    } catch (e) {}
+    } on Exception catch (e) {
+      debugPrint(e.toString());
+    }
 
     return Direction.none;
   }
@@ -812,26 +796,26 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
     final map = tiledmap!.tileMap.map;
     // get left boundary
-    final int farthestTileXLeftAvailable =
-        playerTile.x > distance ? playerTile.x.toInt() - distance : 0;
+    final farthestTileXLeftAvailable =
+        playerTile.x > distance ? playerTile.x - distance : 0;
     // get right boundary
-    final int farthestTileXRightAvailable = playerTile.x + distance < map.width
-        ? playerTile.x.toInt() + distance
-        : playerTile.x.toInt() + (map.width - playerTile.x.toInt());
+    final farthestTileXRightAvailable = playerTile.x + distance < map.width
+        ? playerTile.x + distance
+        : playerTile.x + (map.width - playerTile.x);
     // get bottom boundary
-    final int farthestTileYDownAvailable = playerTile.y + distance < map.height
-        ? playerTile.y.toInt() + distance
-        : playerTile.y.toInt() + (map.height - playerTile.y.toInt());
+    final farthestTileYDownAvailable = playerTile.y + distance < map.height
+        ? playerTile.y + distance
+        : playerTile.y + (map.height - playerTile.y);
     // get top boundary
-    final int farthestTileYUpAvailable =
-        playerTile.y.toInt() > distance ? playerTile.y.toInt() - distance : 0;
+    final farthestTileYUpAvailable =
+        playerTile.y > distance ? playerTile.y - distance : 0;
 
-    final List<k.Tile> tiles = [];
+    final tiles = <k.Tile>[];
 
-    for (int x = farthestTileXLeftAvailable;
+    for (var x = farthestTileXLeftAvailable;
         x < farthestTileXRightAvailable;
         x++) {
-      for (int y = farthestTileYUpAvailable;
+      for (var y = farthestTileYUpAvailable;
           y < farthestTileYDownAvailable;
           y++) {
         tiles.add(k.Tile(x, y));
@@ -842,7 +826,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<k.Tile> getBlockedTilesInList(List<k.Tile> list) {
-    final List<k.Tile> tiles = [];
+    final tiles = <k.Tile>[];
     for (final tile in list) {
       final pos = k.Tile(tile.x, tile.y);
       if (isTileBlocked(pos)) {
@@ -879,8 +863,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     if (game.player.data.gold < item.cost) {
       final dialog = DialogData();
       dialog.title = 'Oops!';
-      dialog.message = 'Sorry, you don\'t have enough gold!';
-      game.ref?.read(dialogProvider.notifier).set(dialog);
+      dialog.message = "Sorry, you don't have enough gold!";
+      game.ref?.read(dialogProvider.notifier).state = dialog;
       game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     } else {
       item.isSelected = false;
@@ -947,10 +931,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
             color: color, fontSize: fontSize, fontWeight: FontWeight.bold));
     final text =
         TextComponent(textRenderer: paint, text: message, position: pos);
-    final moveUp = MoveEffect.by(
-        Vector2(0, -30), EffectController(duration: 2.0), onComplete: () {
-      text.removeFromParent();
-    });
+    final moveUp = MoveEffect.by(Vector2(0, -30), EffectController(duration: 2.0), onComplete: text.removeFromParent);
     text.add(moveUp);
     add(text);
 
@@ -966,9 +947,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final textOutline = TextComponent(
         textRenderer: textOutlinePaint, text: message, position: pos);
     final outlineMoveup = MoveEffect.by(
-        Vector2(0, -30), EffectController(duration: 2.0), onComplete: () {
-      textOutline.removeFromParent();
-    });
+        Vector2(0, -30), EffectController(duration: 2.0), onComplete: textOutline.removeFromParent);
     textOutline.add(outlineMoveup);
     add(textOutline);
   }

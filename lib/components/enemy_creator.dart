@@ -3,7 +3,6 @@ import 'package:flame/components.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
-import 'dart:math' as math;
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();
@@ -33,8 +32,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     }
 
     final enemyTiles = game.overworld?.enemies.map((enemy) {
-      final tile = posToTile(enemy.position);
-      return math.Point<int>(tile.x.toInt(), tile.y.toInt());
+      return posToTile(enemy.position);
     }).toList() ?? [];
 
     spawnArea.removeWhere((tile) {

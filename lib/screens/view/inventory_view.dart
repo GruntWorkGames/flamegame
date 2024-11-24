@@ -43,7 +43,7 @@ class InventoryView extends ConsumerWidget {
     return box;
   }
 
-  Widget _title(context) {
+  Widget _title(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final label = Padding(

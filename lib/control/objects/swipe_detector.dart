@@ -12,8 +12,9 @@ class SwipeDetector extends StatelessWidget {
   final VoidCallback? onSwipeLeft;
   final VoidCallback? onSwipeRight;
 
-  SwipeDetector({
-    required this.child,
+  const SwipeDetector({
+    required this.child, 
+    super.key,
     this.onSwipeUp,
     this.onSwipeDown,
     this.onSwipeLeft,
@@ -32,19 +33,23 @@ class SwipeDetector extends StatelessWidget {
       onPanStart: (startDetails) => panStartDetails = startDetails,
       onPanUpdate: (updateDetails) => panUpdateDetails = updateDetails,
       onPanEnd: (endDetails) {
-        if (panStartDetails == null || panUpdateDetails == null) return;
+        if (panStartDetails == null || panUpdateDetails == null) {
+          return;
+        }
 
-        double dx = panUpdateDetails!.globalPosition.dx -
+        final dx = panUpdateDetails!.globalPosition.dx -
             panStartDetails!.globalPosition.dx;
-        double dy = panUpdateDetails!.globalPosition.dy -
+        final dy = panUpdateDetails!.globalPosition.dy -
             panStartDetails!.globalPosition.dy;
 
-        int panDurationMiliseconds =
+        final panDurationMiliseconds =
             panUpdateDetails!.sourceTimeStamp!.inMilliseconds -
                 panStartDetails!.sourceTimeStamp!.inMilliseconds;
 
-        double mainDis, crossDis, mainVel;
-        bool isHorizontalMainAxis = dx.abs() > dy.abs();
+        double mainDis;
+        double crossDis;
+        double mainVel;
+        final isHorizontalMainAxis = dx.abs() > dy.abs();
 
         if (isHorizontalMainAxis) {
           mainDis = dx.abs();
@@ -61,32 +66,31 @@ class SwipeDetector extends StatelessWidget {
         // if (mainVel < minVelocity) return;
 
         if (mainDis < minMainDisplacement) {
-          debugPrint(
-              "SWIPE DEBUG | Displacement too short. Real: $mainDis - Min: $minMainDisplacement");
+          debugPrint('SWIPE DEBUG | Displacement too short. Real: $mainDis - Min: $minMainDisplacement');
           return;
         }
         if (crossDis > maxCrossRatio * mainDis) {
-          debugPrint(
-              "SWIPE DEBUG | Cross axis displacemnt bigger than limit. Real: $crossDis - Limit: ${mainDis * maxCrossRatio}");
+          debugPrint('SWIPE DEBUG | Cross axis displacemnt bigger than limit. Real: $crossDis - Limit: ${mainDis * maxCrossRatio}');
           return;
         }
         if (mainVel < minVelocity) {
-          debugPrint(
-              "SWIPE DEBUG | Swipe velocity too slow. Real: $mainVel - Min: $minVelocity");
+          debugPrint('SWIPE DEBUG | Swipe velocity too slow. Real: $mainVel - Min: $minVelocity');
           return;
         }
 
         // dy < 0 => UP -- dx > 0 => RIGHT
         if (isHorizontalMainAxis) {
-          if (dx > 0)
+          if (dx > 0) {
             onSwipeRight?.call();
-          else
+          } else {
             onSwipeLeft?.call();
+          }
         } else {
-          if (dy < 0)
+          if (dy < 0) {
             onSwipeUp?.call();
-          else
+          } else {
             onSwipeDown?.call();
+          }
         }
       },
     );

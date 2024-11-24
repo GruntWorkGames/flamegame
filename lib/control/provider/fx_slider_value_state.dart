@@ -7,7 +7,8 @@ final fxSliderValueState = StateNotifierProvider<FxSliderValueState, double>((re
 class FxSliderValueState extends StateNotifier<double>{
   FxSliderValueState() : super(50);
   
-  void set(double value) {
+  @override
+  set state (double value) {
     state = value;
   }
 }

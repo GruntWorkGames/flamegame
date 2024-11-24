@@ -8,7 +8,7 @@ class Room {
   final floorsize = Vector2(8, 12);
 
   Room() {
-    final numFloorTiles = 40;
+    const numFloorTiles = 40;
     _floorplan = FloorPlanGenerator().generate(floorsize, numFloorTiles);
     _buildFromFloorplan(_floorplan, floorsize);
   }
@@ -25,8 +25,8 @@ class Room {
   }
 
   void _buildFromFloorplan(List<List<bool>> floorplan, Vector2 floorSize) {
-    for (int x = 0; x < floorSize.x; x++) {
-      for (int y = 0; y < floorSize.y; y++) {
+    for (var x = 0; x < floorSize.x; x++) {
+      for (var y = 0; y < floorSize.y; y++) {
         final isWall = _floorplan[x][y];
         if (isWall) {
           // final blockPos = Vector2(x.toDouble(), y.toDouble());
@@ -52,8 +52,8 @@ class FloorPlanGenerator {
     final floorData = _fillFloorArray(size);
 
     // Set controller in center
-    int cx = size.x.toInt() ~/ 2;
-    int cy = size.y ~/ 2;
+    var cx = size.x.toInt() ~/ 2;
+    var cy = size.y ~/ 2;
 
     final random = Random();
 

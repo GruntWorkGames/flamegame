@@ -1,22 +1,24 @@
 import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/components/melee_attack_result.dart';
 import 'package:flame_game/components/turn_system.dart';
 import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/character_state.dart';
-import 'package:flame_game/control/enum/item_type.dart';
-import 'package:flame_game/control/json/item.dart';
-import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/components/game.dart';
+import 'package:flame_game/control/enum/item_type.dart';
+import 'package:flame_game/control/json/character_data.dart';
+import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
+import 'package:flutter/foundation.dart';
 
 class MeleeCharacter extends SpriteAnimationComponent
     with HasGameRef<MainGame> {
-  MeleeCharacter() : super(size: Vector2(TILESIZE.toDouble(), TILESIZE.toDouble()));
+  MeleeCharacter() : super(size: Vector2(kTileSize.toDouble(), kTileSize.toDouble()));
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
@@ -33,7 +35,7 @@ class MeleeCharacter extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
-    anchor = Anchor(0, 0.3);
+    anchor = const Anchor(0, 0.3);
     buildAnimations();
     actionFinished(CharacterAnimationState.idleDown);
   }
@@ -41,6 +43,11 @@ class MeleeCharacter extends SpriteAnimationComponent
   Future<void> buildAnimations() async {
     final json = await game.assets.readJson('json/player_animations.json');
     final imageFilename = json['imageFile'] ?? '';
+    if(imageFilename is! String) {
+      debugPrint('Error: animation image filename');
+      return;
+    }
+
     final image = await game.images.load(imageFilename);
     for (final state in CharacterAnimationState.values) {
       if (json.containsKey(state.name)) {
@@ -60,14 +67,36 @@ class MeleeCharacter extends SpriteAnimationComponent
       image: image,
       srcSize: Vector2(16, 16),
     );
-    final Map<String, dynamic> anim = json[animName];
-    final List<SpriteAnimationFrameData> frames = [];
-    final double stepTime = anim['timePerFrame'] ?? 0;
+
+    final anim = json[animName];
+    if(anim is! Map<String, dynamic>){ 
+      throw Exception('animVal error');
+    }
+
+    final stepTime = anim['timePerFrame'] ?? 0;
+    if(stepTime is! double) {
+      throw Exception('stepTime error');
+    }
+
+    final frameData = anim['frames'];
+    if(frameData is! List<dynamic>) {
+      throw Exception('frameData error');
+    }
+
+    final frames = <SpriteAnimationFrameData>[];
     if (anim.containsKey('frames')) {
-      final List<dynamic> frameData = anim['frames'];
       for (final frame in frameData) {
+        if(frame is! Map<String, dynamic>) {
+          throw Exception('frame data ${frame.runtimeType} is not Map<String, dynamic>');
+        }
         final x = frame['y'] ?? 0;
         final y = frame['x'] ?? 0;
+        if(x is! int) {
+          throw Exception('error parsing sprite frame');
+        }
+        if(y is! int) {
+          throw Exception('error pasring sprite frame');
+        }
         final f = spriteSheet.createFrameData(x, y, stepTime: stepTime);
         frames.add(f);
       }
@@ -108,19 +137,19 @@ class MeleeCharacter extends SpriteAnimationComponent
     final distance = Vector2(0, 0);
     switch (direction) {
       case Direction.up:
-        distance.y -= TILESIZE;
+        distance.y -= kTileSize;
         actionFinished(CharacterAnimationState.walkUp);
         break;
       case Direction.down:
-        distance.y += TILESIZE;
+        distance.y += kTileSize;
         actionFinished(CharacterAnimationState.walkDown);
         break;
       case Direction.left:
-        distance.x -= TILESIZE;
+        distance.x -= kTileSize;
         actionFinished(CharacterAnimationState.walkLeft);
         break;
       case Direction.right:
-        distance.x += TILESIZE;
+        distance.x += kTileSize;
         actionFinished(CharacterAnimationState.walkRight);
         break;
       case Direction.none:
@@ -204,8 +233,7 @@ class MeleeCharacter extends SpriteAnimationComponent
       case Direction.none:
     }
 
-    final emptyEffect = MoveByEffect(
-        Vector2(0, 0), EffectController(duration: .5), onComplete: () {
+    final emptyEffect = MoveByEffect(Vector2(0, 0), EffectController(duration: .5), onComplete: () {
       actionFinished(CharacterAnimationState.beginIdle);
       onComplete();
     });
@@ -230,13 +258,13 @@ class MeleeCharacter extends SpriteAnimationComponent
   }
 
   // returns amount of damage done
-  ({MeleeAttackResult result, double value}) takeHit(double damage, Function onComplete, Function onKilled) {
+  ({MeleeAttackResult result, double value}) takeHit(double incomingDamage, Function onComplete, Function onKilled) {
     if(dodge()) {
       onComplete();
       return (result: MeleeAttackResult.dodged, value: 0);
     }
 
-    damage = mitigatedDamage(damage);
+    final damage = mitigatedDamage(incomingDamage);
     data.health -= damage;
     if(damage > 0) {
       final flicker = OpacityEffect.fadeOut(
@@ -274,7 +302,5 @@ class MeleeCharacter extends SpriteAnimationComponent
 }
 
 class PlayerComponent extends MeleeCharacter {
-  PlayerComponent() {
-
-  }
+  PlayerComponent();
 }

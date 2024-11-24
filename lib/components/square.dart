@@ -9,7 +9,7 @@ class Square extends PositionComponent {
   Square(this.palette);
   @override
   void render(Canvas canvas) {
-    canvas.drawRect(Rect.fromCircle(center: Offset(8,8), radius: 7.4), 
+    canvas.drawRect(Rect.fromCircle(center: const Offset(8,8), radius: 7.4), 
     palette.paint()..style = PaintingStyle.stroke..strokeWidth = 1);
   }
 }

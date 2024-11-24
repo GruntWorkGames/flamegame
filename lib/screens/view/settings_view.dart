@@ -12,7 +12,7 @@ class SettingsView extends ConsumerWidget {
     final title = Padding(padding: EdgeInsets.all(7), child: Text('Settings', style: textStyle));
     final titleContainer = Padding(padding: EdgeInsets.only(bottom: 1), child: Container(decoration: boxDecoration, child: title));
 
-    final cells = [];
+    final cells = <Widget>[];
     
     final control = Padding(padding: EdgeInsets.only(bottom:10), child: ControlStyleSetting());
     final row = Row(mainAxisAlignment: MainAxisAlignment.center, children: [control]);

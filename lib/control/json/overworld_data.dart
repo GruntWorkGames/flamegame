@@ -6,17 +6,15 @@ class OverworldData {
   OverworldData();
 
   OverworldData.fromJson(Map<String, dynamic> json) {
-    final enemiesNode = json['enemies'] ?? [];
+    final enemiesNode = json['enemies'] as List<Map<String, dynamic>>? ?? [];
     for (final json in enemiesNode) {
       enemies.add(CharacterData.fromJson(json));
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> json = {};
-
+    final json = <String, dynamic>{};
     json['enemies'] = enemies.map((enemy) => enemy.toJson()).toList();
-
     return json;
   }
 }

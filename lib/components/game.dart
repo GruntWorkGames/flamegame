@@ -3,17 +3,17 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
+import 'package:flame_game/components/map_runner.dart';
 import 'package:flame_game/components/melee_character.dart';
+import 'package:flame_game/components/overworld_navigator.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/components/overworld_navigator.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/components/map_runner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,30 +38,35 @@ class MainGame extends FlameGame with TapDetector {
     overworld?.equipWeapon(player.weapon);
     overworld?.equipArmor(player.armor);
 
-    TextComponent debugLabel = TextComponent();
+    final debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
     debugLabel.text = '';
-    debugLabel.textRenderer = TextPaint(style: TextStyle(color: Colors.red));
+    debugLabel.textRenderer = TextPaint(style: const TextStyle(color: Colors.red));
     debugLabel.priority = double.maxFinite.toInt();
     debugLabel.anchor = Anchor.center;
     add(debugLabel);
   }
 
-  void save() async {
+  Future<void> save() async {
     final jsonString = jsonEncode(player.data.toJson());
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     prefs.setString('player', jsonString);
   }
 
   Future<void> loadSavedPlayerData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('player') ?? '{}';
     final json = jsonDecode(jsonString);
+    final isJson = json is Map<String, dynamic>;
+    if(!isJson) {
+      return;
+    }
     player.data = CharacterData.fromJson(json);
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
     ref?.read(inventoryProvider.notifier).set(player.data);
     ref?.read(inventoryItemProvider.notifier).set(firstItem);
+
     final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
@@ -145,6 +150,4 @@ class MainGame extends FlameGame with TapDetector {
     }
     return (command:commands.first, argument: commandData.argument);
   }
-
-  onTapDownPressed(Direction direction) {}
 }

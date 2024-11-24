@@ -8,10 +8,17 @@ class Shop {
   Shop();
 
   Shop.fromJson(Map<String, dynamic> json) {
-    owner = json['name'] ?? '';
-    final shop = json['shop'] ?? {};
-    message = shop['message'] ?? '';
-    final itemsJson = shop['items'] ?? [];
+    final ownerVal = json['name'] as String? ?? '';
+    owner = ownerVal;
+
+    final shop = json['shop']  as Map<String, dynamic>? ?? {};
+    final messageVal = shop['message'] ?? '';
+
+    if(messageVal is String) {
+       message = messageVal;
+    }
+
+    final itemsJson = shop['items'] as List<Map<String, dynamic>>? ?? [];
     for (final item in itemsJson) {
       items.add(Item.fromJson(item));
     }

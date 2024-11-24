@@ -1,26 +1,26 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/control/enum/direction.dart';
-import 'package:flutter/material.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
+import 'package:flutter/material.dart';
 
-const int TILESIZE = 16;
+const int kTileSize = 16;
 final mainColor = Colors.grey[600]!;
 final borderColor = Colors.grey[700]!;
 // final mainColor = Colors.grey[400]!;
 // final borderColor = Colors.blue;
-final selectedColor = Color.fromARGB(255, 49, 49, 49);
-final borderRadius = 5.0;
-final borderWidth = 2.0;
-final buttonId = 400;
+const selectedColor = Color.fromARGB(255, 49, 49, 49);
+const borderRadius = 5.0;
+const borderWidth = 2.0;
+const buttonId = 400;
 
 k.Tile posToTile(Vector2 pos) {
-  final x = (pos.x / TILESIZE).toInt();
-  final y = (pos.y / TILESIZE).toInt();
+  final x = (pos.x / kTileSize).toInt();
+  final y = (pos.y / kTileSize).toInt();
   return k.Tile(x, y);
 }
 
 Vector2 tileToPos(k.Tile tile) {
-  return Vector2(tile.x.toDouble() * TILESIZE, tile.y.toDouble() * TILESIZE);
+  return Vector2(tile.x.toDouble() * kTileSize, tile.y.toDouble() * kTileSize);
 }
 
 k.Tile getNextTile(Direction direction, k.Tile pos) {
@@ -61,15 +61,15 @@ Direction directionFromPosToPos(k.Tile posA, k.Tile posB) {
   }
 }
 
-final phoneTextTheme = TextTheme();
+const phoneTextTheme = TextTheme();
 
 final mainTheme = ThemeData(
-  textTheme: TextTheme(),
-  textButtonTheme: TextButtonThemeData(), 
-  iconButtonTheme: IconButtonThemeData(),
-  iconTheme: IconThemeData(),
-  actionIconTheme: ActionIconThemeData(),
-  inputDecorationTheme: InputDecorationTheme()
+  textTheme: const TextTheme(),
+  textButtonTheme: const TextButtonThemeData(), 
+  iconButtonTheme: const IconButtonThemeData(),
+  iconTheme: const IconThemeData(),
+  actionIconTheme: const ActionIconThemeData(),
+  inputDecorationTheme: const InputDecorationTheme()
 );
 
 final boxDecoration = BoxDecoration(
@@ -77,4 +77,4 @@ final boxDecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(borderRadius),
   color: mainColor);
 
-  final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
+const titleStyle = TextStyle(fontSize: 18, color: Colors.white);

@@ -8,7 +8,8 @@ final controlStyleState = StateNotifierProvider<ControlStyleState, ControlStyle>
 class ControlStyleState extends StateNotifier<ControlStyle> {
   ControlStyleState() : super(ControlStyle.directional);
 
-  void set(ControlStyle type) {
+  @override
+  set state(ControlStyle type) {
     state = type;
   }
 }

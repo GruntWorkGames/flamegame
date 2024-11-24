@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame_game/components/game.dart';
-import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/map_runner.dart';
+import 'package:flame_game/components/melee_character.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
   final Map<String, MapRunner> worlds = {};
@@ -17,7 +17,7 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
     if(worlds.containsKey(mapfile)) {
       world = worlds[mapfile];
     } else {
-      world = await MapRunner(mapfile);
+      world = MapRunner(mapfile);
       worlds[mapfile] = world;
     }
 

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FxSetting extends ConsumerWidget {
+  const FxSetting({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sliderValue = ref.watch(fxSliderValueState);
     final slider = Slider(max: 100, min: 0, value: sliderValue, onChanged: (value) {
-      ref.read(fxSliderValueState.notifier).set(value);
+      ref.read(fxSliderValueState.notifier).state = value;
     });
     final themeData = SliderThemeData(
       activeTrackColor: Colors.white,

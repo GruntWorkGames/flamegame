@@ -30,7 +30,7 @@ class ControlStyleSetting extends ConsumerWidget {
       ],
       selected: <ControlStyle>{state},
       onSelectionChanged: (Set<ControlStyle> newSelection) {
-        ref.read(controlStyleState.notifier).set(newSelection.first);
+        ref.read(controlStyleState.notifier).state = newSelection.first;
       },
     );
   }

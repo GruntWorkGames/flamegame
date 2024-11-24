@@ -18,6 +18,9 @@ class NPC extends MeleeCharacter {
     if (npc.animationJsonFile.isNotEmpty) {
       final json = await game.assets.readJson(npc.animationJsonFile);
       final imageFilename = json['imageFile'] ?? '';
+      if(imageFilename is! String) {
+        throw Exception('image file name is not String. it is ${imageFilename.runtimeType}');
+      }
       final image = await game.images.load(imageFilename);
 
       for (final state in CharacterAnimationState.values) {

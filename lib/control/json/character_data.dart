@@ -28,7 +28,7 @@ class CharacterData {
     }
   }
 
-  void set health(double h) {
+  set health(double h) {
     _health = h;
     if(_health > maxHealth) {
       _health = maxHealth;
@@ -46,23 +46,23 @@ class CharacterData {
   }
 
   CharacterData.fromJson(Map<String, dynamic> json) {
-    _health = json['health'] ?? 10.0;
-    _maxHealth = json['maxHealth'] ?? 30.0;
-    experience = json['experience'] ?? 0.0;
-    hit = json['hit'] ?? 40.0;
-    dodge = json['dodge'] ?? 5.0;
-    str = json['str'] ?? 1.0;
-    stam = json['stam'] ?? 1.0;
-    gold = json['gold'] ?? 0;
-    num x = json['x'];
-    num y = json['y'];
-    tilePosition.x = x.toInt();
-    tilePosition.y = y.toInt();
-    mapfile = json['mapfile'] ?? 'bigmap.tmx';
-    final inventoryNode = json['inventory'] ?? [];
-    if (inventoryNode != null && inventoryNode.isNotEmpty) {
-      json['inventory'].forEach((v) {
-        inventory.add(Item.fromJson(v));
+    _health = json['health'] as double? ?? 10.0;
+    _maxHealth = json['maxHealth'] as double? ?? 30.0;
+    experience = json['experience'] as double? ?? 0.0;
+    hit = json['hit'] as double? ?? 40.0;
+    dodge = json['dodge'] as double? ?? 5.0;
+    str = json['str'] as double? ?? 1.0;
+    stam = json['stam'] as double? ?? 1.0;
+    gold = json['gold'] as double? ?? 0;
+    tilePosition.x = json['x'] as int? ?? 0;
+    tilePosition.y = json['y'] as int? ?? 0;
+    mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
+    final inventoryNode = json['inventory'] as List<dynamic>? ?? [];
+    if (inventoryNode.isNotEmpty) {
+      final inventoryList = json['inventory'] as List<dynamic>? ?? [];
+      inventoryList.forEach((v) {
+        final item = v as Map<String, dynamic>? ?? {};
+        inventory.add(Item.fromJson(item));
       });
     } else {
       addDefaultItems();
@@ -70,10 +70,10 @@ class CharacterData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['health'] = this.health;
-    data['maxHealth'] = this._maxHealth;
-    data['gold'] = this.gold;
+    final data = <String, dynamic>{};
+    data['health'] = health;
+    data['maxHealth'] = _maxHealth;
+    data['gold'] = gold;
     data['x'] = tilePosition.x;
     data['y'] = tilePosition.y;
     data['hit'] = hit;
@@ -82,39 +82,39 @@ class CharacterData {
     data['dodge'] = dodge;
     data['mapfile'] = mapfile;
     data['experience'] = experience;
-    data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
+    data['inventory'] = inventory.map((v) => v.toJson()).toList();
     return data;
   }
   
   void addDefaultItems() {
     final hPotion = {
-      "name" : "Health Potion",
-      "type" : "potion",
-      "value" : 10.0,
-      "valueName": "health",
-      "description": "The thick red liquid reminds you of cough syrup.", 
-      "cost" : 10.0,
-      "inventoryUseText" : "Drink"
+      'name' : 'Health Potion',
+      'type' : 'potion',
+      'value' : 10.0,
+      'valueName': 'health',
+      'description': 'The thick red liquid reminds you of cough syrup.', 
+      'cost' : 10.0,
+      'inventoryUseText' : 'Drink'
     };
     final sword = {
-      "name" : "Dull Short Sword",
-      "type" : "weapon",
-      "value" : 4.0,
-      "valueName": "damage",
-      "description": "A nearly useless weapon. A kids toy.",
-      "cost" : 30.0,
-      "inventoryUseText" : "Equip",
-      "isEquipped": true
+      'name' : 'Dull Short Sword',
+      'type' : 'weapon',
+      'value' : 4.0,
+      'valueName': 'damage',
+      'description': 'A nearly useless weapon. A kids toy.',
+      'cost' : 30.0,
+      'inventoryUseText' : 'Equip',
+      'isEquipped': true
     };
     final helmet = {
-      "name" : "Armor Helm",
-      "type" : "armor",
-      "value" : 2.0,
-      "valueName": "mitigation",
-      "description": "Tarnished and flimsy.",
-      "cost" : 20.0,
-      "inventoryUseText" : "Equip",
-      "isEquipped": true
+      'name' : 'Armor Helm',
+      'type' : 'armor',
+      'value' : 2.0,
+      'valueName': 'mitigation',
+      'description': 'Tarnished and flimsy.',
+      'cost' : 20.0,
+      'inventoryUseText' : 'Equip',
+      'isEquipped': true
     };
 
     inventory.add(Item.fromJson(hPotion));

@@ -1,16 +1,16 @@
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/components/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InventoryView extends ConsumerWidget {
   final MainGame game;
-  InventoryView(this.game);
+  const InventoryView(this.game, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,8 +18,7 @@ class InventoryView extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     final title = _title(context);
     final cells = playerData.inventory.map((item) => _buildCell(context, item, ref)).toList();
-    final rightCol = SizedBox(height: 300, child: SingleChildScrollView(child: Column(children: cells),
-      physics: AlwaysScrollableScrollPhysics()));
+    final rightCol = SizedBox(height: 300, child: SingleChildScrollView(physics: const AlwaysScrollableScrollPhysics(), child: Column(children: cells)));
     final leftCol = Column(children: [_descriptionPane(context, ref)]);
     final row = Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,15 +27,15 @@ class InventoryView extends ConsumerWidget {
 
     final closeBtnContainer = InkWell(
       onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
-      child: Padding(padding: EdgeInsets.only(top: 30), 
+      child: Padding(padding: const EdgeInsets.only(top: 30), 
         child: Container(
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-        boxShadow: [BoxShadow(offset: const Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        boxShadow: const [BoxShadow(offset: Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
         borderRadius: BorderRadius.circular(30), 
         color: Colors.grey[600]), 
-        child: Icon(Icons.close, size: 24, color: Colors.white))));  
+        child: const Icon(Icons.close, size: 24, color: Colors.white))));  
     final col = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, row, closeBtnContainer]);
     final box =
         Center(child: SizedBox(width: width, child: col));
@@ -45,11 +44,11 @@ class InventoryView extends ConsumerWidget {
 
   Widget _title(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final titleStyle = TextStyle(fontSize: 18, color: Colors.white);
-    final label = Padding(
+    const titleStyle = TextStyle(fontSize: 18, color: Colors.white);
+    const label = Padding(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
         child: Text('Inventory', style: titleStyle));
-    return Padding(padding: EdgeInsets.only(bottom: 1), child:Container(
+    return Padding(padding: const EdgeInsets.only(bottom: 1), child:Container(
         constraints: BoxConstraints(maxWidth: width),
         decoration: boxDecoration,
         child: label));
@@ -58,7 +57,7 @@ class InventoryView extends ConsumerWidget {
   Widget _buildCell(BuildContext context, Item item, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
     final isEquipped = item.isEquipped ? ' *' : '';
-    final name = Padding(padding: EdgeInsets.all(5), child: Text('${item.name} $isEquipped', style: titleStyle));
+    final name = Padding(padding: const EdgeInsets.all(5), child: Text('${item.name} $isEquipped', style: titleStyle));
     final row = Row(children: [name]);
 
     final color = item.isSelected ? selectedColor : mainColor;
@@ -74,7 +73,7 @@ class InventoryView extends ConsumerWidget {
         child: row);
 
     final paddedContainer =
-        Padding(padding: EdgeInsets.only(bottom: 1), child: container);
+        Padding(padding: const EdgeInsets.only(bottom: 1), child: container);
 
     return InkWell(
         onTap: () {
@@ -87,20 +86,20 @@ class InventoryView extends ConsumerWidget {
   Widget _descriptionPane(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width - 2;
     final item = ref.watch(inventoryItemProvider);
-    final style = TextStyle(fontSize: 16, color: Colors.white);
+    const style = TextStyle(fontSize: 16, color: Colors.white);
     final isEquipped = item.isEquipped ? '* Equipped' : '';
     final value = item.value == 0 ? '' : '+${item.value} ${item.valueName}';
     final description = '${item.name}\n\n${item.description}\n\n$value\n\n$isEquipped';
     final label = Padding(
-        padding: EdgeInsets.all(5),
+        padding: const EdgeInsets.all(5),
         child: Text(description, style: style));
     final decoration = BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(color: borderColor, width: borderWidth),
         color: mainColor);
 
-    final deleteIcon = Icon(Icons.delete, size: 24, color: Colors.white);
-    final useText = Padding(padding: EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
+    const deleteIcon = Icon(Icons.delete, size: 24, color: Colors.white);
+    final useText = Padding(padding: const EdgeInsets.all(5), child: Text(item.inventoryUseText, style: style));
 
     final buttonStyle = ButtonStyle(elevation: WidgetStateProperty.resolveWith<double>((states) {
       if(states.contains(WidgetState.pressed)) {
@@ -135,7 +134,7 @@ class InventoryView extends ConsumerWidget {
             ref.read(inventoryItemProvider.notifier).set(Item());
           }
         },
-        child: Center(child: deleteIcon));
+        child: const Center(child: deleteIcon));
 
     final useButton = ElevatedButton(
       style: buttonStyle,
@@ -153,9 +152,9 @@ class InventoryView extends ConsumerWidget {
       child: useText,
     );
 
-    final buttonRow = Padding(padding: EdgeInsets.only(bottom: 7), child: Row(children: [useButton, const Spacer(), deleteBtn]));
+    final buttonRow = Padding(padding: const EdgeInsets.only(bottom: 7), child: Row(children: [useButton, const Spacer(), deleteBtn]));
     final col = Column(children: [label, const Spacer(), buttonRow]);
-    return Padding(padding: EdgeInsets.only(right:1), child:Container(
+    return Padding(padding: const EdgeInsets.only(right:1), child:Container(
         height: 400, width: width / 2, decoration: decoration, child: col));
   }
 }

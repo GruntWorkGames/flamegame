@@ -1,13 +1,13 @@
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/control_style.dart';
+import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/button_opacity.dart';
 import 'package:flame_game/control/provider/control_style_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
-import 'package:flame_game/control/provider/healthProvider.dart';
+import 'package:flame_game/control/provider/health_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/components/game.dart';
 import 'package:flame_game/screens/view/control_pad.dart';
 import 'package:flame_game/screens/view/debug_view.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
@@ -19,8 +19,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class UILayer extends ConsumerWidget {
-  late final MainGame game;
-  UILayer(this.game);
+  final MainGame game;
+  const UILayer(this.game, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,31 +28,31 @@ class UILayer extends ConsumerWidget {
     game.ref = ref;
 
     final buttonOpacity = ref.watch(buttonOpacityProvider);
-    final style = TextStyle(color: Colors.white);
+    const style = TextStyle(color: Colors.white);
     final hud = _buildHud(ref);
-    final gearIcon = Icon(Icons.menu, color: Colors.white);
-    final xIcon = Icon(Icons.close, color: Colors.white);
+    const gearIcon = Icon(Icons.menu, color: Colors.white);
+    const xIcon = Icon(Icons.close, color: Colors.white);
     final fab = SpeedDial(
-      child: gearIcon,
       activeChild: xIcon,
       backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity + 0.1),
       spacing: 3,
       spaceBetweenChildren: 4,
       overlayOpacity: 0,
       direction: SpeedDialDirection.down,
-      childrenButtonSize: Size(150, 50),
+      childrenButtonSize: const Size(150, 50),
       children: [
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
-          child: Text('Inventory', style: style), 
+          child: const Text('Inventory', style: style), 
           onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
-          child: Text('Settings', style: style), onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.settings)),
+          child: const Text('Settings', style: style), onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.settings)),
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
-          child: Text('Debug', style: style), 
-          onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.debug))]);
+          child: const Text('Debug', style: style), 
+          onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.debug))],
+      child: gearIcon);
     const pos = FloatingActionButtonLocation.endTop;
 
     switch(uiState) {
@@ -63,9 +63,9 @@ class UILayer extends ConsumerWidget {
       case UIViewDisplayType.shop:
         return SafeArea(child: Stack(children: [ShopMenu(game), hud]));
       case UIViewDisplayType.dialog:
-        return SafeArea(child: Stack(children:[DialogView(), hud]));
+        return SafeArea(child: Stack(children:[const DialogView(), hud]));
       case UIViewDisplayType.invisible:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       case UIViewDisplayType.gameOver:
         return _gameOver(ref);
       case UIViewDisplayType.inventory:
@@ -73,7 +73,7 @@ class UILayer extends ConsumerWidget {
       case UIViewDisplayType.debug: 
         return SafeArea(child: Stack(children:[DebugView(game), hud]));
       case UIViewDisplayType.settings:
-        return SafeArea(child: Stack(children:[SettingsView(), hud]));
+        return SafeArea(child: Stack(children:[const SettingsView(), hud]));
     }
   }
 
@@ -88,18 +88,18 @@ class UILayer extends ConsumerWidget {
   }
 
   Widget _buildHud(WidgetRef ref) {
-    final style = TextStyle(color: Colors.white, fontSize: 24);
+    const style = TextStyle(color: Colors.white, fontSize: 24);
     final health = ref.watch(healthProvider);
     final heartImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/heart.png'));
-    final healthText = Padding(padding: EdgeInsets.only(left: 20), child: Text(health.toInt().toString(), style: style));
+    final healthText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(health.toInt().toString(), style: style));
 
     final coins = ref.watch(goldProvider);
     final coinImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/coin.png'));
-    final coinText = Padding(padding: EdgeInsets.only(left: 20), child: Text(coins.toInt().toString(), style: style));
+    final coinText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(coins.toInt().toString(), style: style));
 
     final healthRow = Row(children: [heartImg, healthText]);
     final goldRow = Row(children: [coinImg, coinText]);
-    final column = Padding(padding: EdgeInsets.all(10), child: Column(children: [healthRow, goldRow]));
+    final column = Padding(padding: const EdgeInsets.all(10), child: Column(children: [healthRow, goldRow]));
     final touchableColumn = GestureDetector(onTap: ()=>ref.read(uiProvider.notifier).set(UIViewDisplayType.game), child: column);
     return touchableColumn;
   }
@@ -126,8 +126,8 @@ class UILayer extends ConsumerWidget {
   
   Widget _gameOver(WidgetRef ref) {
     final dialog = GestureDetector(onTap: (){
-      // TODO
-    }, child: DialogView());
+      // TODO(Kris): add stuff
+    }, child: const DialogView());
     return Center(child: dialog);
   }
   

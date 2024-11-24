@@ -7,7 +7,8 @@ final enemiesEnabled = StateNotifierProvider<EnemiesEnabledState, bool>((ref) {
 class EnemiesEnabledState extends StateNotifier<bool> {
   EnemiesEnabledState() : super(true);
 
-  void set(bool type) {
-    state = type;
+  // ignore: avoid_positional_boolean_parameters
+  void set(bool enemyType) {
+    state = enemyType;
   }
 }

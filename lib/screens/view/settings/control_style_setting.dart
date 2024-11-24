@@ -15,6 +15,8 @@ class ControlStyleSetting extends ConsumerWidget {
     }),
   );
 
+  ControlStyleSetting({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(controlStyleState);

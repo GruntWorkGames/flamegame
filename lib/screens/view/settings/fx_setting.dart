@@ -8,7 +8,7 @@ class FxSetting extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sliderValue = ref.watch(fxSliderValueState);
-    final slider = Slider(max: 100, min: 0, value: sliderValue, onChanged: (value) {
+    final slider = Slider(max: 100, value: sliderValue, onChanged: (value) {
       ref.read(fxSliderValueState.notifier).state = value;
     });
     final themeData = SliderThemeData(

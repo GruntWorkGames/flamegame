@@ -24,7 +24,7 @@ import 'package:flame_game/control/objects/portal.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
-import 'package:flame_game/control/provider/healthProvider.dart';
+import 'package:flame_game/control/provider/health_provider.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -377,7 +377,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         final dialog = DialogData();
         dialog.title = 'You have died';
         dialog.message = 'Press here to restart';
-        game.ref?.read(dialogProvider.notifier).state = dialog;
+        game.ref?.read(dialogProvider.notifier).set(dialog);
         game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
 
@@ -868,7 +868,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       final dialog = DialogData();
       dialog.title = 'Oops!';
       dialog.message = "Sorry, you don't have enough gold!";
-      game.ref?.read(dialogProvider.notifier).state = dialog;
+      game.ref?.read(dialogProvider.notifier).set(dialog);
       game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
     } else {
       item.isSelected = false;

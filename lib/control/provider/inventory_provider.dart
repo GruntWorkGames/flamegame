@@ -7,7 +7,7 @@ final inventoryProvider = StateNotifierProvider<InventoryState, CharacterData>((
 
 class InventoryState extends StateNotifier<CharacterData> {
   InventoryState() : super(CharacterData());
-
+  
   void set(CharacterData inventory) {
     state = inventory;
   }

@@ -1,13 +1,13 @@
 
 import 'package:flame_game/components/game.dart';
-import 'package:flame_game/control/provider/button_opacity.dart';
 import 'package:flame_game/control/enum/direction.dart';
+import 'package:flame_game/control/provider/button_opacity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ControlPad extends ConsumerStatefulWidget {
   final MainGame game;
-  ControlPad(this.game);
+  const ControlPad(this.game, {super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
@@ -23,10 +23,10 @@ class _ControlPadState extends ConsumerState {
   @override
   Widget build(BuildContext context) {
     const color = Colors.white;
-    final leftIcon = Icon(Icons.chevron_left, color: color);
-    final rightIcon = Icon(Icons.chevron_right, color: color);
-    final upIcon = Transform.rotate(angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color));
-    final downIcon = Transform.rotate(angle: -90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color));
+    const leftIcon = Icon(Icons.chevron_left, color: color);
+    const rightIcon = Icon(Icons.chevron_right, color: color);
+    final upIcon = Transform.rotate(angle: 90 * 3.14 / 180, child: const Icon(Icons.chevron_left, color: color));
+    final downIcon = Transform.rotate(angle: -90 * 3.14 / 180, child: const Icon(Icons.chevron_left, color: color));
     final upButton = _buildButton(Direction.up, upIcon);
     final downButton = _buildButton(Direction.down, downIcon); 
     final leftButton = _buildButton(Direction.left, leftIcon);

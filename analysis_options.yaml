@@ -3,3 +3,4 @@ analyzer:
   errors:
     lines_longer_than_80_chars: ignore
     require_trailing_commas: ignore
+    use_setters_to_change_properties: ignore

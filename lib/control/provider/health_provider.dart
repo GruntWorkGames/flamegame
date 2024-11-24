@@ -6,6 +6,7 @@ final healthProvider = StateNotifierProvider<HealthProvider, double>((ref) {
 
 class HealthProvider extends StateNotifier<double> {
   HealthProvider() : super(0);
+  
   void set(double value) {
     state = value;
   }

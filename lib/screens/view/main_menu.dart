@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainMenuFlutter extends ConsumerWidget {
-  MainMenuFlutter();
+  const MainMenuFlutter({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final game = GameWidget(game: _MapBackground());
-    final titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: "Times New Roman", shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: const Offset(2, 2))]);
-    final buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
+    const titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: 'Times New Roman', shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: Offset(2, 2))]);
+    const buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
     final buttonColors = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
       if(states.contains(WidgetState.pressed)) {
         return Colors.grey[700]!;
@@ -22,8 +22,8 @@ class MainMenuFlutter extends ConsumerWidget {
         return Colors.grey[400]!;
       }
     }));
-    final text = Text('Kara\'s Quest', style: titleStyle);
-    final spacer = SizedBox(height: 50);
+    const text = Text("Kara's Quest", style: titleStyle);
+    const spacer = SizedBox(height: 50);
     final playButton = ElevatedButton(onPressed: (){
       Navigator.push(context, MaterialPageRoute(builder: (context) { 
         final game = MainGame();
@@ -32,7 +32,7 @@ class MainMenuFlutter extends ConsumerWidget {
         final scaffold = Scaffold(body: stack);
         return scaffold;
       }));
-    }, child: Text('Play', style: buttonStyle), style: buttonColors);
+    }, style: buttonColors, child: const Text('Play', style: buttonStyle));
     final centeredCol = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [text, spacer, playButton]));
     final stack = Stack(children:[game, centeredCol]);
     return stack;

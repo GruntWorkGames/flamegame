@@ -13,8 +13,8 @@ final dialogProvider = StateNotifierProvider<DialogState, DialogData>((ref) {
 class DialogState extends StateNotifier<DialogData> {
   DialogState() : super(DialogData());
 
-  @override
-  set state (DialogData dialog) {
+  // ignore: use_setters_to_change_properties
+  void set(DialogData dialog) {
     state = dialog;
   }
 }

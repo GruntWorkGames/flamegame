@@ -22,7 +22,7 @@ class _ControlPadState extends ConsumerState {
 
   @override
   Widget build(BuildContext context) {
-    final color = Colors.white;
+    const color = Colors.white;
     final leftIcon = Icon(Icons.chevron_left, color: color);
     final rightIcon = Icon(Icons.chevron_right, color: color);
     final upIcon = Transform.rotate(angle: 90 * 3.14 / 180, child: Icon(Icons.chevron_left, color: color));
@@ -33,15 +33,15 @@ class _ControlPadState extends ConsumerState {
     final rightButton = _buildButton(Direction.right, rightIcon);
 
     final topRow = Row(mainAxisAlignment: MainAxisAlignment.center, children: [upButton]);
-    final middleRow = Padding(padding: EdgeInsets.symmetric(horizontal: 10), 
+    final middleRow = Padding(padding: const EdgeInsets.symmetric(horizontal: 10), 
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [leftButton, const SizedBox(width: 50), rightButton]));
-    final bottomRow = Padding(padding: EdgeInsets.only(bottom: 10),
+    final bottomRow = Padding(padding: const EdgeInsets.only(bottom: 10),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [downButton]));
     return Column(children: [const Spacer(), topRow, middleRow, bottomRow]);
   }
 
   Widget _buildButton(Direction direction, Widget child) {
-    final padding = EdgeInsets.fromLTRB(30, 10, 30, 10);
+    const padding = EdgeInsets.fromLTRB(30, 10, 30, 10);
     final buttonOpacity = ref.watch(buttonOpacityProvider);
     final icon = Padding(padding: padding, child: child);
     final dec = BoxDecoration(color: Colors.grey.withOpacity(buttonOpacity), borderRadius: BorderRadius.circular(30));

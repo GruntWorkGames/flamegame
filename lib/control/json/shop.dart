@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flame_game/control/json/item.dart';
 
 class Shop {
@@ -18,9 +20,12 @@ class Shop {
        message = messageVal;
     }
 
-    final itemsJson = shop['items'] as List<Map<String, dynamic>>? ?? [];
-    for (final item in itemsJson) {
-      items.add(Item.fromJson(item));
-    }
+    final itemsJson = shop['items'] as List<Map<String, dynamic>?>? ?? [];
+    print(itemsJson);
+
+
+    // for (final item in itemsJson as List<Map<String, dynamic>>) {
+    //   items.add(Item.fromJson(item));
+    // }
   }
 }

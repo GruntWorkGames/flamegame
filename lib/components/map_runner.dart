@@ -508,7 +508,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final dialog = DialogData();
     dialog.title = npc.npc.name;
     dialog.message = npc.npc.speech;
-    game.ref?.read(dialogProvider.notifier).state = dialog;
+    game.ref?.read(dialogProvider.notifier).set(dialog);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
   }
 

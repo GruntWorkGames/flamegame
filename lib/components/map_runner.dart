@@ -193,7 +193,7 @@ class CraftedMap with GameMap {
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
-  List<List<Function?>> _triggerTiles = [];
+  List<List<Function>> _triggerTiles = [];
   List<List<NPC?>> _npcTiles = [];
   List<Enemy> enemies = [];
   final List<NPC> _npcs = [];
@@ -489,13 +489,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       return false;
     }
 
-    if (portal != null) {
-      _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
-      shouldContinue = false;
-      portal();
-      return false;
-    }
-
+    _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
+    shouldContinue = false;
+    portal();
+  
     return !isTileBlocked(nextTile);
   }
 
@@ -550,11 +547,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
             growable: false),
         growable: false);
 
-    _triggerTiles = List<List<Function?>>.generate(
+    _triggerTiles = List<List<Function>>.generate(
         map.width,
         (index) =>
-            List<Function?>.generate(map.height, (index) => null, growable: false),
-        growable: false);
+            List<Function>.generate(map.height, (index) => (){}), growable: false);
 
     _npcTiles = List<List<NPC?>>.generate(
         map.width,
@@ -611,13 +607,16 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void _addPortal(Portal portal) {
-    final func = () async {
+    final tilePos = posToTile(portal.position);
+    _triggerTiles[tilePos.x][tilePos.y] = () {
+      portalEntered(portal);
+    };
+  }
+
+  Future<void> portalEntered(Portal portal) async {
       shouldContinue = false;
       final map = portal.map;
       await game.overworldNavigator.pushWorld(map);
-    };
-    final tilePos = posToTile(portal.position);
-    _triggerTiles[tilePos.x][tilePos.y] = func;
   }
 
   void _addExit(Vector2 exit) {
@@ -732,13 +731,14 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     return null;
   }
 
-  Function? _getTilePortal(k.Tile nextTile) {
-    try {
-      return _triggerTiles[nextTile.x][nextTile.y];
-    } on Exception catch (e) {
-      debugPrint('error checking tile $e');
-    }
-    return null;
+  Function _getTilePortal(k.Tile nextTile) {
+    return _triggerTiles[nextTile.x][nextTile.y];
+    // try {
+    //   return _triggerTiles[nextTile.x][nextTile.y];
+    // } on Exception catch (e) {
+    //   debugPrint('error checking tile $e');
+    // }
+    // return null;
   }
 
   Direction findPath(Enemy enemy) {

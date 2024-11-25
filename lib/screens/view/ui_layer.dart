@@ -12,6 +12,7 @@ import 'package:flame_game/screens/view/control_pad.dart';
 import 'package:flame_game/screens/view/debug_view.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
 import 'package:flame_game/screens/view/inventory_view.dart';
+import 'package:flame_game/screens/view/quest_list_view.dart';
 import 'package:flame_game/screens/view/settings_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,10 @@ class UILayer extends ConsumerWidget {
           onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.inventory)), 
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
+          child: const Text('Quests', style: style), 
+          onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.quests)), 
+        SpeedDialChild(
+          backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
           child: const Text('Settings', style: style), onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.settings)),
         SpeedDialChild(
           backgroundColor: Colors.grey[buttonId]!.withOpacity(buttonOpacity),
@@ -74,6 +79,8 @@ class UILayer extends ConsumerWidget {
         return SafeArea(child: Stack(children:[DebugView(game), hud]));
       case UIViewDisplayType.settings:
         return SafeArea(child: Stack(children:[const SettingsView(), hud]));
+      case UIViewDisplayType.quests:  
+        return SafeArea(child: Stack(children:[const QuestListView(), hud]));
     }
   }
 

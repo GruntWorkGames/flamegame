@@ -22,16 +22,16 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   }
 
   void _createEnemy() {
-    if((game.overworld?.enemies.length ?? 0) >= maxEnemies) {
+    if((game.mapRunner?.enemies.length ?? 0) >= maxEnemies) {
       return;
     }
 
-    final spawnArea = game.overworld?.tilesArroundPosition(posToTile(game.player.position), spawnRadius) ?? [];
+    final spawnArea = game.mapRunner?.tilesArroundPosition(posToTile(game.player.position), spawnRadius) ?? [];
     if(spawnArea.isEmpty) {
       throw Exception('Spawn Area is empty');
     }
 
-    final enemyTiles = game.overworld?.enemies.map((enemy) {
+    final enemyTiles = game.mapRunner?.enemies.map((enemy) {
       return posToTile(enemy.position);
     }).toList() ?? [];
 
@@ -39,14 +39,14 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       return 
         tile == posToTile(game.player.position)
           || enemyTiles.contains(tile)
-          || game.overworld!.isTileBlocked(tile);
+          || game.mapRunner!.isTileBlocked(tile);
     });
 
     final index = Random().nextInt(spawnArea.length);
     final spawnTile = spawnArea[index];
     final enemy = Enemy();
     enemy.position = tileToPos(spawnTile);
-    game.overworld?.enemies.add(enemy);
-    game.overworld?.add(enemy);
+    game.mapRunner?.enemies.add(enemy);
+    game.mapRunner?.add(enemy);
   }
 }

@@ -42,7 +42,7 @@ class Enemy extends MeleeCharacter {
 
   @override
   void onMoveCompleted(k.Tile newTile) {
-    game.overworld!.moveNextEnemy();
+    game.mapRunner!.moveNextEnemy();
     data.tilePosition = posToTile(position);
   }
 }

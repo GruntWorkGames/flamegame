@@ -11,8 +11,10 @@ import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
+import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
+import 'package:flame_game/control/provider/quest_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
-  MapRunner? overworld;
+  MapRunner? mapRunner;
   final overworldNavigator = OverworldNavigator();
   Component? currentSpeechBubble;
   WidgetRef? ref;
@@ -35,8 +37,8 @@ class MainGame extends FlameGame with TapDetector {
     instance = this;
     await overworldNavigator.pushWorld(player.data.mapfile);
     await loadSavedPlayerData();
-    overworld?.equipWeapon(player.weapon);
-    overworld?.equipArmor(player.armor);
+    mapRunner?.equipWeapon(player.weapon);
+    mapRunner?.equipArmor(player.armor);
 
     final debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
@@ -67,6 +69,25 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
+
+    // load quests
+    final questJson = prefs.getString('quests') ?? '{}';
+    final questMap = jsonDecode(questJson) as Map<String,dynamic>? ?? {};
+    final questNode = questMap['quests'] as List<dynamic>? ?? [];
+    final quests = <Quest>[];
+    for(final questNode in questNode) {
+      final quest = questNode as Map<String, dynamic>? ?? {};
+      quests.add(Quest.fromMap(quest));
+    }
+
+    if(quests.isEmpty) {
+      final quest = Quest();
+      await quest.loadDefaultQuest();
+      quests.add(quest);
+    }
+
+    player.data.quests = quests;
+    ref?.read(questListProvider.notifier).set(quests);
   }
 
   @override
@@ -77,17 +98,17 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void directionDown(Direction direction) {
-    overworld?.directionPressed(direction);
-    overworld?.shouldContinue = true;
+    mapRunner?.directionPressed(direction);
+    mapRunner?.shouldContinue = true;
   }
 
   void directionUp(Direction direction) {
-    overworld?.shouldContinue = false;
+    mapRunner?.shouldContinue = false;
   }
 
   void directionPressed(Direction direction) {
-    if (overworld != null) {
-      overworld!.directionPressed(direction);
+    if (mapRunner != null) {
+      mapRunner!.directionPressed(direction);
     }
   }
 
@@ -103,18 +124,18 @@ class MainGame extends FlameGame with TapDetector {
         return;
       case DebugCommand.heal:
         player.data.heal(double.parse(command.argument));
-        overworld?.updateUI();
+        mapRunner?.updateUI();
         return;
       case DebugCommand.reload:
         Navigator.pop(context);
         return;
       case DebugCommand.sethp:
         player.data.health = double.parse(command.argument);
-        overworld?.updateUI();
+        mapRunner?.updateUI();
         return;
       case DebugCommand.setstam:
         player.data.stam = double.parse(command.argument);
-        overworld?.updateUI();
+        mapRunner?.updateUI();
         return;
       case DebugCommand.setstr:
         player.data.str = double.parse(command.argument);

@@ -20,6 +20,7 @@ import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
+import 'package:flame_game/control/objects/game_event_listener.dart';
 import 'package:flame_game/control/objects/portal.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 import 'package:flame_game/control/provider/dialog_provider.dart';
@@ -423,14 +424,14 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     
     game.player.playAttackDirectionAnim(direction, () {
       final damageDone = enemy.takeHit(game.player.weapon.value, () {
-        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+        game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.data.gold += enemy.data.gold;
         game.player.data.experience += enemy.experience;
         updateUI();
         enemy.removeFromParent();
         enemies.removeWhere((other) => other == enemy);
-        game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+        game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
         final damageString = damageDone.value == 0 ? '' : '-${damageDone.value.toInt()}';
         final resultString = damageDone.result == MeleeAttackResult.success ? '' : damageDone.result.name;
@@ -447,7 +448,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       pos.x -= kTileSize;
     }
     game.player.playAttackDirectionAnim(direction, () {
-      game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+      game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       showCombatMessage(pos, 'miss',const Color.fromARGB(250, 255, 255, 255));
     });
   }
@@ -485,6 +486,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final npc = _isTileBlockedNpc(nextTile);
     final portal = _getTilePortal(nextTile);
     if (npc != null) {
+      postGameEvent('talk_to', npc.npc.name);
       showDialog(npc);
       return false;
     }
@@ -960,5 +962,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     if(game.ref?.read(enemiesEnabled) ?? true) {
       enemyCreator.playerMoved();
     }
+  }
+  
+  void postGameEvent(String event, String value) {
+    print('$event $value');
+    // TODO(Kris): check current quests to see if the event matches any
   }
 }

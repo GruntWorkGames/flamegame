@@ -139,7 +139,7 @@ class InventoryView extends ConsumerWidget {
     final useButton = ElevatedButton(
       style: buttonStyle,
       onPressed: () {
-        game.overworld?.useItem(item);
+        game.mapRunner?.useItem(item);
         ref.read(inventoryProvider.notifier).set(game.player.data);
         if (game.player.data.inventory.isNotEmpty) {
           ref

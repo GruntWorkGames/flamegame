@@ -21,7 +21,7 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
       worlds[mapfile] = world;
     }
 
-    game.overworld = world;
+    game.mapRunner = world;
     game.world = world!;
     stack.add(world);
   }
@@ -29,7 +29,7 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
   void popWorld() {
     stack.removeLast();
     final world = stack.last;
-    game.overworld = world;
+    game.mapRunner = world;
     game.world = world;
   }
 

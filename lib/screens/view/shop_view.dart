@@ -115,7 +115,7 @@ class ShopMenu extends ConsumerWidget {
     final useButton = ElevatedButton(
       style: buttonStyle,
       onPressed: () {
-        MainGame.instance.overworld!.playerBoughtItem(item);
+        MainGame.instance.mapRunner!.playerBoughtItem(item);
       },
       child: useText,
     );

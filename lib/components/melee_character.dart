@@ -122,10 +122,10 @@ class MeleeCharacter extends SpriteAnimationComponent
   }
 
   void onMoveCompleted(k.Tile newTile) {
-    game.overworld?.steppedOnTile(newTile);
+    game.mapRunner?.steppedOnTile(newTile);
     isMoving = false;
     actionFinished(CharacterAnimationState.beginIdle);
-    game.overworld!.turnSystem.updateState(TurnSystemState.playerFinished);
+    game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
     data.tilePosition = posToTile(position);
   }
 

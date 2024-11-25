@@ -20,7 +20,6 @@ import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
 import 'package:flame_game/control/json/shop.dart';
-import 'package:flame_game/control/objects/game_event_listener.dart';
 import 'package:flame_game/control/objects/portal.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 import 'package:flame_game/control/provider/dialog_provider.dart';
@@ -966,6 +965,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   
   void postGameEvent(String event, String value) {
     print('$event $value');
+    game.onGameEvent(event, value);
     // TODO(Kris): check current quests to see if the event matches any
   }
 }

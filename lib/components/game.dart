@@ -167,4 +167,15 @@ class MainGame extends FlameGame with TapDetector {
     }
     return (command:commands.first, argument: commandData.argument);
   }
+
+  void onGameEvent(String event, String value) {
+    final quests = player.data.quests;
+    for(final quest in quests) {
+      for(final obj in quest.objectives) {
+        if(obj.listenEvent == '${event}_$value') {
+          print('objective complete ${obj.title}');
+        }
+      }
+    }
+  }
 }

@@ -491,7 +491,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
 
     if(portal != null) {
-      _reEntryPos = game.player.position;
+      _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
       shouldContinue = false;
       portal();
     }

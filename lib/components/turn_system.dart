@@ -7,35 +7,35 @@ enum TurnSystemState {
 }
 
 class TurnSystem extends Component with HasGameRef<MainGame> {
-  final MapRunner overworld;
+  final MapRunner mapRunner;
   TurnSystemState _state = TurnSystemState.initial;
   Function? playerFinishedCallback;
   Function? enemyFinishedCallback;
 
-  TurnSystem({required this.overworld, this.playerFinishedCallback, this.enemyFinishedCallback});
+  TurnSystem({required this.mapRunner, this.playerFinishedCallback, this.enemyFinishedCallback});
  
   void updateState(TurnSystemState newState) {
 
     switch(newState) {
       case TurnSystemState.player:
-        overworld.listenToInput = true;
+        mapRunner.listenToInput = true;
         break;
       case TurnSystemState.playerFinished:
-        overworld.listenToInput = false;
+        mapRunner.listenToInput = false;
         if(playerFinishedCallback != null) {
           playerFinishedCallback?.call();
         }
         _state = TurnSystemState.enemy;
-        overworld.enemyTurn();
-        overworld.playerMoved();
+        mapRunner.enemyTurn();
+        mapRunner.playerMoved();
         return;
       case TurnSystemState.enemy:
         break;
       case TurnSystemState.enemyFinished:
-        overworld.listenToInput = true;
+        mapRunner.listenToInput = true;
         _state = TurnSystemState.player;
-        if(overworld.shouldContinue) {
-          overworld.directionPressed(overworld.lastDirection);
+        if(mapRunner.shouldContinue) {
+          mapRunner.directionPressed(mapRunner.lastDirection);
         }
         return;
       case TurnSystemState.initial:

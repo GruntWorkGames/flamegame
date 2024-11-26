@@ -12,6 +12,7 @@ import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/json/quest.dart';
+import 'package:flame_game/control/objects/game_event_listener.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
 import 'package:flame_game/control/provider/quest_provider.dart';
@@ -29,6 +30,7 @@ class MainGame extends FlameGame with TapDetector {
   static late MainGame instance;
   bool isMoveKeyDown = false;
   TextComponent debugLabel = TextComponent();
+  late final gameEventListener = GameEventListener(this, player.data);
 
   @override
   Future<void> onLoad() async {
@@ -169,13 +171,6 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void onGameEvent(String event, String value) {
-    final quests = player.data.quests;
-    for(final quest in quests) {
-      for(final obj in quest.objectives) {
-        if(obj.listenEvent == '${event}_$value') {
-          print('objective complete ${obj.title}');
-        }
-      }
-    }
+    gameEventListener.onEvent(event, value);
   }
 }

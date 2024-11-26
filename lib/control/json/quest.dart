@@ -52,3 +52,10 @@ class QuestObjective {
     currentCount = map['currentCount'] as int? ?? 0;
   }
 }
+
+class CompletedQuest {
+  String id = '';
+  CompletedQuest.fromMap(Map<String, dynamic> map) {
+    id = map['id'] as String? ?? 'first_quest';
+  }
+}

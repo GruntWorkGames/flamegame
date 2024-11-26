@@ -193,7 +193,7 @@ class CraftedMap with GameMap {
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
-  List<List<Function>> _triggerTiles = [];
+  List<List<Function?>> _triggerTiles = [];
   List<List<NPC?>> _npcTiles = [];
   List<Enemy> enemies = [];
   final List<NPC> _npcs = [];
@@ -242,7 +242,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildPortals(tiledmap!.tileMap);
     _createNpcs();
     enemies = _createEnemies(tiledmap!.tileMap);
-    turnSystem = TurnSystem(overworld: this, playerFinishedCallback: () {});
+    turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     // game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
@@ -490,9 +490,11 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       return false;
     }
 
-    _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
-    shouldContinue = false;
-    portal();
+    if(portal != null) {
+      _reEntryPos = game.player.position;
+      shouldContinue = false;
+      portal();
+    }
   
     return !isTileBlocked(nextTile);
   }
@@ -548,10 +550,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
             growable: false),
         growable: false);
 
-    _triggerTiles = List<List<Function>>.generate(
+    _triggerTiles = List<List<Function?>>.generate(
         map.width,
         (index) =>
-            List<Function>.generate(map.height, (index) => (){}), growable: false);
+            List<Function?>.generate(map.height, (index) => null), growable: false);
 
     _npcTiles = List<List<NPC?>>.generate(
         map.width,
@@ -732,14 +734,14 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     return null;
   }
 
-  Function _getTilePortal(k.Tile nextTile) {
-    return _triggerTiles[nextTile.x][nextTile.y];
-    // try {
-    //   return _triggerTiles[nextTile.x][nextTile.y];
-    // } on Exception catch (e) {
-    //   debugPrint('error checking tile $e');
-    // }
-    // return null;
+  Function? _getTilePortal(k.Tile nextTile) {
+    // return _triggerTiles[nextTile.x][nextTile.y];
+    try {
+      return _triggerTiles[nextTile.x][nextTile.y];
+    } on Exception catch (e) {
+      debugPrint('error checking tile $e');
+    }
+    return null;
   }
 
   Direction findPath(Enemy enemy) {

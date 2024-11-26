@@ -3,6 +3,10 @@
     "text" : "You wake up in a strange place. You feel as if you have been here before... In a dream, maybe.",
     "id" : "first_quest",
     "completer" : "Clark",
+    "finishOnComplete" : true,
+    "reward" : {
+        "xp" : 100
+    },
     "objectives" : [
         {
             "listenEvent" : "talk_to_Clark",

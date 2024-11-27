@@ -69,6 +69,11 @@ class CharacterData {
     } else {
       addDefaultItems();
     }
+    final questsList = json['quests'] as List<dynamic>? ?? [];
+    quests = questsList.map((map) {
+      final node = map as Map<String, dynamic>? ?? {};
+      return Quest.fromMap(node);
+    }).toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +90,7 @@ class CharacterData {
     data['mapfile'] = mapfile;
     data['experience'] = experience;
     data['inventory'] = inventory.map((v) => v.toJson()).toList();
+    data['quests'] = quests.map((quest) => quest.toMap()).toList();
     return data;
   }
   

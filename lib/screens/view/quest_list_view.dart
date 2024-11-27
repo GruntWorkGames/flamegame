@@ -1,3 +1,4 @@
+import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/provider/quest_provider.dart';
 import 'package:flame_game/screens/view/quest_view.dart';
@@ -5,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuestListView extends ConsumerWidget{
-  const QuestListView({super.key});
+  final MainGame game;
+  const QuestListView(this.game, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,7 +18,7 @@ class QuestListView extends ConsumerWidget{
 
     final cells = <Widget>[];
     for(final quest in quests) {
-      final questItem = Padding(padding: const EdgeInsets.only(bottom:10), child: QuestView(quest));
+      final questItem = Padding(padding: const EdgeInsets.only(bottom:10), child: QuestView(quest, game));
       final row = Row(mainAxisAlignment: MainAxisAlignment.center, children: [questItem]);
       final questCell = _cell(context, '', row);
       cells.add(questCell);

@@ -80,7 +80,7 @@ class UILayer extends ConsumerWidget {
       case UIViewDisplayType.settings:
         return SafeArea(child: Stack(children:[const SettingsView(), hud]));
       case UIViewDisplayType.quests:  
-        return SafeArea(child: Stack(children:[const QuestListView(), hud]));
+        return SafeArea(child: Stack(children:[QuestListView(game), hud]));
     }
   }
 

@@ -1,12 +1,15 @@
-
 import 'dart:convert';
-
+import 'package:flame_game/control/json/quest_reward.dart';
 import 'package:flutter/services.dart';
 
 class Quest {
   String title = '';
   String text = '';
   String id = '';
+  String completer = '';
+  bool isComplete = false;
+  bool finishOnComplete = true;
+  QuestReward reward = QuestReward();
   List<QuestObjective> objectives = [];
 
   Quest();
@@ -15,12 +18,29 @@ class Quest {
     title = map['title'] as String? ?? '';
     text = map['text'] as String? ?? '';
     id = map['id'] as String? ?? '';
-
+    isComplete = map['isComplete'] as bool? ?? false;
+    completer = map['completer'] as String? ?? '';
+    finishOnComplete = map['finishOnComplete'] as bool? ?? true;
+    final rewardMap = map['reward'] as Map<String, dynamic>? ?? {};
+    reward = QuestReward.fromMap(rewardMap);
     final objList = map['objectives'] as List<dynamic>? ?? [];
     for(final obj in objList) {
       final objNode = obj as Map<String, dynamic>? ?? {};
       objectives.add(QuestObjective.fromMap(objNode));
     }
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title,
+      'text': text,
+      'id': id,
+      'completer' : completer,
+      'isComplete' : isComplete,
+      'finishOnComplete': finishOnComplete,
+      'reward': reward.toMap(), // Assuming QuestReward has a toMap() method
+      'objectives': objectives.map((objective) => objective.toMap()).toList(), // Assuming QuestObjective has a toMap() method
+    };
   }
 
   Future<void> loadDefaultQuest() async {
@@ -29,6 +49,11 @@ class Quest {
     title = questMap['title'] as String? ?? '';
     text = questMap['text'] as String? ?? '';
     id = questMap['id'] as String? ?? '';
+    isComplete = questMap['isComplete'] as bool? ?? false;
+    completer = questMap['completer'] as String? ?? '';
+    finishOnComplete = questMap['finishOnComplete'] as bool? ?? true;
+    final rewardMap = questMap['reward'] as Map<String, dynamic>? ?? {};
+    reward = QuestReward.fromMap(rewardMap);
     final objList = questMap['objectives'] as List<dynamic>? ?? [];
     for(final obj in objList) {
       final objNode = obj as Map<String, dynamic>? ?? {};
@@ -50,6 +75,15 @@ class QuestObjective {
     listenEvent = map['listenEvent'] as String? ?? '';
     countNeeded = map['countNeeded'] as int? ?? 0;
     currentCount = map['currentCount'] as int? ?? 0;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'title' : title,
+      'listenEvent' : listenEvent,
+      'countNeeded' : countNeeded,
+      'currentCount' : currentCount
+    };
   }
 }
 

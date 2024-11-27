@@ -60,6 +60,7 @@ class MainGame extends FlameGame with TapDetector {
   Future<void> loadSavedPlayerData() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString('player') ?? '{}';
+    final isNewCharacter = jsonString == '{}';
     final json = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
     player.data = CharacterData.fromJson(json);
     final firstItem = player.data.inventory.first;
@@ -72,24 +73,12 @@ class MainGame extends FlameGame with TapDetector {
       player.weapon = weapon;
     }
 
-    // load quests
-    final questJson = prefs.getString('quests') ?? '{}';
-    final questMap = jsonDecode(questJson) as Map<String,dynamic>? ?? {};
-    final questNode = questMap['quests'] as List<dynamic>? ?? [];
-    final quests = <Quest>[];
-    for(final questNode in questNode) {
-      final quest = questNode as Map<String, dynamic>? ?? {};
-      quests.add(Quest.fromMap(quest));
-    }
-
-    if(quests.isEmpty) {
+    if(isNewCharacter) {
       final quest = Quest();
       await quest.loadDefaultQuest();
-      quests.add(quest);
+      player.data.quests.add(quest);
     }
-
-    player.data.quests = quests;
-    ref?.read(questListProvider.notifier).set(quests);
+    ref?.read(questListProvider.notifier).set(player.data.quests);
   }
 
   @override
@@ -171,6 +160,13 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void onGameEvent(String event, String value) {
-    gameEventListener.onEvent(event, value);
+    gameEventListener.onEvent(event, value, ref);
+    save();
+  }
+
+  void playerCompletedQuest(Quest quest) {
+    player.data.quests.remove(quest);
+    ref?.read(questListProvider.notifier).set([...player.data.quests]);
+    save();
   }
 }

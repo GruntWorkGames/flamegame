@@ -44,7 +44,7 @@ class Quest {
   }
 
   Future<void> loadDefaultQuest() async {
-    final questJson = await rootBundle.loadString('assets/json/quests/first_quest.json');
+    final questJson = await rootBundle.loadString('assets/json/quests/quest1.json');
     final questMap = jsonDecode(questJson) as Map<String, dynamic>? ?? {};
     title = questMap['title'] as String? ?? '';
     text = questMap['text'] as String? ?? '';
@@ -90,6 +90,6 @@ class QuestObjective {
 class CompletedQuest {
   String id = '';
   CompletedQuest.fromMap(Map<String, dynamic> map) {
-    id = map['id'] as String? ?? 'first_quest';
+    id = map['id'] as String? ?? 'quest1';
   }
 }

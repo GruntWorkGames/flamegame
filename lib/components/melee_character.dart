@@ -41,12 +41,7 @@ class MeleeCharacter extends SpriteAnimationComponent
 
   Future<void> buildAnimations() async {
     final json = await game.assets.readJson('json/player_animations.json');
-    final imageFilename = json['imageFile'] ?? '';
-    if(imageFilename is! String) {
-      debugPrint('Error: animation image filename');
-      return;
-    }
-
+    final imageFilename = json['imageFile'] as String? ?? '';
     final image = await game.images.load(imageFilename);
     for (final state in CharacterAnimationState.values) {
       if (json.containsKey(state.name)) {
@@ -57,8 +52,7 @@ class MeleeCharacter extends SpriteAnimationComponent
     animation = animations[CharacterAnimationState.idleDown];
   }
 
-  SpriteAnimation animationFromJson(
-      Image image, Map<String, dynamic> json, String animName) {
+  SpriteAnimation animationFromJson(Image image, Map<String, dynamic> json, String animName) {
     if (!json.containsKey(animName)) {
       throw Exception('Missing Animation $animName');
     }
@@ -250,14 +244,14 @@ class MeleeCharacter extends SpriteAnimationComponent
     return random <= data.dodge;
   }
 
-  double mitigatedDamage(double rawDamage) {
+  int mitigatedDamage(int rawDamage) {
     final items = game.player.data.inventory;
     final armor = items.where((item) => item.type == ItemType.armor).toList().firstOrNull ?? Item();
     return max(0, rawDamage - armor.value);
   }
 
   // returns amount of damage done
-  ({MeleeAttackResult result, double value}) takeHit(double incomingDamage, Function onComplete, Function onKilled) {
+  ({MeleeAttackResult result, int value}) takeHit(int incomingDamage, Function onComplete, Function onKilled) {
     if(dodge()) {
       onComplete();
       return (result: MeleeAttackResult.dodged, value: 0);

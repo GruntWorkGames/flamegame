@@ -3,10 +3,10 @@ import 'package:flame_game/control/enum/item_type.dart';
 class Item {
   String name = '';
   ItemType type = ItemType.none;
-  double value = 0;
+  int value = 0;
   String valueName = '';
   String description = '';
-  double cost = 0;
+  int cost = 0;
   String inventoryUseText = '';
   bool isEquipped = false;
   bool isSelected = false;
@@ -18,10 +18,10 @@ class Item {
     final typeString = json['type'] as String? ?? '';
     type = ItemType.typeFromString(typeString);
 
-    value = json['value'] as double? ?? 0;
+    value = json['value'] as int? ?? 0;
     valueName = json['valueName'] as String? ?? '';
     description = json['description'] as String? ?? '';
-    cost = json['cost'] as double? ?? 0;
+    cost = json['cost'] as int? ?? 0;
     inventoryUseText = json['inventoryUseText'] as String? ?? '';
     isEquipped = json['isEquipped'] as bool? ?? false;
   }

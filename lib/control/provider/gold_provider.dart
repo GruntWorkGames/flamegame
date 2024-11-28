@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final goldProvider = StateNotifierProvider<GoldProvider, double>((ref) {
+final goldProvider = StateNotifierProvider<GoldProvider, int>((ref) {
   return GoldProvider();
 });
 
-class GoldProvider extends StateNotifier<double> {
+class GoldProvider extends StateNotifier<int> {
   GoldProvider() : super(0);
   
-  void set(double value) {
+  void set(int value) {
     state = value;
   }
 }

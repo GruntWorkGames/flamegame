@@ -1,0 +1,19 @@
+{
+    "title" : "Heal up",
+    "text" : "Talk to Popo. You can pay him a fee of 10g to heal you to full health.",
+    "id" : "quest2",
+    "completer" : "self",
+    "isComplete" : false,
+    "finishOnComplete" : true,
+    "reward" : {
+        "xp" : 100
+    },
+    "objectives" : [
+        {
+            "listenEvent" : "talk_to_Popo",
+            "title" : "Talk to Popo",
+            "countNeeded" : 1,
+            "currentCount" : 0
+        }
+    ]
+}

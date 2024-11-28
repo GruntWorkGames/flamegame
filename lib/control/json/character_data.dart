@@ -3,25 +3,26 @@ import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 
 class CharacterData {
-  double _health = 10;
-  double _maxHealth = 30;
-  double gold = 0;
-  double hit = 40;
-  double dodge = 5;
-  double str = 1;
-  double stam = 1;
-  double armor = 1;
-  double experience = 0;
+  int _health = 10;
+  int _maxHealth = 30;
+  int gold = 0;
+  int hit = 40;
+  int dodge = 5;
+  int str = 1;
+  int stam = 1;
+  int armor = 1;
+  int experience = 0;
+  int level = 0;
   k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
   List<Quest> quests = [];
 
-  double get maxHealth {
+  int get maxHealth {
     return (stam * 5) + _maxHealth;
   }
 
-  void heal(double hp) {
+  void heal(int hp) {
     final newMax = _health + hp;
     if (newMax > maxHealth) {
       _health = maxHealth;
@@ -30,14 +31,14 @@ class CharacterData {
     }
   }
 
-  set health(double h) {
+  set health(int h) {
     _health = h;
     if(_health > maxHealth) {
       _health = maxHealth;
     }
   }
 
-  double get health {
+  int get health {
     return _health;
   }
 
@@ -48,14 +49,14 @@ class CharacterData {
   }
 
   CharacterData.fromMap(Map<String, dynamic> json) {
-    _health = json['health'] as double? ?? 10.0;
-    _maxHealth = json['maxHealth'] as double? ?? 30.0;
-    experience = json['experience'] as double? ?? 0.0;
-    hit = json['hit'] as double? ?? 40.0;
-    dodge = json['dodge'] as double? ?? 5.0;
-    str = json['str'] as double? ?? 1.0;
-    stam = json['stam'] as double? ?? 1.0;
-    gold = json['gold'] as double? ?? 0;
+    _health = json['health'] as int? ?? 10;
+    _maxHealth = json['maxHealth'] as int? ?? 30;
+    experience = json['experience'] as int? ?? 0;
+    hit = json['hit'] as int? ?? 40;
+    dodge = json['dodge'] as int? ?? 5;
+    str = json['str'] as int? ?? 1;
+    stam = json['stam'] as int? ?? 1;
+    gold = json['gold'] as int? ?? 0;
     tilePosition.x = json['x'] as int? ?? 0;
     tilePosition.y = json['y'] as int? ?? 0;
     mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
@@ -98,29 +99,29 @@ class CharacterData {
     final hPotion = {
       'name' : 'Health Potion',
       'type' : 'potion',
-      'value' : 10.0,
+      'value' : 10,
       'valueName': 'health',
       'description': 'The thick red liquid reminds you of cough syrup.', 
-      'cost' : 10.0,
+      'cost' : 10,
       'inventoryUseText' : 'Drink'
     };
     final sword = {
       'name' : 'Dull Short Sword',
       'type' : 'weapon',
-      'value' : 4.0,
+      'value' : 4,
       'valueName': 'damage',
       'description': 'A nearly useless weapon. A kids toy.',
-      'cost' : 30.0,
+      'cost' : 30,
       'inventoryUseText' : 'Equip',
       'isEquipped': true
     };
     final helmet = {
       'name' : 'Armor Helm',
       'type' : 'armor',
-      'value' : 2.0,
+      'value' : 2,
       'valueName': 'mitigation',
       'description': 'Tarnished and flimsy.',
-      'cost' : 20.0,
+      'cost' : 20,
       'inventoryUseText' : 'Equip',
       'isEquipped': true
     };

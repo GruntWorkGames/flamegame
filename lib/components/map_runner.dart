@@ -426,7 +426,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       }, () {
         game.player.data.gold += enemy.data.gold;
-        game.player.data.experience += enemy.experience;
+        game.player.data.experience += enemy.experienceYield;
         updateUI();
         enemy.removeFromParent();
         enemies.removeWhere((other) => other == enemy);

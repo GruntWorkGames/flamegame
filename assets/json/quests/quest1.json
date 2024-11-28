@@ -1,8 +1,8 @@
 {
     "title" : "Welcome to Snifaria",
     "text" : "You wake up in a strange place. You feel as if you have been here before... In a dream, maybe.",
-    "id" : "first_quest",
-    "completer" : "Clark",
+    "id" : "quest1",
+    "completer" : "self",
     "isComplete" : false,
     "finishOnComplete" : true,
     "reward" : {

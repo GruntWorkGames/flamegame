@@ -1,5 +1,19 @@
 {
     "name": "Clark",
+    "questsAvailable" : [
+        {
+            "id" : "quest2",
+            "requiredIds" : [
+                "quest1"
+            ],
+            "requiredLevel" : [
+                1
+            ],
+            "requiredItemId" : [
+
+            ]
+        }
+    ],
     "conversations": [
         {
             "message": "This is the first message"

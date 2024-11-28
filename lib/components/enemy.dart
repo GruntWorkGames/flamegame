@@ -7,7 +7,8 @@ import 'package:flame_game/control/objects/tile.dart' as k;
 
 class Enemy extends MeleeCharacter {
   int experienceYield = 10;
-  Enemy();
+  final String animationFile;
+  Enemy(this.animationFile);
 
   @override
   Future<void> onLoad() async {
@@ -22,7 +23,7 @@ class Enemy extends MeleeCharacter {
 
   @override
   Future<void> buildAnimations() async {
-    final json = await game.assets.readJson('json/club_goblin.json');
+    final json = await game.assets.readJson(animationFile);
     final imageFilename = json['imageFile'] as String? ?? '';
     final image = await game.images.load(imageFilename);
 

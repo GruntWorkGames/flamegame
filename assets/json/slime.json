@@ -1,0 +1,101 @@
+{
+    "health" : 5,
+    "xp" : 1,
+    "imageFile": "SlimeBlue.png",
+    "idleDown": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {"x":1,"y":0},
+            {"x":0,"y":0}
+        ]
+    },
+    "idleUp": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {"x":1,"y":3},
+            {"x":0,"y":3}
+        ]
+    },
+    "idleLeft": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {"x":1,"y":1},
+            {"x":0,"y":1}
+        ]
+    },
+    "idleRight": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {"x":1,"y":2},
+            {"x":0,"y":2}
+        ]
+    },
+    "walkDown": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":0},
+            {"x":3,"y":0},
+            {"x":4,"y":0},
+            {"x":5,"y":0}
+        ]
+    },
+    "walkUp": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":3},
+            {"x":3,"y":3},
+            {"x":4,"y":3},
+            {"x":5,"y":3}
+        ]
+    },
+    "walkRight": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":2},
+            {"x":3,"y":2},
+            {"x":4,"y":2},
+            {"x":5,"y":2}
+        ]
+    },
+    "walkLeft": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":1},
+            {"x":3,"y":1},
+            {"x":4,"y":1},
+            {"x":5,"y":1}
+        ]
+    },
+    "attackUp": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":3},
+            {"x":3,"y":3},
+            {"x":4,"y":3}
+        ]
+    },
+    "attackDown": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":0},
+            {"x":3,"y":0},
+            {"x":4,"y":0}
+        ]
+    },
+    "attackLeft": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":1},
+            {"x":3,"y":1},
+            {"x":4,"y":1}
+        ]
+    },
+    "attackRight": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {"x":2,"y":2},
+            {"x":3,"y":2},
+            {"x":4,"y":2}
+        ]
+    }
+}

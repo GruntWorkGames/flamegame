@@ -221,6 +221,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   FutureOr<void> onLoad() async {
+    await enemyCreator.loadEnemyFile();
     tiledmap = await TiledComponent.load(_mapfile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties
@@ -717,7 +718,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final enemies = <Enemy>[];
     final spawns = _readEnemySpawns(tiledmap!.tileMap);
     for (final spawnPos in spawns) {
-      final enemy = Enemy();
+      final enemy = Enemy('json/club_goblin.json');
       enemy.position = spawnPos;
       enemies.add(enemy);
       add(enemy);

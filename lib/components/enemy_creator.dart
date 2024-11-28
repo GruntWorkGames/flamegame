@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame_game/components/enemy.dart';
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
+import 'package:flutter/services.dart';
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();
@@ -11,8 +13,21 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   int spawnChance = 0;
   int maxEnemies = 0;
   int spawnRadius = 0;
+  List<String> enemies = [];
 
   EnemyCreator() : super();
+
+  Future<void> loadEnemyFile() async {
+    final json = await rootBundle.loadString('assets/json/enemies.json');
+    final map = jsonDecode(json) as Map<String, dynamic>? ?? {};
+    final enemyList = map['enemies'] as List<dynamic>? ?? [];
+    for(final enemy in enemyList) {
+      if(enemy is String) {
+        enemies.add(enemy);
+        print('enemy $enemy');
+      }
+    }
+  }
 
   void playerMoved() {
     final r = random.nextInt(100) + 1;
@@ -44,9 +59,16 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
 
     final index = Random().nextInt(spawnArea.length);
     final spawnTile = spawnArea[index];
-    final enemy = Enemy();
+    final enemyJsonFile = randomEnemyFile();
+    final enemy = Enemy(enemyJsonFile);
     enemy.position = tileToPos(spawnTile);
     game.mapRunner?.enemies.add(enemy);
     game.mapRunner?.add(enemy);
+  }
+
+  String randomEnemyFile() {
+    final r = random.nextInt(enemies.length);
+    print('random $r');
+    return enemies[r];
   }
 }

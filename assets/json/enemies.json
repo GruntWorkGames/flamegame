@@ -1,0 +1,6 @@
+{
+    "enemies":[
+       "json/club_goblin.json",
+       "json/slime.json"
+    ]
+ }

@@ -932,7 +932,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void showCombatMessage(Vector2 pos, String message, Color color) {
-    const fontSize = 16.0;
+    const fontSize = 8.0;
     final paint = TextPaint(
         style: TextStyle(
             color: color, fontSize: fontSize, fontWeight: FontWeight.bold));
@@ -944,7 +944,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     final foregroundPaint = Paint();
     foregroundPaint.style = PaintingStyle.stroke;
-    foregroundPaint.strokeWidth = 0.75;
+    foregroundPaint.strokeWidth = 0.3;
     foregroundPaint.color = Colors.black;
     final textOutlinePaint = TextPaint(
         style: TextStyle(

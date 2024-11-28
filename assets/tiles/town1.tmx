@@ -10,7 +10,7 @@
  <tileset firstgid="85" source="Taverns.tsx"/>
  <tileset firstgid="97" source="Trees.tsx"/>
  <tileset firstgid="101" source="Well.tsx"/>
- <layer id="1" name="grass" width="29" height="30" visible="0">
+ <layer id="1" name="grass" width="29" height="30">
   <data encoding="csv">
 3,3,2,5,3,3,2,2,2,2,2,2,3,3,2,2,2,2,2,2,3,3,2,2,2,2,2,2,3,
 2,2,3,5,2,2,2,2,2,2,3,3,2,2,2,2,2,2,3,3,2,2,2,2,2,2,3,3,2,

@@ -47,7 +47,7 @@ class CharacterData {
     inventory.removeWhere((element) => item == element);
   }
 
-  CharacterData.fromJson(Map<String, dynamic> json) {
+  CharacterData.fromMap(Map<String, dynamic> json) {
     _health = json['health'] as double? ?? 10.0;
     _maxHealth = json['maxHealth'] as double? ?? 30.0;
     experience = json['experience'] as double? ?? 0.0;
@@ -76,7 +76,7 @@ class CharacterData {
     }).toList();
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data['health'] = health;
     data['maxHealth'] = _maxHealth;

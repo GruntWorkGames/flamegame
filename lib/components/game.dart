@@ -10,8 +10,8 @@ import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/json/quest.dart';
+import 'package:flame_game/control/json/save_file.dart';
 import 'package:flame_game/control/objects/game_event_listener.dart';
 import 'package:flame_game/control/provider/inventory_item_provider.dart';
 import 'package:flame_game/control/provider/inventory_provider.dart';
@@ -31,6 +31,7 @@ class MainGame extends FlameGame with TapDetector {
   bool isMoveKeyDown = false;
   TextComponent debugLabel = TextComponent();
   late final gameEventListener = GameEventListener(this, player.data);
+  SaveFile saveFile = SaveFile();
 
   @override
   Future<void> onLoad() async {
@@ -52,17 +53,18 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   Future<void> save() async {
-    final jsonString = jsonEncode(player.data.toJson());
+    final jsonString = jsonEncode(saveFile.toMap());
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('player', jsonString);
+    prefs.setString('save_file', jsonString);
   }
 
   Future<void> loadSavedPlayerData() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('player') ?? '{}';
+    final jsonString = prefs.getString('save_file') ?? '{}';
     final isNewCharacter = jsonString == '{}';
-    final json = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
-    player.data = CharacterData.fromJson(json);
+    final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
+    saveFile = SaveFile.fromMap(map);
+    player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
     ref?.read(inventoryProvider.notifier).set(player.data);

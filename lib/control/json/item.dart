@@ -16,9 +16,6 @@ class Item {
   Item.fromJson(Map<String, dynamic> json) {
     name = json['name'] as String? ?? '';
     final typeString = json['type'] as String? ?? '';
-    if(typeString.isEmpty) {
-      throw Exception('type string is empty');
-    }
     type = ItemType.typeFromString(typeString);
 
     value = json['value'] as double? ?? 0;

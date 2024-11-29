@@ -8,7 +8,6 @@ class Quest {
   String id = '';
   String completer = '';
   bool isComplete = false;
-  bool finishOnComplete = true;
   int requiredLevel = 0;
   QuestReward reward = QuestReward();
   List<QuestObjective> objectives = [];
@@ -22,7 +21,6 @@ class Quest {
     id = map['id'] as String? ?? '';
     isComplete = map['isComplete'] as bool? ?? false;
     completer = map['completer'] as String? ?? '';
-    finishOnComplete = map['finishOnComplete'] as bool? ?? true;
     final rewardMap = map['reward'] as Map<String, dynamic>? ?? {};
     reward = QuestReward.fromMap(rewardMap);
     final objList = map['objectives'] as List<dynamic>? ?? [];
@@ -46,7 +44,6 @@ class Quest {
       'id': id,
       'completer' : completer,
       'isComplete' : isComplete,
-      'finishOnComplete': finishOnComplete,
       'reward': reward.toMap(), // Assuming QuestReward has a toMap() method
       'objectives': objectives.map((objective) => objective.toMap()).toList(), // Assuming QuestObjective has a toMap() method
     };
@@ -60,7 +57,6 @@ class Quest {
     id = questMap['id'] as String? ?? '';
     isComplete = questMap['isComplete'] as bool? ?? false;
     completer = questMap['completer'] as String? ?? '';
-    finishOnComplete = questMap['finishOnComplete'] as bool? ?? true;
     final rewardMap = questMap['reward'] as Map<String, dynamic>? ?? {};
     reward = QuestReward.fromMap(rewardMap);
     final objList = questMap['objectives'] as List<dynamic>? ?? [];
@@ -74,6 +70,7 @@ class Quest {
 class QuestObjective {
   String title = '';
   String listenEvent = '';
+  String target = '';
   int countNeeded = 0;
   int currentCount = 0;
 
@@ -82,6 +79,7 @@ class QuestObjective {
   QuestObjective.fromMap(Map<String, dynamic> map) {
     title = map['title'] as String? ?? '';
     listenEvent = map['listenEvent'] as String? ?? '';
+    target = map['target'] as String? ?? '';
     countNeeded = map['countNeeded'] as int? ?? 0;
     currentCount = map['currentCount'] as int? ?? 0;
   }
@@ -90,6 +88,7 @@ class QuestObjective {
     return {
       'title' : title,
       'listenEvent' : listenEvent,
+      'target' : target,
       'countNeeded' : countNeeded,
       'currentCount' : currentCount
     };

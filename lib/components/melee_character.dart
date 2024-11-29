@@ -265,6 +265,7 @@ class MeleeCharacter extends SpriteAnimationComponent
           onComplete: () {
         if (data.health <= 0) {
           onKilled();
+          game.onGameEvent('killed', 'a enemy');
         } else {
           onComplete();
         }

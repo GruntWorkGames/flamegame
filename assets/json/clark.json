@@ -1,7 +1,8 @@
 {
     "name": "Clark",
     "questsAvailable" : [
-        "quest2"
+        "quest2",
+        "quest3"
     ],
     "speech" : "Make sure to talk to everyone!",
     "animationFile" : "json/FarmerRed.json"

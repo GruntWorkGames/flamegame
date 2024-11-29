@@ -11,23 +11,23 @@ class GameEventListener {
 
   GameEventListener(this.game, this.data);
 
-  void onEvent(String event, String value, WidgetRef? ref) {
+  void onEvent(String event, String target, WidgetRef? ref) {
     switch(event) {
     case 'talk_to':
-      _onTalkToEvent(value, ref);
+      _onTalkToEvent(target, ref);
       break;
-    case 'killed_enemy':
+    case 'killed':
+      _onKilledEvent(target, ref);
       break;  
     default:
       debugPrint('unknown event'); 
     }
   }
   
-  void _onTalkToEvent(String value, WidgetRef? ref) {
-    final event = 'talk_to_$value';
+  void _onTalkToEvent(String target, WidgetRef? ref) {
     for(final quest in data.quests) {
       for(final objective in quest.objectives) {
-        if(event == objective.listenEvent) {
+        if(target == objective.target) {
           if(objective.currentCount < objective.countNeeded) {
             objective.currentCount += 1;
           } else if(objective.currentCount == objective.countNeeded) {
@@ -36,6 +36,24 @@ class GameEventListener {
         }
       }
     }
+
     ref?.read(questListProvider.notifier).set(game.player.data.quests);
+  }
+
+  void _onKilledEvent(String target, WidgetRef? ref) {
+    print('killed a $target');  
+
+    for(final quest in data.quests) {
+      for(final objective in quest.objectives) {
+        final anyTarget = objective.target == 'any';
+        if(anyTarget || target == objective.target) {
+          if(objective.currentCount < objective.countNeeded) {
+            objective.currentCount += 1;
+          } else if(objective.currentCount == objective.countNeeded) {
+            quest.isComplete = true;
+          }
+        }
+      }
+    }
   }
 }

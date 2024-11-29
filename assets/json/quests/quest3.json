@@ -1,11 +1,11 @@
 {
-    "title": "Protecting the fontier",
-    "text": "Kill 5 bad guys",
+    "title": "Heal up",
+    "text": "Talk to Popo. You can pay him a fee of 10g to heal you to full health.",
     "id": "quest2",
     "completer": "self",
     "isComplete": false,
     "requiredQuestIds": [
-        "quest1"
+        "quest2"
     ],
     "requiredLevel": 1,
     "requiredItemId": [],
@@ -14,10 +14,10 @@
     },
     "objectives": [
         {
-            "listenEvent": "killed",
-            "target": "any",
-            "title": "Kill bad guys",
-            "countNeeded": 5,
+            "listenEvent": "talk_to",
+            "target" : "Popo",
+            "title": "Talk to Popo",
+            "countNeeded": 1,
             "currentCount": 0
         }
     ]

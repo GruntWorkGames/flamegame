@@ -164,8 +164,8 @@ class MainGame extends FlameGame with TapDetector {
     return (command:commands.first, argument: commandData.argument);
   }
 
-  void onGameEvent(String event, String value) {
-    gameEventListener.onEvent(event, value, ref);
+  void onGameEvent(String event, String target) {
+    gameEventListener.onEvent(event, target, ref);
     save();
   }
 

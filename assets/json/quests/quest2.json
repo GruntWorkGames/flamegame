@@ -1,19 +1,24 @@
 {
-    "title" : "Heal up",
-    "text" : "Talk to Popo. You can pay him a fee of 10g to heal you to full health.",
-    "id" : "quest2",
-    "completer" : "self",
-    "isComplete" : false,
-    "finishOnComplete" : true,
-    "reward" : {
-        "xp" : 100
+    "title": "Heal up",
+    "text": "Talk to Popo. You can pay him a fee of 10g to heal you to full health.",
+    "id": "quest2",
+    "completer": "self",
+    "isComplete": false,
+    "finishOnComplete": true,
+    "requiredQuestIds": [
+        "quest1"
+    ],
+    "requiredLevel": 1,
+    "requiredItemId": [],
+    "reward": {
+        "xp": 100
     },
-    "objectives" : [
+    "objectives": [
         {
-            "listenEvent" : "talk_to_Popo",
-            "title" : "Talk to Popo",
-            "countNeeded" : 1,
-            "currentCount" : 0
+            "listenEvent": "talk_to_Popo",
+            "title": "Talk to Popo",
+            "countNeeded": 1,
+            "currentCount": 0
         }
     ]
 }

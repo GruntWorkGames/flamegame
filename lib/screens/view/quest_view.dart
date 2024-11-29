@@ -13,9 +13,10 @@ class QuestView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final title = Text(quest.title, style: titleStyle);
     final text = Text(quest.text);
+    bool isDone = false;
     final objectives = quest.objectives.map((objective) {
-      final isComplete = (objective.currentCount / objective.countNeeded) == 1;
-      final doneString = isComplete ? '- Done' : '';
+      isDone = (objective.currentCount / objective.countNeeded) == 1;
+      final doneString = isDone ? '- Done' : '';
       final progressString = '${objective.title}      ${objective.currentCount} / ${objective.countNeeded} $doneString';
       final progress = Text(progressString);
       return Row(children:[Column(children: [progress])]);
@@ -38,7 +39,7 @@ class QuestView extends ConsumerWidget {
     final button = ElevatedButton(style: buttonStyle, child: completeBtnText, onPressed: (){
       game.playerCompletedQuest(quest);
     });
-    final buttonRow = quest.isComplete ? Row(children: [button]) : const SizedBox.shrink();
+    final buttonRow = isDone ? Row(children: [button]) : const SizedBox.shrink();
     final buttonPadding = Padding(padding: const EdgeInsets.only(top: 20), child: buttonRow);
     return Column(children: [title, text, ...objectives, buttonPadding]);
   }

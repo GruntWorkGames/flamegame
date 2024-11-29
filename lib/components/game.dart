@@ -6,6 +6,7 @@ import 'package:flame/text.dart';
 import 'package:flame_game/components/map_runner.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/overworld_navigator.dart';
+import 'package:flame_game/components/player_component.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
 import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
@@ -32,6 +33,7 @@ class MainGame extends FlameGame with TapDetector {
   TextComponent debugLabel = TextComponent();
   late final gameEventListener = GameEventListener(this, player.data);
   SaveFile saveFile = SaveFile();
+  List<Quest> quests = <Quest>[];
 
   @override
   Future<void> onLoad() async {
@@ -168,6 +170,8 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   void playerCompletedQuest(Quest quest) {
+    quest.isComplete = true;
+    player.data.completedQuests.add(quest);
     player.data.quests.remove(quest);
     ref?.read(questListProvider.notifier).set([...player.data.quests]);
     save();

@@ -5,6 +5,12 @@
     "completer" : "self",
     "isComplete" : false,
     "finishOnComplete" : true,
+    "requiredIds" : [
+        
+    ],
+    "requiredLevel" : 1,
+    "requiredItemId" : [
+    ],
     "reward" : {
         "xp" : 100
     },

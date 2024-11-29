@@ -1,25 +1,8 @@
 {
     "name": "Clark",
     "questsAvailable" : [
-        {
-            "id" : "quest2",
-            "requiredIds" : [
-                "quest1"
-            ],
-            "requiredLevel" : [
-                1
-            ],
-            "requiredItemId" : [
-
-            ]
-        }
+        "quest2"
     ],
-    "conversations": [
-        {
-            "message": "This is the first message"
-        },
-        {
-            "message": "This is the second message"
-        }
-    ]
+    "speech" : "Make sure to talk to everyone!",
+    "animationFile" : "json/FarmerRed.json"
 }

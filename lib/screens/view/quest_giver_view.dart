@@ -1,24 +1,22 @@
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/item.dart';
-import 'package:flame_game/control/json/shop.dart';
-import 'package:flame_game/control/provider/shop_item_provider.dart';
-import 'package:flame_game/control/provider/shop_provider.dart';
+import 'package:flame_game/control/json/quest.dart';
+import 'package:flame_game/control/provider/quest_giver.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ShopMenu extends ConsumerWidget {
+class QuestGiverView extends ConsumerWidget {
   final MainGame game;
-  const ShopMenu(this.game, {super.key});
+  const QuestGiverView(this.game, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final shop = ref.watch(shopProvider);
+    final quests = ref.watch(questGiver);
     final width = MediaQuery.of(context).size.width;
-    final title = _title(context, shop);
-    final cells = shop.items.map((item) => _buildCell(context, item, ref)).toList();
+    final title = _title(context, 'Quest Giver');
+    final cells = quests.map((item) => _buildCell(context, item, ref)).toList();
     final rightCol = SizedBox(height: 300, child: SingleChildScrollView(physics: const AlwaysScrollableScrollPhysics(), child: Column(children: cells)));
     final leftCol = Column(children: [_descriptionPane(context, ref)]);
     final row = Row(
@@ -44,12 +42,12 @@ class ShopMenu extends ConsumerWidget {
     return box;
   }
 
-  Widget _title(BuildContext context, Shop shop) {
+  Widget _title(BuildContext context, String title) {
     final width = MediaQuery.of(context).size.width;
     const titleStyle = TextStyle(fontSize: 18, color: Colors.white);
     final label = Padding(
         padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-        child: Text(shop.owner, style: titleStyle));
+        child: Text(title, style: titleStyle));
     final decoration = BoxDecoration(
         border: Border.all(color: borderColor, width: borderWidth),
         borderRadius: BorderRadius.circular(borderRadius),
@@ -60,14 +58,14 @@ class ShopMenu extends ConsumerWidget {
         child: label));
   }
 
-  Widget _buildCell(BuildContext context, Item item, WidgetRef ref) {
+  Widget _buildCell(BuildContext context, Quest quest, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width;
     const titleStyle = TextStyle(fontSize: 18, color: Colors.white);
-    final name = Padding(padding: const EdgeInsets.all(5), child: Text(item.name, style: titleStyle));
+    final name = Padding(padding: const EdgeInsets.all(5), child: Text(quest.title, style: titleStyle));
     final row = Row(children: [name]);
 
-    final color = item.isSelected ? selectedColor : mainColor;
- 
+    // final color = quest.isSelected ? selectedColor : mainColor;
+    final color = mainColor;
     final decoration = BoxDecoration(
         border: Border.all(color: borderColor, width: borderWidth),
         color: color,
@@ -83,8 +81,7 @@ class ShopMenu extends ConsumerWidget {
 
     return InkWell(
         onTap: () {
-          ref.read(shopItemProvider.notifier).set(item);
-          item.isSelected = true;
+          ref.read(questGiverSelectedQuest.notifier).set(quest);
         },
         child: paddedContainer);
   }
@@ -92,10 +89,9 @@ class ShopMenu extends ConsumerWidget {
 
   Widget _descriptionPane(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.of(context).size.width - 2;
-    final item = ref.watch(shopItemProvider);
+    final quest = ref.watch(questGiverSelectedQuest);
     const style = TextStyle(fontSize: 18, color: Colors.white);
-    final value = item.value == 0 ? '' : '+${item.value} ${item.valueName}';
-    final description = '${item.name}\n\n${item.description}\n\n$value\n\nCost: ${item.cost} gold';
+    final description = '${quest.title}\n\n${quest.text}';
     final label = Padding(
         padding: const EdgeInsets.all(5),
         child: Text(description, style: style));
@@ -103,7 +99,7 @@ class ShopMenu extends ConsumerWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(color: borderColor, width: borderWidth),
         color: mainColor);
-    const useText = Padding(padding: EdgeInsets.all(5), child: Text('Buy', style: style));
+    const useText = Padding(padding: EdgeInsets.all(5), child: Text('Accept', style: style));
     final buttonStyle = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
       if(states.contains(WidgetState.pressed)) {
         return mainColor;
@@ -115,7 +111,7 @@ class ShopMenu extends ConsumerWidget {
     final useButton = ElevatedButton(
       style: buttonStyle,
       onPressed: () {
-        MainGame.instance.mapRunner!.playerBoughtItem(item);
+        game.player.acceptQuest(quest);
       },
       child: useText,
     );

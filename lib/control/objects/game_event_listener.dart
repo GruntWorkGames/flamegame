@@ -1,5 +1,6 @@
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/json/character_data.dart';
+import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/provider/quest_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,14 +30,8 @@ class GameEventListener {
         if(event == objective.listenEvent) {
           if(objective.currentCount < objective.countNeeded) {
             objective.currentCount += 1;
-          }
-
-          if(objective.countNeeded == objective.currentCount) {
-            debugPrint('quest completed');
+          } else if(objective.currentCount == objective.countNeeded) {
             quest.isComplete = true;
-            // remove quest from log
-            // give reward
-            
           }
         }
       }

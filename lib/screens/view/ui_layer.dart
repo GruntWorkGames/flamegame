@@ -12,6 +12,7 @@ import 'package:flame_game/screens/view/control_pad.dart';
 import 'package:flame_game/screens/view/debug_view.dart';
 import 'package:flame_game/screens/view/dialog_view.dart';
 import 'package:flame_game/screens/view/inventory_view.dart';
+import 'package:flame_game/screens/view/quest_giver_view.dart';
 import 'package:flame_game/screens/view/quest_list_view.dart';
 import 'package:flame_game/screens/view/settings_view.dart';
 import 'package:flame_game/screens/view/shop_view.dart';
@@ -81,6 +82,8 @@ class UILayer extends ConsumerWidget {
         return SafeArea(child: Stack(children:[const SettingsView(), hud]));
       case UIViewDisplayType.quests:  
         return SafeArea(child: Stack(children:[QuestListView(game), hud]));
+      case UIViewDisplayType.questGiver:
+        return SafeArea(child: Stack(children:[QuestGiverView(game), hud]));
     }
   }
 
@@ -98,11 +101,11 @@ class UILayer extends ConsumerWidget {
     const style = TextStyle(color: Colors.white, fontSize: 24);
     final health = ref.watch(healthProvider);
     final heartImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/heart.png'));
-    final healthText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(health.toInt().toString(), style: style));
+    final healthText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(health.toString(), style: style));
 
     final coins = ref.watch(goldProvider);
     final coinImg = Transform.scale(scale: 2, filterQuality: FilterQuality.none, child: Image.asset('assets/images/coin.png'));
-    final coinText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(coins.toInt().toString(), style: style));
+    final coinText = Padding(padding: const EdgeInsets.only(left: 20), child: Text(coins.toString(), style: style));
 
     final healthRow = Row(children: [heartImg, healthText]);
     final goldRow = Row(children: [coinImg, coinText]);

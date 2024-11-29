@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
 import 'package:flame/components.dart';
@@ -19,12 +20,15 @@ import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/json/item.dart';
+import 'package:flame_game/control/json/npc_data.dart';
+import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/json/shop.dart';
 import 'package:flame_game/control/objects/portal.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 import 'package:flame_game/control/provider/dialog_provider.dart';
 import 'package:flame_game/control/provider/gold_provider.dart';
 import 'package:flame_game/control/provider/health_provider.dart';
+import 'package:flame_game/control/provider/quest_giver.dart';
 import 'package:flame_game/control/provider/shop_item_provider.dart';
 import 'package:flame_game/control/provider/shop_provider.dart';
 import 'package:flame_game/control/provider/ui_provider.dart';
@@ -32,6 +36,7 @@ import 'package:flame_game/screens/view/debug/enemies_enabled_provider.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 mixin GameMap {
   List<k.Tile> blockedTileList = [];
@@ -241,7 +246,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     _generateTiles(tiledmap!.tileMap.map);
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
-    _createNpcs();
+    await _createNpcs();
     enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     // game.camera.follow(game.player);
@@ -382,7 +387,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
       });
 
-      final damageString = attackResult.value == 0 ? '' : '-${attackResult.value.toInt()}';
+      final damageString = attackResult.value == 0 ? '' : '-${attackResult.value}';
       final resultString = attackResult.result == MeleeAttackResult.success ? '' : attackResult.result.name;  
       showCombatMessage(pos,'$resultString $damageString', const Color.fromARGB(249, 255, 96, 96));
     });
@@ -433,7 +438,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         enemies.removeWhere((other) => other == enemy);
         game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
-        final damageString = damageDone.value == 0 ? '' : '-${damageDone.value.toInt()}';
+        final damageString = damageDone.value == 0 ? '' : '-${damageDone.value}';
         final resultString = damageDone.result == MeleeAttackResult.success ? '' : damageDone.result.name;
         showCombatMessage(pos, '$resultString $damageString',const Color.fromARGB(250, 255, 255, 255));
       });
@@ -486,9 +491,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final npc = _isTileBlockedNpc(nextTile);
     final portal = _getTilePortal(nextTile);
     if (npc != null) {
-      postGameEvent('talk_to', npc.npc.name);
-      showDialog(npc);
-      return false;
+        interactWithNpc(npc);
+        return false;
     }
 
     if(portal != null) {
@@ -500,17 +504,34 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     return !isTileBlocked(nextTile);
   }
 
-  void showDialog(NPC npc) {
+  Future<void> interactWithNpc(NPC npc) async {
+    final questsAvailable = await npc.questsAvailable();
+    postGameEvent('talk_to', npc.npc.name);
+    if(questsAvailable.isNotEmpty) {
+      showQuestDialog(questsAvailable);
+      return;
+    }
+      
     if (npc.npc.shopJsonFile.isNotEmpty) {
       showShop(npc);
       return;
     }
 
+    showDialog(npc);
+  }
+
+  Future<void> showDialog(NPC npc) async {
     final dialog = DialogData();
     dialog.title = npc.npc.name;
     dialog.message = npc.npc.speech;
     game.ref?.read(dialogProvider.notifier).set(dialog);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.dialog);
+  }
+
+  void showQuestDialog(List<Quest> quests) {
+    print('show quest dialog');
+    game.ref?.read(questGiver.notifier).set([...quests]);
+    game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.questGiver);
   }
 
   Future<void> showShop(NPC npc) async {
@@ -651,7 +672,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     return spawns;
   }
 
-  List<NpcData> _readNpcSpawnPoints(RenderableTiledMap tilemap) {
+  Future<List<NpcData>> _createNpcData(RenderableTiledMap tilemap) async {
     final spawnData = <NpcData>[];
     final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
     if (objectGroup == null) {
@@ -659,13 +680,21 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
 
     for (final object in objectGroup.objects) {
-      final data = NpcData();
+      var data =  NpcData();
+      final npcFile = object.properties.getProperty<StringProperty>('npcDataFile');
+      if(npcFile != null) {
+        final jsonFile = npcFile.value;
+        final jsonString = await rootBundle.loadString(jsonFile);
+        final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
+        data = NpcData.fromMap(map);
+      }
+
       final speech = object.properties.getProperty<StringProperty>('speech');
       if (speech != null) {
         data.speech = speech.value;
       }
 
-      final jsonFile = object.properties.getProperty<StringProperty>('shop');
+      final jsonFile = object.properties.getProperty<StringProperty>('shopFile');
       if (jsonFile != null) {
         data.shopJsonFile = jsonFile.value;
       }
@@ -703,8 +732,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     game.player.position = _reEntryPos;
   }
 
-  void _createNpcs() {
-    final spawns = _readNpcSpawnPoints(tiledmap!.tileMap);
+  Future<void> _createNpcs() async {
+    final spawns = await _createNpcData(tiledmap!.tileMap);
     for (final spawnData in spawns) {
       final npc = NPC(spawnData);
       add(npc);
@@ -969,6 +998,5 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   void postGameEvent(String event, String value) {
     print('$event $value');
     game.onGameEvent(event, value);
-    // TODO(Kris): check current quests to see if the event matches any
   }
 }

@@ -12,11 +12,12 @@ class CharacterData {
   int stam = 1;
   int armor = 1;
   int experience = 0;
-  int level = 0;
+  int level = 1;
   k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
   List<Quest> quests = [];
+  List<Quest> completedQuests = [];
 
   int get maxHealth {
     return (stam * 5) + _maxHealth;
@@ -59,6 +60,7 @@ class CharacterData {
     gold = json['gold'] as int? ?? 0;
     tilePosition.x = json['x'] as int? ?? 0;
     tilePosition.y = json['y'] as int? ?? 0;
+    level = json['level'] as int? ?? 1;
     mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
     final inventoryNode = json['inventory'] as List<dynamic>? ?? [];
     if (inventoryNode.isNotEmpty) {
@@ -72,6 +74,12 @@ class CharacterData {
     }
     final questsList = json['quests'] as List<dynamic>? ?? [];
     quests = questsList.map((map) {
+      final node = map as Map<String, dynamic>? ?? {};
+      return Quest.fromMap(node);
+    }).toList();
+
+    final completedQuestsList = json['quests'] as List<dynamic>? ?? [];
+    completedQuests = completedQuestsList.map((map) {
       final node = map as Map<String, dynamic>? ?? {};
       return Quest.fromMap(node);
     }).toList();
@@ -89,9 +97,11 @@ class CharacterData {
     data['stam'] = stam;
     data['dodge'] = dodge;
     data['mapfile'] = mapfile;
+    data['level'] = level;
     data['experience'] = experience;
     data['inventory'] = inventory.map((v) => v.toJson()).toList();
     data['quests'] = quests.map((quest) => quest.toMap()).toList();
+    data['completedQuests'] = completedQuests.map((quest) => quest.toMap()).toList();
     return data;
   }
   

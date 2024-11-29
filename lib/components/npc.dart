@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:flame/components.dart';
 import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/control/enum/character_state.dart';
+import 'package:flame_game/control/json/npc_data.dart';
+import 'package:flame_game/control/json/quest.dart';
 
 class NPC extends MeleeCharacter {
   final NpcData npc;
@@ -32,13 +33,17 @@ class NPC extends MeleeCharacter {
       animation = animations[CharacterAnimationState.idleDown];
     } else if (npc.spriteFile.isNotEmpty) {}
   }
-}
 
-class NpcData {
-  String speech = '';
-  String name = '';
-  String shopJsonFile = '';
-  String animationJsonFile = '';
-  String spriteFile = '';
-  Vector2 position = Vector2.zero();
+  Future<List<Quest>> questsAvailable() async {
+    final questsAvailable = <Quest>[];
+    for(final questId in npc.questsAvailable) {
+      final map = await game.assets.readJson('json/quests/$questId.json');
+      final quest = Quest.fromMap(map);
+      if(game.player.isEligibleForQuest(quest)) {
+        print('player is eligible for $questId');
+        questsAvailable.add(quest);
+      }
+    }
+    return questsAvailable;
+  }
 }

@@ -7,5 +7,6 @@ enum UIViewDisplayType {
   inventory,
   debug,
   settings,
-  quests
+  quests,
+  questGiver
 }

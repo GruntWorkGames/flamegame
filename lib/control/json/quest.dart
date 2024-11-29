@@ -9,8 +9,10 @@ class Quest {
   String completer = '';
   bool isComplete = false;
   bool finishOnComplete = true;
+  int requiredLevel = 0;
   QuestReward reward = QuestReward();
   List<QuestObjective> objectives = [];
+  List<String> requiredQuestIds = [];
 
   Quest();
 
@@ -27,6 +29,13 @@ class Quest {
     for(final obj in objList) {
       final objNode = obj as Map<String, dynamic>? ?? {};
       objectives.add(QuestObjective.fromMap(objNode));
+    }
+    requiredLevel = map['requiredLevel'] as int? ?? 0;
+    final questIdArry = map['requiredQuestIds'] as List<dynamic>? ?? [];
+    for(final questId in questIdArry) {
+      if(questId is String) {
+        requiredQuestIds.add(questId);
+      }
     }
   }
 

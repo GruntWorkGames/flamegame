@@ -12,7 +12,6 @@ import 'package:flame_game/control/enum/direction.dart';
 import 'package:flame_game/control/enum/item_type.dart';
 import 'package:flame_game/control/json/character_data.dart';
 import 'package:flame_game/control/json/item.dart';
-import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/objects/tile.dart' as k;
 
 class MeleeCharacter extends SpriteAnimationComponent

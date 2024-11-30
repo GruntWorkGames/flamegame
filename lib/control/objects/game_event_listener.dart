@@ -1,6 +1,5 @@
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/control/json/quest.dart';
 import 'package:flame_game/control/provider/quest_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,8 +40,6 @@ class GameEventListener {
   }
 
   void _onKilledEvent(String target, WidgetRef? ref) {
-    print('killed a $target');  
-
     for(final quest in data.quests) {
       for(final objective in quest.objectives) {
         final anyTarget = objective.target == 'any';

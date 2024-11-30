@@ -1,6 +1,8 @@
 import 'package:flame_game/components/game.dart';
 import 'package:flame_game/control/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/quest_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/screens/view/quest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,17 +20,28 @@ class QuestListView extends ConsumerWidget{
 
     final cells = <Widget>[];
     for(final quest in quests) {
-      final questItem = Padding(padding: const EdgeInsets.only(bottom:10), child: QuestView(quest, game));
+      final questItem = Expanded(child: Padding(padding: const EdgeInsets.only(bottom:10), child: QuestView(quest, game)));
       final row = Row(mainAxisAlignment: MainAxisAlignment.center, children: [questItem]);
       final questCell = _cell(context, '', row);
       cells.add(questCell);
     }
 
     final col = Column(mainAxisAlignment: MainAxisAlignment.center, children: cells);
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height / 2;
-    final box = Container(width: width, height: height, child:SingleChildScrollView(physics: const AlwaysScrollableScrollPhysics(), child: col));
-    final content = Column(mainAxisAlignment: MainAxisAlignment.center, children: [titleContainer, box]);
+    final scroll = SingleChildScrollView(physics: const AlwaysScrollableScrollPhysics(), child: col);
+    
+    final closeBtnContainer = InkWell(
+      onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
+      child: Padding(padding: const EdgeInsets.only(top: 30), 
+        child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+        boxShadow: const [BoxShadow(offset: Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        borderRadius: BorderRadius.circular(30), 
+        color: Colors.grey[600]), 
+        child: const Icon(Icons.close, size: 24, color: Colors.white))));  
+
+    final content = Column(mainAxisAlignment: MainAxisAlignment.center, children: [titleContainer, scroll, closeBtnContainer]);
     return Center(child: content);
   }
 

@@ -24,7 +24,6 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     for(final enemy in enemyList) {
       if(enemy is String) {
         enemies.add(enemy);
-        print('enemy $enemy');
       }
     }
   }
@@ -68,7 +67,6 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
 
   String randomEnemyFile() {
     final r = random.nextInt(enemies.length);
-    print('random $r');
     return enemies[r];
   }
 }

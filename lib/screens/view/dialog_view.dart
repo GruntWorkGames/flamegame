@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flame_game/control/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
 import 'package:flame_game/control/provider/dialog_provider.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,7 +25,21 @@ class DialogView extends ConsumerWidget {
     final message = Container(decoration: decoration, child: box);
 
     const spacer = SizedBox(height: 4);
-    final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message]);
+
+    final closeBtnContainer = InkWell(
+      onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
+      child: Padding(padding: const EdgeInsets.only(top: 30), 
+        child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+        boxShadow: const [BoxShadow(offset: Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        borderRadius: BorderRadius.circular(30), 
+        color: Colors.grey[600]), 
+        child: const Icon(Icons.close, size: 24, color: Colors.white)))); 
+
+
+    final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message, closeBtnContainer]);
     final blur =  BackdropFilter(filter:ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Center(child: column));
     return blur;
   }

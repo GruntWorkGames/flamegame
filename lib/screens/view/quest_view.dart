@@ -11,15 +11,15 @@ class QuestView extends ConsumerWidget {
   
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final title = Text(quest.title, style: titleStyle);
-    final text = Text(quest.text);
-    bool isDone = false;
+    final title = Text(quest.title, style: titleStyle, textAlign: TextAlign.center);
+    final text = Text(quest.text, textAlign: TextAlign.center);
+    var isDone = false;
     final objectives = quest.objectives.map((objective) {
       isDone = (objective.currentCount / objective.countNeeded) == 1;
       final doneString = isDone ? '- Done' : '';
       final progressString = '${objective.title}      ${objective.currentCount} / ${objective.countNeeded} $doneString';
-      final progress = Text(progressString);
-      return Row(children:[Column(children: [progress])]);
+      final progress = Text(progressString, textAlign: TextAlign.center);
+      return Row(mainAxisAlignment: MainAxisAlignment.center,children:[Column(children: [progress])]);
     }).toList();
     final buttonStyle = ButtonStyle(elevation: WidgetStateProperty.resolveWith<double>((states) {
       if(states.contains(WidgetState.pressed)) {
@@ -39,8 +39,8 @@ class QuestView extends ConsumerWidget {
     final button = ElevatedButton(style: buttonStyle, child: completeBtnText, onPressed: (){
       game.playerCompletedQuest(quest);
     });
-    final buttonRow = isDone ? Row(children: [button]) : const SizedBox.shrink();
+    final buttonRow = isDone ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [button]) : const SizedBox.shrink();
     final buttonPadding = Padding(padding: const EdgeInsets.only(top: 20), child: buttonRow);
-    return Column(children: [title, text, ...objectives, buttonPadding]);
+    return Column(children: [title, text, const SizedBox(height: 10), ...objectives, buttonPadding]);
   }
 }

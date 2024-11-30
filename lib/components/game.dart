@@ -4,7 +4,6 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
 import 'package:flame_game/components/map_runner.dart';
-import 'package:flame_game/components/melee_character.dart';
 import 'package:flame_game/components/overworld_navigator.dart';
 import 'package:flame_game/components/player_component.dart';
 import 'package:flame_game/control/enum/debug_command.dart';
@@ -62,7 +61,6 @@ class MainGame extends FlameGame with TapDetector {
 
   Future<void> loadSavedPlayerData() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     final jsonString = prefs.getString('save_file') ?? '{}';
     final isNewCharacter = jsonString == '{}';
     final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};

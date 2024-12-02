@@ -4,6 +4,7 @@
     "id" : "quest1",
     "completer" : "self",
     "isComplete" : false,
+    "isActive" : true,
     "requiredIds" : [
         
     ],
@@ -12,7 +13,7 @@
     ],
     "reward" : {
         "xp" : 100
-    },
+    }, 
     "objectives" : [
         {
             "listenEvent" : "talk_to",

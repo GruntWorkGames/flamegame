@@ -4,6 +4,7 @@
     "id": "quest2",
     "completer": "self",
     "isComplete": false,
+    "isActive": false,
     "requiredQuestIds": [
         "quest1"
     ],

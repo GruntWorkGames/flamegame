@@ -210,7 +210,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<k.Tile> _blockedTileList = [];
   double zoomFactor = 2.4;
   final _aggroDistance = 6;
-  bool listenToInput = false;
+  bool listenToInput = true;
   late final TurnSystem turnSystem;
   final List<Enemy> _enemiesToMove = [];
   bool shouldContinue = false; // player continuoue movement

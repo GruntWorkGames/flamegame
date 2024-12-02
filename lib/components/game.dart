@@ -81,7 +81,6 @@ class MainGame extends FlameGame with TapDetector {
       await quest.loadDefaultQuest();
       player.data.quests.add(quest);
     }
-    player.data.health = 1;
     ref?.read(questListProvider.notifier).set(player.data.quests);
   }
 

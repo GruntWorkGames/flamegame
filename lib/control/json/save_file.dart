@@ -1,7 +1,11 @@
 import 'package:flame_game/control/json/character_data.dart';
+import 'package:flame_game/control/json/quest.dart';
 
 class SaveFile {
   CharacterData playerData = CharacterData();
+  List<Quest> currentQuests = [];
+  List<Quest> completedQuests = [];
+  List<Quest> allQuests = [];
 
   SaveFile();
   

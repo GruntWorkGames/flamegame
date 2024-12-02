@@ -78,7 +78,7 @@ class CharacterData {
       return Quest.fromMap(node);
     }).toList();
 
-    final completedQuestsList = json['quests'] as List<dynamic>? ?? [];
+    final completedQuestsList = json['completedQuests'] as List<dynamic>? ?? [];
     completedQuests = completedQuestsList.map((map) {
       final node = map as Map<String, dynamic>? ?? {};
       return Quest.fromMap(node);

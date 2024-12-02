@@ -73,7 +73,7 @@ class UILayer extends ConsumerWidget {
       case UIViewDisplayType.invisible:
         return const SizedBox.shrink();
       case UIViewDisplayType.gameOver:
-        return _gameOver(ref);
+        return _gameOver(context, ref);
       case UIViewDisplayType.inventory:
         return SafeArea(child: Stack(children:[InventoryView(game), hud]));  
       case UIViewDisplayType.debug: 
@@ -134,10 +134,10 @@ class UILayer extends ConsumerWidget {
     });
   }
   
-  Widget _gameOver(WidgetRef ref) {
+  Widget _gameOver(BuildContext context, WidgetRef ref) {
     final dialog = GestureDetector(onTap: (){
-      // TODO(Kris): add stuff
-    }, child: const DialogView());
+      Navigator.pop(context);
+    }, child: const DialogView(showCloseButton: false));
     return Center(child: dialog);
   }
   

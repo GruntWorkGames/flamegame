@@ -1,4 +1,6 @@
 import 'package:flame_game/control/constants.dart';
+import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flame_game/screens/view/settings/control_style_setting.dart';
 import 'package:flame_game/screens/view/settings/fx_setting.dart';
 import 'package:flame_game/screens/view/settings/music_setting.dart';
@@ -38,10 +40,25 @@ class SettingsView extends ConsumerWidget {
     final height = MediaQuery.of(context).size.height / 2;
     final box = Container(width: width, height: height, child:
       SingleChildScrollView(physics: const AlwaysScrollableScrollPhysics(), child: col));
+
+    final closeBtnContainer = InkWell(
+      onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
+      child: Padding(padding: const EdgeInsets.only(top: 30), 
+        child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+        boxShadow: const [BoxShadow(offset: Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
+        borderRadius: BorderRadius.circular(30), 
+        color: Colors.grey[600]), 
+        child: const Icon(Icons.close, size: 24, color: Colors.white)))); 
+
     final content = Column(mainAxisAlignment: MainAxisAlignment.center, 
       children: [
         titleContainer, 
-        box
+        box,
+        const SizedBox(height: 20),
+        closeBtnContainer
       ]);
     return Center(child: content);
   }

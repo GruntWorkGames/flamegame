@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DialogView extends ConsumerWidget {
-  const DialogView({super.key});
+  final bool showCloseButton;
+  const DialogView({super.key, this.showCloseButton = true});
 
   @override
   Widget build(Object context, WidgetRef ref) {
@@ -26,7 +27,8 @@ class DialogView extends ConsumerWidget {
 
     const spacer = SizedBox(height: 4);
 
-    final closeBtnContainer = InkWell(
+    final closeBtnContainer = showCloseButton 
+    ? InkWell(
       onTap: () => ref.read(uiProvider.notifier).set(UIViewDisplayType.game), 
       child: Padding(padding: const EdgeInsets.only(top: 30), 
         child: Container(
@@ -36,8 +38,8 @@ class DialogView extends ConsumerWidget {
         boxShadow: const [BoxShadow(offset: Offset(0, 1), blurRadius: 5, spreadRadius: 1, color: Colors.black45)],
         borderRadius: BorderRadius.circular(30), 
         color: Colors.grey[600]), 
-        child: const Icon(Icons.close, size: 24, color: Colors.white)))); 
-
+        child: const Icon(Icons.close, size: 24, color: Colors.white))))
+    : const SizedBox.shrink();
 
     final column = Column(mainAxisAlignment: MainAxisAlignment.center, children: [title, spacer, message, closeBtnContainer]);
     final blur =  BackdropFilter(filter:ImageFilter.blur(sigmaX: 10, sigmaY: 10), child: Center(child: column));

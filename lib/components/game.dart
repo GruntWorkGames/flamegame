@@ -81,14 +81,8 @@ class MainGame extends FlameGame with TapDetector {
       await quest.loadDefaultQuest();
       player.data.quests.add(quest);
     }
+    player.data.health = 1;
     ref?.read(questListProvider.notifier).set(player.data.quests);
-  }
-
-  @override
-  void onTap() {
-    ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
-    // ref.read(screenTransitionState.notifier).set(true);
-    super.onTap();
   }
 
   void directionDown(Direction direction) {
@@ -172,6 +166,28 @@ class MainGame extends FlameGame with TapDetector {
     player.data.completedQuests.add(quest);
     player.data.quests.remove(quest);
     ref?.read(questListProvider.notifier).set([...player.data.quests]);
+    save();
+  }
+
+  Future<void> onPlayerDied() async {
+    final map = <String, dynamic>{};
+    saveFile = SaveFile.fromMap(map);
+    player.data = saveFile.playerData;
+    final firstItem = player.data.inventory.first;
+    firstItem.isSelected = true;
+    ref?.read(inventoryProvider.notifier).set(player.data);
+    ref?.read(inventoryItemProvider.notifier).set(firstItem);
+
+    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    if (weapon != null) {
+      player.weapon = weapon;
+    }
+
+    final quest = Quest();
+    await quest.loadDefaultQuest();
+    player.data.quests.add(quest);
+    ref?.read(questListProvider.notifier).set(player.data.quests);
+
     save();
   }
 }

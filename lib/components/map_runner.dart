@@ -385,6 +385,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         dialog.message = 'Press here to restart';
         game.ref?.read(dialogProvider.notifier).set(dialog);
         game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.gameOver);
+        game.onPlayerDied();
       });
 
       final damageString = attackResult.value == 0 ? '' : '-${attackResult.value}';

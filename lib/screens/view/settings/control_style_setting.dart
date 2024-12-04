@@ -1,7 +1,7 @@
-import 'package:karas_quest/control/enum/control_style.dart';
-import 'package:karas_quest/control/provider/control_style_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/enum/control_style.dart';
+import 'package:karas_quest/control/provider/control_style_provider.dart';
 
 
 class ControlStyleSetting extends ConsumerWidget {

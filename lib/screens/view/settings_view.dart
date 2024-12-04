@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/settings/control_style_setting.dart';
 import 'package:karas_quest/screens/view/settings/fx_setting.dart';
 import 'package:karas_quest/screens/view/settings/music_setting.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});

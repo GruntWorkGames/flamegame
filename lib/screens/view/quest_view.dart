@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/json/quest.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuestView extends ConsumerWidget {
   final Quest quest;

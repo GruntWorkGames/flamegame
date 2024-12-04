@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class GameEventListener {
   final CharacterData data;

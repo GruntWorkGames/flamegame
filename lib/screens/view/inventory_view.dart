@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
@@ -5,8 +7,6 @@ import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InventoryView extends ConsumerWidget {
   final MainGame game;

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/control_style.dart';
@@ -16,9 +19,6 @@ import 'package:karas_quest/screens/view/quest_giver_view.dart';
 import 'package:karas_quest/screens/view/quest_list_view.dart';
 import 'package:karas_quest/screens/view/settings_view.dart';
 import 'package:karas_quest/screens/view/shop_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class UILayer extends ConsumerWidget {
   final MainGame game;

@@ -1,11 +1,12 @@
 import 'dart:async';
+
 import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
-import 'package:karas_quest/components/game.dart';
-import 'package:karas_quest/screens/view/ui_layer.dart';
 import 'package:flame_tiled/flame_tiled.dart' as flame;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/screens/view/ui_layer.dart';
 
 class MainMenuFlutter extends ConsumerWidget {
   const MainMenuFlutter({super.key});

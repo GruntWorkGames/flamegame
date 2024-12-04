@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:karas_quest/control/json/quest_reward.dart';
+
 import 'package:flutter/services.dart';
+import 'package:karas_quest/control/json/quest_reward.dart';
 
 class Quest {
   String title = '';

@@ -1,8 +1,11 @@
 import 'dart:convert';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/map_runner.dart';
 import 'package:karas_quest/components/overworld_navigator.dart';
 import 'package:karas_quest/components/player_component.dart';
@@ -17,8 +20,6 @@ import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {

@@ -1,5 +1,5 @@
-import 'package:karas_quest/control/json/character_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/json/character_data.dart';
 
 final inventoryProvider = StateNotifierProvider<InventoryState, CharacterData>((ref) {
   return InventoryState();

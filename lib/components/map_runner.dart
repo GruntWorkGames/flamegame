@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
+import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flame_tiled_utils/flame_tiled_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/melee_attack_result.dart';
 import 'package:karas_quest/components/melee_character.dart';
-import 'package:karas_quest/components/npc.dart'; 
+import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/components/square.dart';
 import 'package:karas_quest/components/turn_system.dart';
 import 'package:karas_quest/control/constants.dart';
@@ -33,10 +38,6 @@ import 'package:karas_quest/control/provider/shop_item_provider.dart';
 import 'package:karas_quest/control/provider/shop_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
-import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flame_tiled_utils/flame_tiled_utils.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 mixin GameMap {
   List<k.Tile> blockedTileList = [];

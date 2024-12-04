@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/quest_view.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuestListView extends ConsumerWidget{
   final MainGame game;

@@ -1,6 +1,6 @@
-import 'package:karas_quest/control/provider/fx_slider_value_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/provider/fx_slider_value_state.dart';
 
 class FxSetting extends ConsumerWidget {
   const FxSetting({super.key});

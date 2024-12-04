@@ -1,5 +1,5 @@
-import 'package:karas_quest/control/json/quest.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/json/quest.dart';
 
 final questGiver = StateNotifierProvider<QuestGiverState, List<Quest>>((ref) {
   return QuestGiverState();

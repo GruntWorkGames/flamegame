@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
-import 'package:flutter/material.dart';
 
 const int kTileSize = 16;
 final mainColor = Colors.grey[600]!;

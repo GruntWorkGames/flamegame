@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/components/map_runner.dart';
-import 'package:flame_game/components/player_component.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/components/map_runner.dart';
+import 'package:karas_quest/components/player_component.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
   final Map<String, MapRunner> worlds = {};

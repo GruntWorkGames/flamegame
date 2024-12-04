@@ -1,5 +1,5 @@
-import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/control/json/quest.dart';
+import 'package:karas_quest/control/json/character_data.dart';
+import 'package:karas_quest/control/json/quest.dart';
 
 class SaveFile {
   CharacterData playerData = CharacterData();

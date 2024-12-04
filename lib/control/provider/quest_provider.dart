@@ -1,4 +1,4 @@
-import 'package:flame_game/control/json/quest.dart';
+import 'package:karas_quest/control/json/quest.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final questListProvider = StateNotifierProvider<QuestListProvider, List<Quest>>((ref) {

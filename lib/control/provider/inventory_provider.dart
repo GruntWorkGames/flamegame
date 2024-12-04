@@ -1,4 +1,4 @@
-import 'package:flame_game/control/json/character_data.dart';
+import 'package:karas_quest/control/json/character_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final inventoryProvider = StateNotifierProvider<InventoryState, CharacterData>((ref) {

@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:flame_game/components/enemy.dart';
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/control/constants.dart';
 import 'package:flutter/services.dart';
+import 'package:karas_quest/components/enemy.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/control/constants.dart';
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();

@@ -1,4 +1,4 @@
-import 'package:flame_game/control/enum/item_type.dart';
+import 'package:karas_quest/control/enum/item_type.dart';
 
 class Item {
   ItemType type = ItemType.none;

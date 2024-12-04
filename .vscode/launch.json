@@ -5,18 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "flamegame",
+            "name": "karas_quest",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "flamegame (profile mode)",
+            "name": "karas_quest (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "flamegame (release mode)",
+            "name": "karas_quest (release mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"

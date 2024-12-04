@@ -1,10 +1,10 @@
 import 'dart:ui';
-import 'package:flame_game/control/constants.dart';
-import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/provider/dialog_provider.dart';
-import 'package:flame_game/control/provider/ui_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/control/enum/ui_view_type.dart';
+import 'package:karas_quest/control/provider/dialog_provider.dart';
+import 'package:karas_quest/control/provider/ui_provider.dart';
 
 class DialogView extends ConsumerWidget {
   final bool showCloseButton;

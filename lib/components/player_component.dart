@@ -1,8 +1,8 @@
-import 'package:flame_game/components/melee_character.dart';
-import 'package:flame_game/control/enum/ui_view_type.dart';
-import 'package:flame_game/control/json/quest.dart';
-import 'package:flame_game/control/provider/quest_provider.dart';
-import 'package:flame_game/control/provider/ui_provider.dart';
+import 'package:karas_quest/components/melee_character.dart';
+import 'package:karas_quest/control/enum/ui_view_type.dart';
+import 'package:karas_quest/control/json/quest.dart';
+import 'package:karas_quest/control/provider/quest_provider.dart';
+import 'package:karas_quest/control/provider/ui_provider.dart';
 
 class PlayerComponent extends MeleeCharacter {
   PlayerComponent();

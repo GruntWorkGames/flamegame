@@ -1,6 +1,6 @@
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/control/constants.dart';
-import 'package:flame_game/control/json/quest.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/control/json/quest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

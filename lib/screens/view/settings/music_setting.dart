@@ -1,5 +1,5 @@
 
-import 'package:flame_game/control/provider/music_slider_value_state.dart';
+import 'package:karas_quest/control/provider/music_slider_value_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,4 +1,4 @@
-import 'package:flame_game/control/enum/control_style.dart';
+import 'package:karas_quest/control/enum/control_style.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final controlStyleState = StateNotifierProvider<ControlStyleState, ControlStyle>((ref) {

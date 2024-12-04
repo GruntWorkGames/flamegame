@@ -1,9 +1,8 @@
-
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/control/provider/button_opacity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/control/enum/direction.dart';
+import 'package:karas_quest/control/provider/button_opacity.dart';
 
 class ControlPad extends ConsumerStatefulWidget {
   final MainGame game;

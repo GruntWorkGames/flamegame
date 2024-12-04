@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
-import 'package:flame_game/components/game.dart';
 import 'package:flutter/material.dart';
+import 'package:karas_quest/components/game.dart';
 
 // used for debugging
 class Square extends PositionComponent {

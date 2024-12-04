@@ -1,5 +1,5 @@
-import 'package:flame_game/control/constants.dart';
-import 'package:flame_game/screens/view/main_menu.dart';
+import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/screens/view/main_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

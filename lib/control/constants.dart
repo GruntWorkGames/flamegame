@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/enum/direction.dart';
+import 'package:karas_quest/control/objects/tile.dart' as k;
 import 'package:flutter/material.dart';
 
 const int kTileSize = 16;

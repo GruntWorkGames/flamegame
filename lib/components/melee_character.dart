@@ -3,16 +3,16 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/sprite.dart';
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/components/melee_attack_result.dart';
-import 'package:flame_game/components/turn_system.dart';
-import 'package:flame_game/control/constants.dart';
-import 'package:flame_game/control/enum/character_state.dart';
-import 'package:flame_game/control/enum/direction.dart';
-import 'package:flame_game/control/enum/item_type.dart';
-import 'package:flame_game/control/json/character_data.dart';
-import 'package:flame_game/control/json/item.dart';
-import 'package:flame_game/control/objects/tile.dart' as k;
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/components/melee_attack_result.dart';
+import 'package:karas_quest/components/turn_system.dart';
+import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/control/enum/character_state.dart';
+import 'package:karas_quest/control/enum/direction.dart';
+import 'package:karas_quest/control/enum/item_type.dart';
+import 'package:karas_quest/control/json/character_data.dart';
+import 'package:karas_quest/control/json/item.dart';
+import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class MeleeCharacter extends SpriteAnimationComponent
     with HasGameRef<MainGame> {

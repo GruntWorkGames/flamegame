@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:flame_game/components/melee_character.dart';
-import 'package:flame_game/control/enum/character_state.dart';
-import 'package:flame_game/control/json/npc_data.dart';
-import 'package:flame_game/control/json/quest.dart';
+import 'package:karas_quest/components/melee_character.dart';
+import 'package:karas_quest/control/enum/character_state.dart';
+import 'package:karas_quest/control/json/npc_data.dart';
+import 'package:karas_quest/control/json/quest.dart';
 
 class NPC extends MeleeCharacter {
   final NpcData npc;

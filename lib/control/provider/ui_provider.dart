@@ -1,4 +1,4 @@
-import 'package:flame_game/control/enum/ui_view_type.dart';
+import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final uiProvider = StateNotifierProvider<UIState, UIViewDisplayType>((ref) {

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flame_game/control/json/quest_reward.dart';
+import 'package:karas_quest/control/json/quest_reward.dart';
 import 'package:flutter/services.dart';
 
 class Quest {

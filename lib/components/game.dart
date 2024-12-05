@@ -167,7 +167,13 @@ class MainGame extends FlameGame with TapDetector {
     player.data.completedQuests.add(quest);
     player.data.quests.remove(quest);
     ref?.read(questListProvider.notifier).set([...player.data.quests]);
+    mapRunner?.updateQuestIcons();
     save();
+  }
+
+  void playerAcceptedQuest(Quest quest) {
+    player.acceptQuest(quest);
+    mapRunner?.updateQuestIcons();
   }
 
   Future<void> onPlayerDied() async {

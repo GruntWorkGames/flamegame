@@ -267,7 +267,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     game.player.data.mapfile = _mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
-
+    updateQuestIcons();
     updateUI();
   }
 
@@ -998,7 +998,17 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
   
   void postGameEvent(String event, String value) {
-    print('$event $value');
     game.onGameEvent(event, value);
+
+    if(event == 'talk_to') {
+      updateQuestIcons();
+    }
+  }
+
+  Future<void> updateQuestIcons() async {
+    for(final npc in _npcs) {
+      final quests = await npc.questsAvailable();
+      npc.setHasQuestIcon(shouldShow: quests.isNotEmpty);
+    }
   }
 }

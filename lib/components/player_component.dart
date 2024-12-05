@@ -11,6 +11,10 @@ class PlayerComponent extends MeleeCharacter {
     final completedQuestIds = game.player.data.completedQuests.map((e) {
       return e.id; 
     });
+
+    if(completedQuestIds.contains(quest.id)) {
+      return false;
+    }
     
     for(final questId in quest.requiredQuestIds) {
       if(!completedQuestIds.contains(questId)) {

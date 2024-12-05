@@ -704,6 +704,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         data.animationJsonFile = animationFile.value;
       }
 
+      if(object.name.isNotEmpty) {
+        data.name = object.name;
+      }
+      
       data.position = Vector2(object.x, object.y);
       spawnData.add(data);
     }
@@ -911,7 +915,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       } else {
         game.player.data.inventory.add(item);
       }
-
+      postGameEvent('buy', item.name);
       updateUI();
     }
   }

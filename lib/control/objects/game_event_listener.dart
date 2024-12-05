@@ -13,17 +13,17 @@ class GameEventListener {
   void onEvent(String event, String target, WidgetRef? ref) {
     switch(event) {
     case 'talk_to':
-      _onTalkToEvent(target, ref);
-      break;
+      _genericObjective(target, ref);
     case 'killed':
       _onKilledEvent(target, ref);
-      break;  
+    case 'buy':
+      _genericObjective(target, ref);
     default:
       debugPrint('unknown event'); 
     }
   }
   
-  void _onTalkToEvent(String target, WidgetRef? ref) {
+  void _genericObjective(String target, WidgetRef? ref) {
     for(final quest in data.quests) {
       for(final objective in quest.objectives) {
         if(target == objective.target) {

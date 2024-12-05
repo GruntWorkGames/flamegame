@@ -760,7 +760,7 @@
   </object>
  </objectgroup>
  <objectgroup color="#0000ff" id="10" name="npc">
-  <object id="23" name="quest 1" x="1072" y="768" width="16" height="16">
+  <object id="23" name="Bart" x="1072" y="768" width="16" height="16">
    <properties>
     <property name="npcDataFile" value="assets/json/npc1.json"/>
    </properties>

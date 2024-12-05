@@ -2,6 +2,7 @@
     "name": "Merchant",
     "shop": {
         "message": "Would you like to buy something?",
+        "errorMessage" : "You don't have enough gold to pay for that!",
         "items" : [
             {
                 "name" : "Health Potion",

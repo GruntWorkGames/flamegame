@@ -508,6 +508,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final questsAvailable = await npc.questsAvailable();
     postGameEvent('talk_to', npc.npc.name);
     if(questsAvailable.isNotEmpty) {
+      game.ref?.read(questGiverSelectedQuest.notifier).set(questsAvailable.first);
       showQuestDialog(questsAvailable);
       return;
     }
@@ -516,7 +517,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       showShop(npc);
       return;
     }
-
     showDialog(npc);
   }
 

@@ -161,7 +161,6 @@ class CraftedMap with GameMap {
         data.animationJsonFile = animationFile.value;
       }
 
-      data.name = object.name;
       data.position = Vector2(object.x, object.y);
       spawnData.add(data);
     }
@@ -250,7 +249,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     await _createNpcs();
     enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
-    // game.camera.follow(game.player);
     turnSystem.updateState(TurnSystemState.player);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
@@ -531,7 +529,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void showQuestDialog(List<Quest> quests) {
-    print('show quest dialog');
     game.ref?.read(questGiver.notifier).set([...quests]);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.questGiver);
   }
@@ -707,7 +704,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         data.animationJsonFile = animationFile.value;
       }
 
-      data.name = object.name;
       data.position = Vector2(object.x, object.y);
       spawnData.add(data);
     }

@@ -8,7 +8,7 @@ import 'package:karas_quest/control/json/quest.dart';
 
 class NPC extends MeleeCharacter {
   final NpcData npc; 
-  SpriteComponent? speechBubble;
+  SpriteComponent? questIndicator;
   NPC(this.npc) : super();
 
   @override
@@ -43,14 +43,17 @@ class NPC extends MeleeCharacter {
     );
     
     final sprite = spriteSheet.getSprite(3, 0);
-    speechBubble = SpriteComponent(sprite: sprite, scale: Vector2(0.75, 0.75), position: Vector2(2, 0), anchor: Anchor.bottomLeft);
-    add(speechBubble!);
-    speechBubble?.setOpacity(0);
+    questIndicator = SpriteComponent(sprite: sprite, scale: Vector2(0.75, 0.75), position: Vector2(2, 0), anchor: Anchor.bottomLeft);
+    add(questIndicator!);
+    questIndicator?.setOpacity(0);
+
+    final availableQuests = await questsAvailable();
+    setHasQuestIcon(shouldShow: availableQuests.isNotEmpty);
   }
 
   void setHasQuestIcon({bool shouldShow = false}) {
     final opacity = shouldShow ? 1.0 : 0.0;
-    speechBubble?.setOpacity(opacity);
+    questIndicator?.setOpacity(opacity);
   }
 
   Future<List<Quest>> questsAvailable() async {

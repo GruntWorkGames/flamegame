@@ -1,0 +1,8 @@
+{
+    "name": "Npc 1",
+    "questsAvailable" : [
+        "quest1"
+    ],
+    "speech" : "Clark was looking for you! He said he will be in the town waiting for you to get back.",
+    "animationFile" : "json/FarmerRed.json"
+}

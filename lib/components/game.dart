@@ -78,11 +78,11 @@ class MainGame extends FlameGame with TapDetector {
       player.weapon = weapon;
     }
 
-    if(isNewCharacter) {
-      final quest = Quest();
-      await quest.loadDefaultQuest();
-      player.data.quests.add(quest);
-    }
+    // if(isNewCharacter) {
+    //   final quest = Quest();
+    //   await quest.loadDefaultQuest();
+    //   player.data.quests.add(quest);
+    // }
     ref?.read(questListProvider.notifier).set(player.data.quests);
   }
 

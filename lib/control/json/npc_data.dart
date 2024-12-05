@@ -2,6 +2,7 @@ import 'package:flame/extensions.dart';
 
 class NpcData {
   String speech = '';
+  List<String> speeches = [];
   String name = '';
   String shopJsonFile = '';
   String animationJsonFile = '';
@@ -20,6 +21,7 @@ class NpcData {
       }
     }
     speech = map['speech'] as String? ?? '';
+    speeches = map['speeches'] as List<String>? ?? [];
     shopJsonFile = map['shopFile'] as String? ?? '';
     animationJsonFile = map['animationFile'] as String? ?? '';
     spriteFile = map['sprite'] as String? ?? '';

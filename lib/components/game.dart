@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -16,6 +15,7 @@ import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 import 'package:karas_quest/control/objects/game_event_listener.dart';
+import 'package:karas_quest/control/objects/quest_manager.dart';
 import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
@@ -31,9 +31,9 @@ class MainGame extends FlameGame with TapDetector {
   static late MainGame instance;
   bool isMoveKeyDown = false;
   TextComponent debugLabel = TextComponent();
-  late final gameEventListener = GameEventListener(this, player.data);
+  late final gameEventListener = GameEventListener(this);
   SaveFile saveFile = SaveFile();
-  List<Quest> quests = <Quest>[];
+  late QuestManager questManager;
 
   @override
   Future<void> onLoad() async {
@@ -59,14 +59,13 @@ class MainGame extends FlameGame with TapDetector {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('save_file', jsonString);
   }
-
+ 
   Future<void> loadSavedPlayerData() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     final jsonString = prefs.getString('save_file') ?? '{}';
-    final isNewCharacter = jsonString == '{}';
     final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
     saveFile = SaveFile.fromMap(map);
+    questManager = QuestManager(this, saveFile);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
@@ -78,12 +77,7 @@ class MainGame extends FlameGame with TapDetector {
       player.weapon = weapon;
     }
 
-    // if(isNewCharacter) {
-    //   final quest = Quest();
-    //   await quest.loadDefaultQuest();
-    //   player.data.quests.add(quest);
-    // }
-    ref?.read(questListProvider.notifier).set(player.data.quests);
+    ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
   }
 
   void directionDown(Direction direction) {
@@ -162,20 +156,6 @@ class MainGame extends FlameGame with TapDetector {
     save();
   }
 
-  void playerCompletedQuest(Quest quest) {
-    quest.isComplete = true;
-    player.data.completedQuests.add(quest);
-    player.data.quests.remove(quest);
-    ref?.read(questListProvider.notifier).set([...player.data.quests]);
-    mapRunner?.updateQuestIcons();
-    save();
-  }
-
-  void playerAcceptedQuest(Quest quest) {
-    player.acceptQuest(quest);
-    mapRunner?.updateQuestIcons();
-  }
-
   Future<void> onPlayerDied() async {
     final map = <String, dynamic>{};
     saveFile = SaveFile.fromMap(map);
@@ -192,8 +172,8 @@ class MainGame extends FlameGame with TapDetector {
 
     final quest = Quest();
     await quest.loadDefaultQuest();
-    player.data.quests.add(quest);
-    ref?.read(questListProvider.notifier).set(player.data.quests);
+    saveFile.activeQuests.add(quest);
+    ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
 
     save();
   }

@@ -1,5 +1,4 @@
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class CharacterData {
@@ -16,8 +15,6 @@ class CharacterData {
   k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
   List<Item> inventory = [];
-  List<Quest> quests = [];
-  List<Quest> completedQuests = [];
 
   int get maxHealth {
     return (stam * 5) + _maxHealth;
@@ -72,17 +69,6 @@ class CharacterData {
     } else {
       addDefaultItems();
     }
-    final questsList = json['quests'] as List<dynamic>? ?? [];
-    quests = questsList.map((map) {
-      final node = map as Map<String, dynamic>? ?? {};
-      return Quest.fromMap(node);
-    }).toList();
-
-    final completedQuestsList = json['completedQuests'] as List<dynamic>? ?? [];
-    completedQuests = completedQuestsList.map((map) {
-      final node = map as Map<String, dynamic>? ?? {};
-      return Quest.fromMap(node);
-    }).toList();
   }
 
   Map<String, dynamic> toMap() {
@@ -100,8 +86,6 @@ class CharacterData {
     data['level'] = level;
     data['experience'] = experience;
     data['inventory'] = inventory.map((v) => v.toJson()).toList();
-    data['quests'] = quests.map((quest) => quest.toMap()).toList();
-    data['completedQuests'] = completedQuests.map((quest) => quest.toMap()).toList();
     return data;
   }
   

@@ -61,7 +61,7 @@ class NPC extends MeleeCharacter {
     for(final questId in npc.questsAvailable) {
       final map = await game.assets.readJson('json/quests/$questId.json');
       final quest = Quest.fromMap(map);
-      if(game.player.isEligibleForQuest(quest)) {
+      if(game.questManager.isEligibleForQuest(quest)) {
         questsAvailable.add(quest);
       }
     }

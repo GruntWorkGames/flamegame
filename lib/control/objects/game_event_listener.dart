@@ -1,14 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/game.dart';
-import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 
 class GameEventListener {
-  final CharacterData data;
   final MainGame game;
 
-  GameEventListener(this.game, this.data);
+  GameEventListener(this.game);
 
   void onEvent(String event, String target, WidgetRef? ref) {
     switch(event) {
@@ -24,7 +22,7 @@ class GameEventListener {
   }
   
   void _genericObjective(String target, WidgetRef? ref) {
-    for(final quest in data.quests) {
+    for(final quest in game.saveFile.activeQuests) {
       for(final objective in quest.objectives) {
         if(target == objective.target) {
           if(objective.currentCount < objective.countNeeded) {
@@ -36,11 +34,11 @@ class GameEventListener {
       }
     }
 
-    ref?.read(questListProvider.notifier).set(game.player.data.quests);
+    ref?.read(questListProvider.notifier).set(game.saveFile.activeQuests);
   }
 
   void _onKilledEvent(String target, WidgetRef? ref) {
-    for(final quest in data.quests) {
+    for(final quest in game.saveFile.activeQuests) {
       for(final objective in quest.objectives) {
         final anyTarget = objective.target == 'any';
         if(anyTarget || target == objective.target) {

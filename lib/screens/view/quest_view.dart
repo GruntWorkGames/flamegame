@@ -37,7 +37,7 @@ class QuestView extends ConsumerWidget {
     const buttonTextStyle = TextStyle(fontSize: 16, color: Colors.white);
     const completeBtnText = Padding(padding: EdgeInsets.all(5), child: Text('Complete', style: buttonTextStyle));
     final button = ElevatedButton(style: buttonStyle, child: completeBtnText, onPressed: (){
-      game.playerCompletedQuest(quest);
+      game.questManager.playerCompletedQuest(quest);
     });
     final buttonRow = isDone ? Row(mainAxisAlignment: MainAxisAlignment.center, children: [button]) : const SizedBox.shrink();
     final buttonPadding = Padding(padding: const EdgeInsets.only(top: 20), child: buttonRow);

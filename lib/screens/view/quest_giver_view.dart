@@ -111,7 +111,7 @@ class QuestGiverView extends ConsumerWidget {
     final useButton = ElevatedButton(
       style: buttonStyle,
       onPressed: () {
-        game.playerAcceptedQuest(quest);
+        game.questManager.acceptQuest(quest);
       },
       child: useText,
     );

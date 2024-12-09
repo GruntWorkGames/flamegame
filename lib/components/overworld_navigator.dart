@@ -48,4 +48,14 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
   void popDungeon() {
     
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+
+    };
+  }
+
+  void initFromMap(Map<String, dynamic> map) {
+    
+  }
 }

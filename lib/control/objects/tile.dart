@@ -9,6 +9,18 @@ class Tile {
 
   Tile.empty();
 
+  Tile.fromMap(Map<String, dynamic> map) {
+    x = map['x'] as int? ?? 0;
+    y = map['y'] as int? ?? 0;
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'x' : x,
+      'y' : y
+    };
+  }
+
   Tile.fromPoint(math.Point<int> point) {
     x = point.x;
     y = point.y;

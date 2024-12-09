@@ -229,18 +229,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     await enemyCreator.loadEnemyFile();
     tiledmap = await TiledComponent.load(_mapfile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
-    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties
-            .getProperty<IntProperty>('spawnChance')
-            ?.value ??
-        0;
-    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties
-            .getProperty<IntProperty>('maxEnemies')
-            ?.value ??
-        0;
-    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties
-            .getProperty<IntProperty>('spawnRadius')
-            ?.value ??
-        0;
+    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
+    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
+    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
     add(enemyCreator);
     add(tiledmap!);
     _generateTiles(tiledmap!.tileMap.map);

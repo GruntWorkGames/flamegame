@@ -5,6 +5,7 @@ class SaveFile {
   CharacterData playerData = CharacterData();
   List<Quest> activeQuests = [];
   List<Quest> completedQuests = [];
+  List<CharacterData> enemies = [];
 
   SaveFile();
   

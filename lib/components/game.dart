@@ -44,7 +44,6 @@ class MainGame extends FlameGame with TapDetector {
     await loadSavedPlayerData();
     mapRunner?.equipWeapon(player.weapon);
     mapRunner?.equipArmor(player.armor);
-
     final debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
     debugLabel.text = '';
@@ -65,7 +64,7 @@ class MainGame extends FlameGame with TapDetector {
     final jsonString = prefs.getString('save_file') ?? '{}';
     final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
     saveFile = SaveFile.fromMap(map);
-    questManager = QuestManager(this, saveFile);
+    questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;

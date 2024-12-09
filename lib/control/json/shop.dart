@@ -16,7 +16,7 @@ class Shop {
     final itemsJson = shop['items'] as List<dynamic>? ?? [];
     for (final item in itemsJson) {
       final itemMap = item as Map<String,dynamic>? ?? {};
-      items.add(Item.fromJson(itemMap));
+      items.add(Item.fromMap(itemMap));
     }
   }
 }

@@ -7,8 +7,21 @@ import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class Enemy extends MeleeCharacter {
   int experienceYield = 10;
-  final String animationFile;
+  String animationFile;
   Enemy(this.animationFile);
+
+  @override
+  Map<String, dynamic> toMap() {
+    final map = super.toMap();
+    map['animationFile'] = animationFile;
+    return map;
+  }
+
+  @override
+  void initFromMap(Map<String, dynamic> map) {
+    super.initFromMap(map);
+    animationFile = map['animationFile'] as String? ?? '';
+  }
 
   @override
   Future<void> onLoad() async {

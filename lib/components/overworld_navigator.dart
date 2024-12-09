@@ -51,11 +51,11 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
 
   Map<String, dynamic> toMap() {
     return {
-
+      'stack' : stack.map((mapRunner) => mapRunner.toMap()).toList()
     };
   }
 
   void initFromMap(Map<String, dynamic> map) {
-    
+
   }
 }

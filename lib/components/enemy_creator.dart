@@ -13,17 +13,17 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   int spawnChance = 0;
   int maxEnemies = 0;
   int spawnRadius = 0;
-  List<String> enemies = [];
+  List<String> enemyFileNames = [];
 
   EnemyCreator() : super();
 
   Future<void> loadEnemyFile() async {
     final json = await rootBundle.loadString('assets/json/enemies.json');
     final map = jsonDecode(json) as Map<String, dynamic>? ?? {};
-    final enemyList = map['enemies'] as List<dynamic>? ?? [];
-    for(final enemy in enemyList) {
-      if(enemy is String) {
-        enemies.add(enemy);
+    final enemyFileList = map['enemies'] as List<dynamic>? ?? [];
+    for(final enemyFileName in enemyFileList) {
+      if(enemyFileName is String) {
+        enemyFileNames.add(enemyFileName);
       }
     }
   }
@@ -66,7 +66,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   }
 
   String randomEnemyFile() {
-    final r = random.nextInt(enemies.length);
-    return enemies[r];
+    final r = random.nextInt(enemyFileNames.length);
+    return enemyFileNames[r];
   }
 }

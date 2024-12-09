@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
-
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -39,171 +38,12 @@ import 'package:karas_quest/control/provider/shop_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 
-mixin GameMap {
-  List<k.Tile> blockedTileList = [];
-  List<List<dynamic>> blockedTiles = [];
-  List<Vector2> openTiles = [];
-  List<List<dynamic>> triggerTiles = [];
-  List<List<dynamic>> npcTiles = [];
-
-  // void buildBlockedTiles(RenderableTiledMap tileMap);
-  // void buildPortals(RenderableTiledMap tileMap);
-  // Vector2 readPlayerSpawnPoint(RenderableTiledMap tileMap);
-  // List<Vector2> readEnemySpawns(RenderableTiledMap tileMap);
-  // List<NpcData> readNpcSpawnPoints(RenderableTiledMap tilemap);
-
-  /// Creates a 2D array of Vector2 objects for each array
-  void allocateArrays(int width, int height) {
-    blockedTiles = _generate2dArray(width, height);
-    triggerTiles = _generate2dArray(width, height);
-    npcTiles = _generate2dArray(width, height);
-  }
-
-  List<List<dynamic>> _generate2dArray(int width, int height) {
-    return List<List>.generate(
-        width,
-        (index) =>
-            List<dynamic>.generate(height, (index) => null, growable: false),
-        growable: false);
-  }
-
-  void addBlockedCell(Vector2 position) {
-    final tile = posToTile(position);
-    blockedTiles[tile.x][tile.y] = true;
-    blockedTileList.add(tile);
-  }
-
-  void addPortal(Portal portal, Function onTrigger) {
-    // TODO(Kris): move this to map runner logic
-    // final func = () async {
-    //   // shouldContinue = false;
-    //   // final map = portal.map;
-    //   // await game.overworldNavigator.pushWorld(map);
-    // };
-    final tilePos = posToTile(Vector2(portal.position.x, portal.position.y));
-    triggerTiles[tilePos.x][tilePos.y] = onTrigger;
-  }
-
-  void addExit(Vector2 exit, Function onTrigger) {
-    // final func = () async {
-      // TODO(Kris): move this to map runner logic
-      // game.overworldNavigator.popWorld();
-    // };
-    final tilePos = posToTile(Vector2(exit.x, exit.y));
-    triggerTiles[tilePos.x][tilePos.y] = onTrigger;
-  }
-}
-
-// class RandomMap with GameMap {
-
-// }
-
-class CraftedMap with GameMap {
-
-  void buildPortals(RenderableTiledMap tileMap) {
-    final portalGroup = tileMap.getLayer<ObjectGroup>('portal');
-    final exitGroup = tileMap.getLayer<ObjectGroup>('exit');
-
-    if (portalGroup != null) {
-      for (final portal in portalGroup.objects) {
-        final pos = Vector2(portal.x, portal.y);
-        final mapProperty =
-            portal.properties.getProperty<StringProperty>('map');
-        final map = (mapProperty != null) ? mapProperty.value : '';
-        addPortal(Portal(map, pos), (){});
-      }
-    }
-
-    if (exitGroup != null) {
-      for (final exit in exitGroup.objects) {
-        final pos = Vector2(exit.x, exit.y);
-        addExit(pos, (){});
-      }
-    }
-  }
-
-  List<Vector2> readEnemySpawns(RenderableTiledMap tileMap) {
-    final spawns = <Vector2>[];
-    final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
-    if (objectGroup == null) {
-      return spawns;
-    }
-
-    for (final object in objectGroup.objects) {
-      spawns.add(Vector2(object.x, object.y));
-    }
-
-    return spawns;
-  }
-
-  List<NpcData> readNpcSpawnPoints(RenderableTiledMap tilemap) {
-    final spawnData = <NpcData>[];
-    final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
-    if (objectGroup == null) {
-      return spawnData;
-    }
-
-    for (final object in objectGroup.objects) {
-      final data = NpcData();
-      final speech = object.properties.getProperty<StringProperty>('speech');
-      if (speech != null) {
-        data.speech = speech.value;
-      }
-
-      final jsonFile = object.properties.getProperty<StringProperty>('shop');
-      if (jsonFile != null) {
-        data.shopJsonFile = jsonFile.value;
-      }
-
-      final animationFile =
-          object.properties.getProperty<StringProperty>('animationFile');
-      if (animationFile != null) {
-        data.animationJsonFile = animationFile.value;
-      }
-
-      data.position = Vector2(object.x, object.y);
-      spawnData.add(data);
-    }
-    return spawnData;
-  }
-
-  Vector2 readPlayerSpawnPoint(RenderableTiledMap tileMap) {
-    final objectGroup = tileMap.getLayer<ObjectGroup>('spawn');
-    final spawnObject = objectGroup!.objects.first;
-    return Vector2(spawnObject.x, spawnObject.y);
-  }
-
-  Future<void> buildBlockedTiles(RenderableTiledMap tileMap) async {
-    final layerNames = tileMap.renderableLayers.map((element) {
-      return element.layer.name;
-    },).toList();
-    
-    try{
-      await TileProcessor.processTileType(
-        tileMap: tileMap,
-        processorByType: <String, TileProcessorFunc>{
-          'blocked': (tile, position, size) async {
-            addBlockedCell(position);
-          },
-        },
-        layersToLoad: layerNames,
-        clear: false);
-    } on Exception catch(e, st) {
-      debugPrint(e.toString());
-      debugPrint(st.toString());
-    }
-  }
-}
-
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
   List<List<Function?>> _triggerTiles = [];
   List<List<NPC?>> _npcTiles = [];
-  List<Enemy> enemies = [];
   final List<NPC> _npcs = [];
-  final String _mapfile;
-  Vector2 _reEntryPos = Vector2.zero();
   TiledComponent? tiledmap;
   final enemyCreator = EnemyCreator();
   final List<Square> _squares = [];
@@ -216,7 +56,37 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
 
-  MapRunner(this._mapfile);
+  // serializable properties
+  String mapfile = '';
+  List<Enemy> enemies = [];
+  Vector2 _playerPos = Vector2.zero();
+
+  MapRunner(String file) {
+    mapfile = file;
+  }
+
+  Map<String, dynamic> toMap() {
+    final tile = posToTile(_playerPos);
+    return {
+      'enemies' : enemies.map((e) => e.toMap()).toList(),
+      'mapFile' : mapfile,
+      'playerTile' : tile.toMap()
+    };
+  }
+
+  void initFromMap(Map<String, dynamic> map) {
+    final enemiesList = map['enemies'] as List<dynamic>? ?? [];
+    enemies = enemiesList.map((enemy) {
+      final animationFile = enemy['animationFile'] as String? ?? '';
+      final e = Enemy(animationFile);
+      e.initFromMap(map);
+      return e;
+    }).toList as List<Enemy>;
+    mapfile = map['mapFile'] as String? ?? '';
+    final tileMap = map['playerTile'] as Map<String, dynamic>? ?? {};
+    final tile = k.Tile.fromMap(tileMap);
+    _playerPos = tileToPos(tile);
+  }
  
   @override
   void onMount() {
@@ -227,7 +97,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   @override
   FutureOr<void> onLoad() async {
     await enemyCreator.loadEnemyFile();
-    tiledmap = await TiledComponent.load(_mapfile, Vector2.all(kTileSize.toDouble()));
+    tiledmap = await TiledComponent.load(mapfile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
@@ -246,7 +116,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     game.player.data.tilePosition = posToTile(game.player.position);
     final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
     final isPlayerAtZero = game.player.position.isZero();
-    final isMapMatch = game.player.data.mapfile == _mapfile;
+    final isMapMatch = game.player.data.mapfile == mapfile;
     // new game?
     if (!isSavedTileZero && isPlayerAtZero && isMapMatch) {
       game.player.position = tileToPos(game.player.data.tilePosition);
@@ -254,7 +124,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
 
-    game.player.data.mapfile = _mapfile;
+    game.player.data.mapfile = mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
     updateQuestIcons();
     updateUI();
@@ -487,7 +357,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
 
     if(portal != null) {
-      _reEntryPos = Vector2(game.player.position.x, game.player.position.y);
+      _playerPos = Vector2(game.player.position.x, game.player.position.y);
       shouldContinue = false;
       portal();
     }
@@ -719,10 +589,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     tiledmap?.add(game.player);
 
-    if (_reEntryPos.isZero()) {
+    if (_playerPos.isZero()) {
       return;
     }
-    game.player.position = _reEntryPos;
+    game.player.position = _playerPos;
   }
 
   Future<void> _createNpcs() async {

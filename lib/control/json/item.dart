@@ -13,7 +13,7 @@ class Item {
 
   Item();
 
-  Item.fromJson(Map<String, dynamic> json) {
+  Item.fromMap(Map<String, dynamic> json) {
     name = json['name'] as String? ?? '';
     final typeString = json['type'] as String? ?? '';
     type = ItemType.typeFromString(typeString);
@@ -26,7 +26,7 @@ class Item {
     isEquipped = json['isEquipped'] as bool? ?? false;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     final data = <String, dynamic>{};
     data['name'] = name;
     data['type'] = type.name;

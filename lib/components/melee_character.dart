@@ -14,22 +14,39 @@ import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 
-class MeleeCharacter extends SpriteAnimationComponent
-    with HasGameRef<MainGame> {
-  MeleeCharacter() : super(size: Vector2(kTileSize.toDouble(), kTileSize.toDouble()));
+class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> {
+  double moveDuration = 0.24;
+  CharacterData data = CharacterData();
   bool isMoving = false;
   final Map<CharacterAnimationState, SpriteAnimation> animations = {};
   CharacterAnimationState animationState = CharacterAnimationState.idleDown;
+
   Item weapon = Item()
     ..type = ItemType.weapon
     ..value = 3
     ..isEquipped = true;
+
   Item armor = Item()
     ..type = ItemType.armor
     ..value = 1
     ..isEquipped = true;
-  double moveDuration = 0.24;
-  CharacterData data = CharacterData();
+
+  MeleeCharacter() : super(size: Vector2(kTileSize.toDouble(), kTileSize.toDouble()));
+
+  Map<String, dynamic> toMap() {
+    final dataMap = data.toMap();
+    dataMap['armor'] = armor.toMap();
+    dataMap['weapon'] = weapon.toMap();
+    dataMap['animationState'] = animationState.toJson();
+    return dataMap;
+  }
+
+  void initFromMap(Map<String,dynamic> map) {
+    data = CharacterData.fromMap(map);
+    armor = Item.fromMap(map['armor'] as Map<String, dynamic>? ?? {});
+    weapon = Item.fromMap(map['weapon'] as Map<String, dynamic>? ?? {});
+    animationState = CharacterAnimationState.fromJson(map['animationState'] as String? ?? '');
+  }
 
   @override
   Future<void> onLoad() async {

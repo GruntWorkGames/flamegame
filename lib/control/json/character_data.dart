@@ -64,7 +64,7 @@ class CharacterData {
       final inventoryList = json['inventory'] as List<dynamic>? ?? [];
       inventoryList.forEach((v) {
         final item = v as Map<String, dynamic>? ?? {};
-        inventory.add(Item.fromJson(item));
+        inventory.add(Item.fromMap(item));
       });
     } else {
       addDefaultItems();
@@ -85,7 +85,7 @@ class CharacterData {
     data['mapfile'] = mapfile;
     data['level'] = level;
     data['experience'] = experience;
-    data['inventory'] = inventory.map((v) => v.toJson()).toList();
+    data['inventory'] = inventory.map((v) => v.toMap()).toList();
     return data;
   }
   
@@ -120,8 +120,8 @@ class CharacterData {
       'isEquipped': true
     };
 
-    inventory.add(Item.fromJson(hPotion));
-    inventory.add(Item.fromJson(sword));
-    inventory.add(Item.fromJson(helmet));
+    inventory.add(Item.fromMap(hPotion));
+    inventory.add(Item.fromMap(sword));
+    inventory.add(Item.fromMap(helmet));
   }
 }

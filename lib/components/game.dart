@@ -54,9 +54,12 @@ class MainGame extends FlameGame with TapDetector {
   }
 
   Future<void> save() async {
-    final jsonString = jsonEncode(saveFile.toMap());
+    final saveMap = saveFile.toMap();
+    final mapMap = mapRunner?.toMap();
+    saveMap['mapRunner'] = mapMap;
+    final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('save_file', jsonString);
+    await prefs.setString('save_file', jsonString);
   }
  
   Future<void> loadSavedPlayerData() async {
@@ -125,6 +128,9 @@ class MainGame extends FlameGame with TapDetector {
         return;
       case DebugCommand.map:
         overworldNavigator.pushWorld(command.argument);
+        return;
+      case DebugCommand.save:
+        save();
     }
   }
 

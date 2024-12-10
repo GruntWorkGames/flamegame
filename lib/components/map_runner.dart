@@ -55,6 +55,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<Enemy> _enemiesToMove = [];
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
+  Map<String, dynamic> data = {};
 
   // serializable properties
   String mapfile = '';
@@ -98,10 +99,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         break;
       }
       final animationFile = enemyData['animationFile'] as String? ?? '';
-      final enemy = Enemy('json/club_goblin.json');
-      enemy.initFromMap(enemyData);
+      final enemy = Enemy(animationFile);
       enemies.add(enemy);
       add(enemy);
+      enemy.initFromMap(enemyData);
     }
   }
  
@@ -143,6 +144,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     game.player.data.mapfile = mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
+
+    initFromMap(data);
+
     updateQuestIcons();
     updateUI();
   }

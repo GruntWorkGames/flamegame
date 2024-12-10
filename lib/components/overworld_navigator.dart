@@ -60,8 +60,10 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
       print(map);
       if(map is Map<String, dynamic>) {
         final mapRunner = MapRunner();
+        final mapFile = map['mapFile'] as String? ?? 'bigmap.tmx';
+        mapRunner.mapfile = mapFile;
         _loadMapRunner(mapRunner, mapRunner.mapfile);
-        mapRunner.initFromMap(map);
+        mapRunner.data = map;
       }
     }
   }

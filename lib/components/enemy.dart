@@ -18,12 +18,6 @@ class Enemy extends MeleeCharacter {
   }
 
   @override
-  void initFromMap(Map<String, dynamic> map) {
-    super.initFromMap(map);
-    animationFile = map['animationFile'] as String? ?? '';
-  }
-
-  @override
   Future<void> onLoad() async {
     super.onLoad();
     data.health = 6;
@@ -32,6 +26,9 @@ class Enemy extends MeleeCharacter {
     weapon.value = 3;
     moveDuration = 0.15;
     data.gold = 4;
+    if(data.tilePosition.x != 0 && data.tilePosition.y != 0) {
+      position = tileToPos(data.tilePosition);
+    }
   }
 
   @override

@@ -61,7 +61,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<Enemy> enemies = [];
   Vector2 _playerPos = Vector2.zero();
 
-  MapRunner(String file) {
+  MapRunner();
+  MapRunner.fromMapFile(String file) {
     mapfile = file;
   }
 
@@ -74,18 +75,34 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     };
   }
 
+    List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
+    final enemies = <Enemy>[];
+    final spawns = _readEnemySpawns(tiledmap!.tileMap);
+    for (final spawnPos in spawns) {
+      final enemy = Enemy('json/club_goblin.json');
+      enemy.position = spawnPos;
+      enemies.add(enemy);
+      add(enemy);
+    }
+    return enemies;
+  }
+
   void initFromMap(Map<String, dynamic> map) {
-    final enemiesList = map['enemies'] as List<dynamic>? ?? [];
-    enemies = enemiesList.map((enemy) {
-      final animationFile = enemy['animationFile'] as String? ?? '';
-      final e = Enemy(animationFile);
-      e.initFromMap(map);
-      return e;
-    }).toList as List<Enemy>;
     mapfile = map['mapFile'] as String? ?? '';
     final tileMap = map['playerTile'] as Map<String, dynamic>? ?? {};
     final tile = k.Tile.fromMap(tileMap);
     _playerPos = tileToPos(tile);
+    final enemiesList = map['enemies'] as List<dynamic>? ?? [];
+    for(final enemyData in enemiesList) {
+      if(enemyData is! Map<String, dynamic>) {
+        break;
+      }
+      final animationFile = enemyData['animationFile'] as String? ?? '';
+      final enemy = Enemy('json/club_goblin.json');
+      enemy.initFromMap(enemyData);
+      enemies.add(enemy);
+      add(enemy);
+    }
   }
  
   @override
@@ -108,7 +125,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
     await _createNpcs();
-    enemies = _createEnemies(tiledmap!.tileMap);
+    // enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
     game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
@@ -355,9 +372,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         interactWithNpc(npc);
         return false;
     }
-
+    _playerPos = Vector2(game.player.position.x, game.player.position.y);
     if(portal != null) {
-      _playerPos = Vector2(game.player.position.x, game.player.position.y);
+      // _playerPos = Vector2(game.player.position.x, game.player.position.y);
       shouldContinue = false;
       portal();
     }
@@ -604,18 +621,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       final tile = posToTile(npc.position);
       _npcTiles[tile.x][tile.y] = npc;
     }
-  }
-
-  List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
-    final enemies = <Enemy>[];
-    final spawns = _readEnemySpawns(tiledmap!.tileMap);
-    for (final spawnPos in spawns) {
-      final enemy = Enemy('json/club_goblin.json');
-      enemy.position = spawnPos;
-      enemies.add(enemy);
-      add(enemy);
-    }
-    return enemies;
   }
 
   NPC? _isTileBlockedNpc(k.Tile nextTile) {

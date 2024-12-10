@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -20,6 +21,7 @@ import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
@@ -40,7 +42,7 @@ class MainGame extends FlameGame with TapDetector {
     super.onLoad();
     add(overworldNavigator);
     instance = this;
-    await overworldNavigator.pushWorld(player.data.mapfile);
+    // await overworldNavigator.pushWorld(player.data.mapfile);
     await loadSavedPlayerData();
     mapRunner?.equipWeapon(player.weapon);
     mapRunner?.equipArmor(player.armor);
@@ -55,11 +57,14 @@ class MainGame extends FlameGame with TapDetector {
 
   Future<void> save() async {
     final saveMap = saveFile.toMap();
-    final mapMap = mapRunner?.toMap();
-    saveMap['mapRunner'] = mapMap;
+    saveMap['mapStack'] = overworldNavigator.toMap();
     final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('save_file', jsonString);
+    final directory = await getDownloadsDirectory();
+    final filepath = '${directory?.path}/game.json';
+    final file = File(filepath);
+    await file.writeAsString(jsonString);
   }
  
   Future<void> loadSavedPlayerData() async {
@@ -80,6 +85,11 @@ class MainGame extends FlameGame with TapDetector {
     }
 
     ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+
+    if(map.isNotEmpty) {
+      final maps = map['mapStack'] as Map<String, dynamic>? ?? {};
+      overworldNavigator.initFromMap(maps);
+    }
   }
 
   void directionDown(Direction direction) {
@@ -130,6 +140,7 @@ class MainGame extends FlameGame with TapDetector {
         overworldNavigator.pushWorld(command.argument);
         return;
       case DebugCommand.save:
+      // toMap
         save();
     }
   }

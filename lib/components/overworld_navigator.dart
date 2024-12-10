@@ -17,13 +17,20 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
     if(worlds.containsKey(mapfile)) {
       world = worlds[mapfile];
     } else {
-      world = MapRunner(mapfile);
+      world = MapRunner.fromMapFile(mapfile);
       worlds[mapfile] = world;
     }
 
     game.mapRunner = world;
     game.world = world!;
     stack.add(world);
+  }
+
+  void _loadMapRunner(MapRunner runner, String mapFile) {
+    worlds[mapFile] = runner;
+    game.mapRunner = runner;
+    game.world = runner;
+    stack.add(runner);
   }
 
   void popWorld() {
@@ -41,21 +48,21 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
     _loadMainWorld();    
   }
 
-  void pushDungeon(Vector2 location) {
-    
-  }
-
-  void popDungeon() {
-    
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'stack' : stack.map((mapRunner) => mapRunner.toMap()).toList()
     };
   }
 
-  void initFromMap(Map<String, dynamic> map) {
-
+  Future<void> initFromMap(Map<String, dynamic> map) async {
+    final mapStack = map['stack'] as List<dynamic>? ?? [];
+    for(final map in mapStack) {
+      print(map);
+      if(map is Map<String, dynamic>) {
+        final mapRunner = MapRunner();
+        _loadMapRunner(mapRunner, mapRunner.mapfile);
+        mapRunner.initFromMap(map);
+      }
+    }
   }
 }

@@ -25,6 +25,7 @@ import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
+import 'package:karas_quest/control/json/overworld_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';
 import 'package:karas_quest/control/objects/portal.dart';
@@ -39,6 +40,7 @@ import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
+  MapData mapData = MapData();
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
   List<List<Function?>> _triggerTiles = [];
@@ -73,24 +75,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     };
   }
 
-  void initFromMap(Map<String, dynamic> map) {
-    mapfile = map['mapFile'] as String? ?? '';
-    final tileMap = map['playerTile'] as Map<String, dynamic>? ?? {};
-    final tile = k.Tile.fromMap(tileMap);
-    _playerPos = tileToPos(tile);
-    final enemiesList = map['enemies'] as List<dynamic>? ?? [];
-    for(final enemyData in enemiesList) {
-      if(enemyData is! Map<String, dynamic>) {
-        break;
-      }
-      final animationFile = enemyData['animationFile'] as String? ?? '';
-      final enemy = Enemy(animationFile);
-      enemies.add(enemy);
-      add(enemy);
-      enemy.initFromMap(enemyData);
-    }
-  }
- 
   @override
   void onMount() {
     super.onMount();
@@ -100,8 +84,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   FutureOr<void> onLoad() async {
+    final playerTile = mapData.playerTile;
+    _playerPos = tileToPos(playerTile);
     await enemyCreator.loadEnemyFile();
-    tiledmap = await TiledComponent.load(mapfile, Vector2.all(kTileSize.toDouble()));
+    tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
@@ -860,5 +846,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       final quests = await npc.questsAvailable();
       npc.setHasQuestIcon(shouldShow: quests.isNotEmpty);
     }
+  }
+
+  MapRunner.fromMapData(MapData map) {
+    mapData = map;
   }
 }

@@ -1,0 +1,61 @@
+{
+    "isFreshGame": true,
+    "player": {
+        "health": 10,
+        "maxHealth": 30,
+        "gold": 0,
+        "x": 64,
+        "y": 49,
+        "hit": 40,
+        "str": 1,
+        "stam": 1,
+        "dodge": 5,
+        "mapfile": "bigmap.tmx",
+        "level": 1,
+        "experience": 0,
+        "inventory": [
+            {
+                "name": "Health Potion",
+                "type": "potion",
+                "value": 10,
+                "valueName": "health",
+                "description": "The thick red liquid reminds you of cough syrup.",
+                "cost": 10,
+                "inventoryUseText": "Drink",
+                "isEquipped": false
+            },
+            {
+                "name": "Dull Short Sword",
+                "type": "weapon",
+                "value": 4,
+                "valueName": "damage",
+                "description": "A nearly useless weapon. A kids toy.",
+                "cost": 30,
+                "inventoryUseText": "Equip",
+                "isEquipped": true
+            },
+            {
+                "name": "Armor Helm",
+                "type": "armor",
+                "value": 2,
+                "valueName": "mitigation",
+                "description": "Tarnished and flimsy.",
+                "cost": 20,
+                "inventoryUseText": "Equip",
+                "isEquipped": true
+            }
+        ]
+    },
+    "activeQuests": [],
+    "completedQuests": [],
+    "mapStack": [
+        {
+            "enemies": [],
+            "mapFile": "bigmap.tmx",
+            "playerTile": {
+                "x": 0,
+                "y": 0
+            }
+        }
+    ]
+}

@@ -5,6 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/map_runner.dart';
 import 'package:karas_quest/components/overworld_navigator.dart';
@@ -27,7 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
   MapRunner? mapRunner;
-  final overworldNavigator = OverworldNavigator();
+  final overworldNavigator = MapLoader();
   Component? currentSpeechBubble;
   WidgetRef? ref;
   static late MainGame instance;
@@ -81,8 +82,12 @@ class MainGame extends FlameGame with TapDetector {
     await file.writeAsString(jsonString);
   }
 
-  void loadNewGame() {
-    overworldNavigator.loadNewGame();
+  Future<void> loadNewGame() async {
+    final defaultJson = await rootBundle.loadString('assets/json/savefile.json');
+
+    final map = jsonDecode(defaultJson) as Map<String, dynamic>? ?? {};
+    saveFile = SaveFile.fromMap(map);
+
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
@@ -91,8 +96,17 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
-    mapRunner?.equipWeapon(player.weapon);
-    mapRunner?.equipArmor(player.armor);
+
+    overworldNavigator.initFromSaveFile(saveFile);
+
+    // mapRunner?.equipWeapon(player.weapon);
+    // mapRunner?.equipArmor(player.armor);
+    // if(ref != null && ref!.context.mounted) {
+    //   ref?.read(inventoryProvider.notifier).set(player.data);
+    //   ref?.read(inventoryItemProvider.notifier).set(firstItem);
+    //   ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+    // }
+    // mapRunner?.initFromMap(map);
   }
 
   Future<void> loadSavedGame() async {
@@ -104,9 +118,6 @@ class MainGame extends FlameGame with TapDetector {
       loadNewGame();
       return;
     }
-
-    final maps = map['mapStack'] as Map<String, dynamic>? ?? {};
-    overworldNavigator.initFromMap(maps);
 
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
@@ -149,7 +160,7 @@ class MainGame extends FlameGame with TapDetector {
       case DebugCommand.none:
       return;
       case DebugCommand.reset:
-        overworldNavigator.loadNewGame();
+        Navigator.pop(context);
         return;
       case DebugCommand.heal:
         player.data.heal(int.parse(command.argument));

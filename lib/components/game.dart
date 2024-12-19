@@ -36,16 +36,15 @@ class MainGame extends FlameGame with TapDetector {
   late final gameEventListener = GameEventListener(this);
   SaveFile saveFile = SaveFile();
   late QuestManager questManager;
+  bool isNewGame = true;
+
+  MainGame({required this.isNewGame});
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    add(overworldNavigator);
     instance = this;
-    // await overworldNavigator.pushWorld(player.data.mapfile);
-    await loadSavedPlayerData();
-    mapRunner?.equipWeapon(player.weapon);
-    mapRunner?.equipArmor(player.armor);
+    add(overworldNavigator);
     final debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
     debugLabel.text = '';
@@ -53,6 +52,21 @@ class MainGame extends FlameGame with TapDetector {
     debugLabel.priority = double.maxFinite.toInt();
     debugLabel.anchor = Anchor.center;
     add(debugLabel);
+
+    if(isNewGame) {
+      loadNewGame();
+    } else {
+      loadSavedGame();
+    }
+  }
+
+  void uiFinishedLoading() {
+    if(ref != null && ref!.context.mounted) {
+      ref?.read(inventoryProvider.notifier).set(player.data);
+      ref?.read(inventoryItemProvider.notifier).set(player.data.inventory.first);
+      ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+      ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
+    }
   }
 
   Future<void> save() async {
@@ -66,30 +80,50 @@ class MainGame extends FlameGame with TapDetector {
     final file = File(filepath);
     await file.writeAsString(jsonString);
   }
- 
-  Future<void> loadSavedPlayerData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('save_file') ?? '{}';
-    final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
-    saveFile = SaveFile.fromMap(map);
+
+  void loadNewGame() {
+    overworldNavigator.loadNewGame();
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
-    ref?.read(inventoryProvider.notifier).set(player.data);
-    ref?.read(inventoryItemProvider.notifier).set(firstItem);
-
     final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
     }
+    mapRunner?.equipWeapon(player.weapon);
+    mapRunner?.equipArmor(player.armor);
+  }
 
-    ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
-
-    if(map.isNotEmpty) {
-      final maps = map['mapStack'] as Map<String, dynamic>? ?? {};
-      overworldNavigator.initFromMap(maps);
+  Future<void> loadSavedGame() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('save_file') ?? '{}';
+    final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
+    saveFile = SaveFile.fromMap(map);
+    if(saveFile.isFreshGame) {
+      loadNewGame();
+      return;
     }
+
+    final maps = map['mapStack'] as Map<String, dynamic>? ?? {};
+    overworldNavigator.initFromMap(maps);
+
+    questManager = QuestManager(this);
+    player.data = saveFile.playerData;
+    final firstItem = player.data.inventory.first;
+    firstItem.isSelected = true;
+    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    if (weapon != null) {
+      player.weapon = weapon;
+    }
+    mapRunner?.equipWeapon(player.weapon);
+    mapRunner?.equipArmor(player.armor);
+    if(ref != null && ref!.context.mounted) {
+      ref?.read(inventoryProvider.notifier).set(player.data);
+      ref?.read(inventoryItemProvider.notifier).set(firstItem);
+      ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+    }
+    // mapRunner?.initFromMap(map);
   }
 
   void directionDown(Direction direction) {

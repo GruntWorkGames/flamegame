@@ -55,7 +55,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   final List<Enemy> _enemiesToMove = [];
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
-  Map<String, dynamic> data = {};
 
   // serializable properties
   String mapfile = '';
@@ -63,9 +62,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Vector2 _playerPos = Vector2.zero();
 
   MapRunner();
-  MapRunner.fromMapFile(String file) {
-    mapfile = file;
-  }
+  MapRunner.fromMapFile(this.mapfile);
 
   Map<String, dynamic> toMap() {
     final tile = posToTile(_playerPos);
@@ -74,18 +71,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       'mapFile' : mapfile,
       'playerTile' : tile.toMap()
     };
-  }
-
-    List<Enemy> _createEnemies(RenderableTiledMap tileMap) {
-    final enemies = <Enemy>[];
-    final spawns = _readEnemySpawns(tiledmap!.tileMap);
-    for (final spawnPos in spawns) {
-      final enemy = Enemy('json/club_goblin.json');
-      enemy.position = spawnPos;
-      enemies.add(enemy);
-      add(enemy);
-    }
-    return enemies;
   }
 
   void initFromMap(Map<String, dynamic> map) {
@@ -110,6 +95,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   void onMount() {
     super.onMount();
     playerEntered();
+    game.uiFinishedLoading();
   }
 
   @override
@@ -126,12 +112,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
     await _createNpcs();
-    // enemies = _createEnemies(tiledmap!.tileMap);
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
-    game.ref?.read(uiProvider.notifier).set(UIViewDisplayType.game);
     game.camera.viewfinder.zoom = zoomFactor;
-    game.player.data.tilePosition = posToTile(game.player.position);
     final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
     final isPlayerAtZero = game.player.position.isZero();
     final isMapMatch = game.player.data.mapfile == mapfile;
@@ -144,9 +127,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
     game.player.data.mapfile = mapfile;
     game.player.data.tilePosition = posToTile(game.player.position);
-
-    initFromMap(data);
-
     updateQuestIcons();
     updateUI();
   }

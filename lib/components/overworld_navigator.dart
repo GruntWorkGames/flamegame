@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/map_runner.dart';
-import 'package:karas_quest/components/player_component.dart';
 
 class OverworldNavigator extends Component with HasGameRef<MainGame> {
   final Map<String, MapRunner> worlds = {};
@@ -41,8 +40,8 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
   }
 
   void loadNewGame() {
-    game.player = PlayerComponent();
-    game.player.data.addDefaultItems();
+    // game.player = PlayerComponent();
+    // game.player.data.addDefaultItems();
     stack.clear();
     worlds.clear();
     _loadMainWorld();    
@@ -59,11 +58,10 @@ class OverworldNavigator extends Component with HasGameRef<MainGame> {
     for(final map in mapStack) {
       print(map);
       if(map is Map<String, dynamic>) {
-        final mapRunner = MapRunner();
         final mapFile = map['mapFile'] as String? ?? 'bigmap.tmx';
-        mapRunner.mapfile = mapFile;
+        final mapRunner = MapRunner.fromMapFile(mapFile);
+        // mapRunner.data = map;
         _loadMapRunner(mapRunner, mapRunner.mapfile);
-        mapRunner.data = map;
       }
     }
   }

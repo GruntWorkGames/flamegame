@@ -28,7 +28,6 @@ class UILayer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final uiState = ref.watch(uiProvider);
     game.ref = ref;
-
     final buttonOpacity = ref.watch(buttonOpacityProvider);
     const style = TextStyle(color: Colors.white);
     final hud = _buildHud(ref);

@@ -25,16 +25,27 @@ class MainMenuFlutter extends ConsumerWidget {
     }));
     const text = Text("Kara's Quest", style: titleStyle);
     const spacer = SizedBox(height: 50);
-    final playButton = ElevatedButton(onPressed: (){
+    final continueButton = ElevatedButton(onPressed: (){
       Navigator.push(context, MaterialPageRoute(builder: (context) { 
-        final game = MainGame();
+        final game = MainGame(isNewGame: false);
         final gameWidget = GameWidget(game: game);
         final stack = Stack(children: [gameWidget, UILayer(game)]);
         final scaffold = Scaffold(body: stack);
         return scaffold;
       }));
-    }, style: buttonColors, child: const Text('Play', style: buttonStyle));
-    final centeredCol = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [text, spacer, playButton]));
+    }, style: buttonColors, child: const Text('Continue', style: buttonStyle));
+
+    final newGameButton = ElevatedButton(onPressed: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context) { 
+        final game = MainGame(isNewGame: true);
+        final gameWidget = GameWidget(game: game);
+        final stack = Stack(children: [gameWidget, UILayer(game)]);
+        final scaffold = Scaffold(body: stack);
+        return scaffold;
+      }));
+    }, style: buttonColors, child: const Text('New Game', style: buttonStyle));
+    
+    final centeredCol = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [text, spacer, continueButton, spacer, newGameButton]));
     final stack = Stack(children:[game, centeredCol]);
     return stack;
   }

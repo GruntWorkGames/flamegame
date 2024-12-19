@@ -40,7 +40,9 @@ class CharacterData {
     return _health;
   }
 
-  CharacterData();
+  CharacterData() {
+    addDefaultItems();
+  }
 
   void delete(Item item) {
     inventory.removeWhere((element) => item == element);

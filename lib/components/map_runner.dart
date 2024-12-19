@@ -75,6 +75,14 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     };
   }
 
+  void save() {
+    mapData.enemies = enemies.map((enemy) {
+      return enemy.data;
+    }).toList();
+    mapData.playerTile = posToTile(_playerPos);
+    mapData.mapFile = mapfile;
+  }
+
   @override
   void onMount() {
     super.onMount();
@@ -488,12 +496,12 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Future<void> portalEntered(Portal portal) async {
       shouldContinue = false;
       final map = portal.map;
-      await game.overworldNavigator.pushWorld(map);
+      await game.mapLoader.pushWorld(map);
   }
 
   void _addExit(Vector2 exit) {
     void func() {
-      game.overworldNavigator.popWorld();
+      game.mapLoader.popWorld();
     }
     final tilePos = posToTile(Vector2(exit.x, exit.y));
     _triggerTiles[tilePos.x][tilePos.y] = func;
@@ -850,5 +858,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   MapRunner.fromMapData(MapData map) {
     mapData = map;
+  }
+
+  MapData toMapData() {
+    save();
+    return mapData;
   }
 }

@@ -44,6 +44,15 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     return stack.map((mapRunner) => mapRunner.toMap()).toList();
   }
 
+  void save(SaveFile savefile) {
+    stack.forEach((map){
+      map.save();
+    });
+    savefile.mapStack = stack.map((map) {
+      return map.toMapData();
+    }).toList();
+  }
+
   void initFromSaveFile(SaveFile saveFile) {
     final maps = saveFile.mapStack;
     for(final map in maps) {

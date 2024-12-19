@@ -28,7 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
   MapRunner? mapRunner;
-  final overworldNavigator = MapLoader();
+  final mapLoader = MapLoader();
   Component? currentSpeechBubble;
   WidgetRef? ref;
   static late MainGame instance;
@@ -45,7 +45,7 @@ class MainGame extends FlameGame with TapDetector {
   Future<void> onLoad() async {
     super.onLoad();
     instance = this;
-    add(overworldNavigator);
+    add(mapLoader);
     final debugLabel = TextComponent();
     debugLabel.position = Vector2(size.x / 2, 100);
     debugLabel.text = '';
@@ -70,9 +70,21 @@ class MainGame extends FlameGame with TapDetector {
     }
   }
 
+  // Future<void> save() async {
+  //   final saveMap = saveFile.toMap();
+  //   saveMap['mapStack'] = overworldNavigator.toMap();
+  //   final jsonString = jsonEncode(saveMap);
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setString('save_file', jsonString);
+  //   final directory = await getDownloadsDirectory();
+  //   final filepath = '${directory?.path}/game.json';
+  //   final file = File(filepath);
+  //   await file.writeAsString(jsonString);
+  // }
+
   Future<void> save() async {
+    mapLoader.save(saveFile);
     final saveMap = saveFile.toMap();
-    saveMap['mapStack'] = overworldNavigator.toMap();
     final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('save_file', jsonString);
@@ -97,7 +109,7 @@ class MainGame extends FlameGame with TapDetector {
       player.weapon = weapon;
     }
 
-    overworldNavigator.initFromSaveFile(saveFile);
+    mapLoader.initFromSaveFile(saveFile);
 
     // mapRunner?.equipWeapon(player.weapon);
     // mapRunner?.equipArmor(player.armor);
@@ -182,7 +194,7 @@ class MainGame extends FlameGame with TapDetector {
         save();
         return;
       case DebugCommand.map:
-        overworldNavigator.pushWorld(command.argument);
+        mapLoader.pushWorld(command.argument);
         return;
       case DebugCommand.save:
       // toMap

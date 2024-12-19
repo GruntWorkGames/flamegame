@@ -2,7 +2,7 @@ import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class MapData {
-  final List<CharacterData> enemies = [];
+  List<CharacterData> enemies = [];
   String mapFile = '';
   k.Tile playerTile = k.Tile(0, 0);
   MapData();

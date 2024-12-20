@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/map_runner.dart';
+import 'package:karas_quest/control/json/overworld_data.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 
 class MapLoader extends Component with HasGameRef<MainGame> {
@@ -18,19 +19,27 @@ class MapLoader extends Component with HasGameRef<MainGame> {
       world = worlds[mapfile];
     } else {
       world = MapRunner.fromMapFile(mapfile);
-      worlds[mapfile] = world;
     }
 
+    worlds[mapfile] = world!;
     game.mapRunner = world;
-    game.world = world!;
+    game.world = world;
     stack.add(world);
   }
 
-  void _loadMapRunner(MapRunner runner, String mapFile) {
-    worlds[mapFile] = runner;
+  // load the maps, but does not call onLoad until they are assigned
+  void _loadMapRunner(MapData map) {
+    final runner = MapRunner.fromMapData(map);
+    worlds[runner.mapfile] = runner;
+    stack.add(runner);
+  }
+
+  // assign the last map in the stack
+  void _startGame() {
+    final runner = stack.last;
     game.mapRunner = runner;
     game.world = runner;
-    stack.add(runner);
+    add(runner);
   }
 
   void popWorld() {
@@ -56,8 +65,10 @@ class MapLoader extends Component with HasGameRef<MainGame> {
   void initFromSaveFile(SaveFile saveFile) {
     final maps = saveFile.mapStack;
     for(final map in maps) {
-      final mapRunner = MapRunner.fromMapData(map);
-      _loadMapRunner(mapRunner, map.mapFile);
+      _loadMapRunner(map);
     }
+
+    // start on last map
+    _startGame();
   }
 }

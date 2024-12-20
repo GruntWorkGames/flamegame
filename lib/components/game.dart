@@ -70,20 +70,9 @@ class MainGame extends FlameGame with TapDetector {
     }
   }
 
-  // Future<void> save() async {
-  //   final saveMap = saveFile.toMap();
-  //   saveMap['mapStack'] = overworldNavigator.toMap();
-  //   final jsonString = jsonEncode(saveMap);
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString('save_file', jsonString);
-  //   final directory = await getDownloadsDirectory();
-  //   final filepath = '${directory?.path}/game.json';
-  //   final file = File(filepath);
-  //   await file.writeAsString(jsonString);
-  // }
-
   Future<void> save() async {
-    mapLoader.save(saveFile);
+    mapLoader.save(saveFile); 
+    saveFile.playerData = player.data;
     final saveMap = saveFile.toMap();
     final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
@@ -130,7 +119,6 @@ class MainGame extends FlameGame with TapDetector {
       loadNewGame();
       return;
     }
-
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
@@ -139,13 +127,24 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
-    mapRunner?.equipWeapon(player.weapon);
-    mapRunner?.equipArmor(player.armor);
-    if(ref != null && ref!.context.mounted) {
-      ref?.read(inventoryProvider.notifier).set(player.data);
-      ref?.read(inventoryItemProvider.notifier).set(firstItem);
-      ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
-    }
+
+    mapLoader.initFromSaveFile(saveFile);
+
+    // questManager = QuestManager(this);
+    // player.data = saveFile.playerData;
+    // final firstItem = player.data.inventory.first;
+    // firstItem.isSelected = true;
+    // final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    // if (weapon != null) {
+    //   player.weapon = weapon;
+    // }
+    // mapRunner?.equipWeapon(player.weapon);
+    // mapRunner?.equipArmor(player.armor);
+    // if(ref != null && ref!.context.mounted) {
+    //   ref?.read(inventoryProvider.notifier).set(player.data);
+    //   ref?.read(inventoryItemProvider.notifier).set(firstItem);
+    //   ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+    // }
     // mapRunner?.initFromMap(map);
   }
 

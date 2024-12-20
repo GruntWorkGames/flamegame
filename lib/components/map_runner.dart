@@ -63,6 +63,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<Enemy> enemies = [];
   Vector2 _playerPos = Vector2.zero();
 
+  bool isCurrentMap = false;
+
   MapRunner();
   MapRunner.fromMapFile(this.mapfile);
 
@@ -73,6 +75,16 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       'mapFile' : mapfile,
       'playerTile' : tile.toMap()
     };
+  }
+
+  MapRunner.fromMapData(MapData map) {
+    mapData = map;
+    mapfile = mapData.mapFile;
+  }
+
+  MapData toMapData() {
+    save();
+    return mapData;
   }
 
   void save() {
@@ -95,7 +107,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final playerTile = mapData.playerTile;
     _playerPos = tileToPos(playerTile);
     await enemyCreator.loadEnemyFile();
-    tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
+    tiledmap = await TiledComponent.load(mapfile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
@@ -494,9 +506,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   Future<void> portalEntered(Portal portal) async {
-      shouldContinue = false;
-      final map = portal.map;
-      await game.mapLoader.pushWorld(map);
+    shouldContinue = false;
+    final map = portal.map;
+    await game.mapLoader.pushWorld(map);
   }
 
   void _addExit(Vector2 exit) {
@@ -854,14 +866,5 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       final quests = await npc.questsAvailable();
       npc.setHasQuestIcon(shouldShow: quests.isNotEmpty);
     }
-  }
-
-  MapRunner.fromMapData(MapData map) {
-    mapData = map;
-  }
-
-  MapData toMapData() {
-    save();
-    return mapData;
   }
 }

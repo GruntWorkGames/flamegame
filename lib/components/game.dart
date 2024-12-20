@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -22,7 +21,6 @@ import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
@@ -77,10 +75,10 @@ class MainGame extends FlameGame with TapDetector {
     final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('save_file', jsonString);
-    final directory = await getDownloadsDirectory();
-    final filepath = '${directory?.path}/game.json';
-    final file = File(filepath);
-    await file.writeAsString(jsonString);
+    // final directory = await getDownloadsDirectory();
+    // final filepath = '${directory?.path}/game.json';
+    // final file = File(filepath);
+    // await file.writeAsString(jsonString);
   }
 
   Future<void> loadNewGame() async {

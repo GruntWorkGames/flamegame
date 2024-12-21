@@ -37,9 +37,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   }
 
   void createEnemyFromCharacterData(CharacterData character) {
-    // final enemy = Enemy(enemyJsonFile);
     final enemy = Enemy.fromCharacterData(character);
-    enemy.position = tileToPos(character.tilePosition);
     game.mapRunner?.enemies.add(enemy);
     game.mapRunner?.add(enemy);
   }

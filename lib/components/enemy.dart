@@ -22,9 +22,6 @@ class Enemy extends MeleeCharacter {
   Map<String, dynamic> toMap() {
     final map = super.toMap();
     map['animationFile'] = data.animationFile;
-    final tilePos = posToTile(position);
-    map['x'] = tilePos.x;
-    map['y'] = tilePos.y; 
     return map;
   }
 

@@ -38,10 +38,8 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     dataMap['armor'] = armor.toMap();
     dataMap['weapon'] = weapon.toMap();
     dataMap['animationState'] = animationState.toJson();
-
     final tilePos = posToTile(position);
-    dataMap['x'] = tilePos.x;
-    dataMap['y'] = tilePos.y;
+    dataMap['tilePosition'] = tilePos.toMap();
     return dataMap;
   }
 

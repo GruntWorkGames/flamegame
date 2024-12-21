@@ -58,8 +58,8 @@ class CharacterData {
     str = json['str'] as int? ?? 1;
     stam = json['stam'] as int? ?? 1;
     gold = json['gold'] as int? ?? 0;
-    tilePosition.x = json['x'] as int? ?? 0;
-    tilePosition.y = json['y'] as int? ?? 0;
+    final tileNode = json['tilePosition'] as Map<String, dynamic>? ?? {};
+    tilePosition = k.Tile.fromMap(tileNode);
     level = json['level'] as int? ?? 1;
     mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
     animationFile = json['animationFile'] as String? ?? '';
@@ -80,8 +80,7 @@ class CharacterData {
     data['health'] = health;
     data['maxHealth'] = _maxHealth;
     data['gold'] = gold;
-    data['x'] = tilePosition.x;
-    data['y'] = tilePosition.y;
+    data['tilePosition'] = tilePosition.toMap();
     data['hit'] = hit;
     data['str'] = str;
     data['stam'] = stam;

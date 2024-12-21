@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -81,9 +80,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   void save() {
-    mapData.enemies = enemies.map((enemy) {
-      return enemy.data;
-    }).toList();
+    // if this level hasnt been loaded yet, enemies will be empty. 
+    // if mapData has enemies, dont override them
+    if (enemies.isNotEmpty) {
+      mapData.enemies = enemies.map((enemy) {
+        return enemy.data;
+      }).toList();
+    }
     mapData.playerTile = posToTile(_playerPos);
     mapData.mapFile = mapfile;
   }

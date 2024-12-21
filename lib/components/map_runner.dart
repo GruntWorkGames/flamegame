@@ -25,7 +25,7 @@ import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
-import 'package:karas_quest/control/json/overworld_data.dart';
+import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';
 import 'package:karas_quest/control/objects/portal.dart';

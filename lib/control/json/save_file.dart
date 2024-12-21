@@ -1,5 +1,5 @@
 import 'package:karas_quest/control/json/character_data.dart';
-import 'package:karas_quest/control/json/overworld_data.dart';
+import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 
 class SaveFile {

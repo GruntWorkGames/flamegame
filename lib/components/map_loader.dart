@@ -4,17 +4,13 @@ import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/map_runner.dart';
-import 'package:karas_quest/control/json/overworld_data.dart';
+import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 
 class MapLoader extends Component with HasGameRef<MainGame> {
   final Map<String, MapRunner> worlds = {};
   List<MapRunner> stack = [];
   final viewport = FixedResolutionViewport(resolution: Vector2(480*2, 320*2));
-
-  void _loadDefaultMap() {
-    pushWorld('bigmap.tmx');
-  }
 
   Future<void> pushWorld(String mapfile) async {
     late MapRunner? world;

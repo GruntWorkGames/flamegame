@@ -67,6 +67,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     final spawnTile = spawnArea[index];
     final enemyJsonFile = randomEnemyFile();
     final enemy = Enemy(enemyJsonFile);
+    enemy.data.tilePosition = spawnTile;
     enemy.position = tileToPos(spawnTile);
     game.mapRunner?.enemies.add(enemy);
     game.mapRunner?.add(enemy);

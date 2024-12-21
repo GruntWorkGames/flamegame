@@ -14,7 +14,7 @@ class MainMenuFlutter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final game = GameWidget(game: _MapBackground());
-    const titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: 'Times New Roman', shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: Offset(2, 2))]);
+    const titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: "Times New Roman", shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: const Offset(2, 2))]);
     const buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
     final buttonColors = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
       if(states.contains(WidgetState.pressed)) {

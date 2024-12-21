@@ -1,4 +1,4 @@
-package com.example.flamegame
+package com.kca.karasquest
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -2,32 +2,33 @@
     "name": "Merchant",
     "shop": {
         "message": "Would you like to buy something?",
+        "errorMessage" : "You don't have enough gold to pay for that!",
         "items" : [
             {
                 "name" : "Health Potion",
                 "type" : "potion",
-                "value" : 10.0,
+                "value" : 10,
                 "valueName": "health",
                 "description": "The thick red liquid reminds you of cough syrup.", 
-                "cost" : 10.0,
+                "cost" : 10,
                 "inventoryUseText" : "Drink"
             },
             {
                 "name" : "Dull Short Sword",
                 "type" : "weapon",
-                "value" : 2.0,
+                "value" : 2,
                 "valueName": "damage",
                 "description": "A nearly useless weapon. A kids toy.",
-                "cost" : 1.0,
+                "cost" : 1,
                 "inventoryUseText" : "Equip"
             },
             {
                 "name" : "Dull Axe",
                 "type" : "weapon",
-                "value" : 5.0,
+                "value" : 5,
                 "valueName": "damage",
                 "description": "A double sided axe. Looks like it's pretty old and worn.",
-                "cost" : 5.0,
+                "cost" : 5,
                 "inventoryUseText" : "Equip"
             }
         ]

@@ -1,0 +1,234 @@
+{
+    "xp": 1,
+    "imageFile": "SlimeBlue.png",
+    "health": 6,
+    "maxHealth": 30,
+    "gold": 4,
+    "hit": 40,
+    "str": 1,
+    "stam": 1,
+    "dodge": 5,
+    "mapfile": "",
+    "level": 1,
+    "experience": 10,
+    "tilePosition": {
+        "x": 0,
+        "y": 0
+    },
+    "inventory": [
+        {
+            "name": "Dull Short Sword",
+            "type": "weapon",
+            "value": 3,
+            "valueName": "damage",
+            "description": "A nearly useless weapon. A kids toy.",
+            "cost": 0,
+            "inventoryUseText": "Equip",
+            "isEquipped": true
+        }
+    ],
+    "idleDown": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {
+                "x": 1,
+                "y": 0
+            },
+            {
+                "x": 0,
+                "y": 0
+            }
+        ]
+    },
+    "idleUp": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {
+                "x": 1,
+                "y": 3
+            },
+            {
+                "x": 0,
+                "y": 3
+            }
+        ]
+    },
+    "idleLeft": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {
+                "x": 1,
+                "y": 1
+            },
+            {
+                "x": 0,
+                "y": 1
+            }
+        ]
+    },
+    "idleRight": {
+        "timePerFrame": 0.4,
+        "frames": [
+            {
+                "x": 1,
+                "y": 2
+            },
+            {
+                "x": 0,
+                "y": 2
+            }
+        ]
+    },
+    "walkDown": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 0
+            },
+            {
+                "x": 3,
+                "y": 0
+            },
+            {
+                "x": 4,
+                "y": 0
+            },
+            {
+                "x": 5,
+                "y": 0
+            }
+        ]
+    },
+    "walkUp": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 3
+            },
+            {
+                "x": 3,
+                "y": 3
+            },
+            {
+                "x": 4,
+                "y": 3
+            },
+            {
+                "x": 5,
+                "y": 3
+            }
+        ]
+    },
+    "walkRight": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 2
+            },
+            {
+                "x": 3,
+                "y": 2
+            },
+            {
+                "x": 4,
+                "y": 2
+            },
+            {
+                "x": 5,
+                "y": 2
+            }
+        ]
+    },
+    "walkLeft": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 1
+            },
+            {
+                "x": 3,
+                "y": 1
+            },
+            {
+                "x": 4,
+                "y": 1
+            },
+            {
+                "x": 5,
+                "y": 1
+            }
+        ]
+    },
+    "attackUp": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 3
+            },
+            {
+                "x": 3,
+                "y": 3
+            },
+            {
+                "x": 4,
+                "y": 3
+            }
+        ]
+    },
+    "attackDown": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 0
+            },
+            {
+                "x": 3,
+                "y": 0
+            },
+            {
+                "x": 4,
+                "y": 0
+            }
+        ]
+    },
+    "attackLeft": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 1
+            },
+            {
+                "x": 3,
+                "y": 1
+            },
+            {
+                "x": 4,
+                "y": 1
+            }
+        ]
+    },
+    "attackRight": {
+        "timePerFrame": 0.1,
+        "frames": [
+            {
+                "x": 2,
+                "y": 2
+            },
+            {
+                "x": 3,
+                "y": 2
+            },
+            {
+                "x": 4,
+                "y": 2
+            }
+        ]
+    }
+}

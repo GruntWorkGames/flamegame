@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/palette.dart';
-import 'package:flame_game/components/game.dart';
 import 'package:flutter/material.dart';
+import 'package:karas_quest/components/game.dart';
 
 // used for debugging
 class Square extends PositionComponent {
@@ -9,7 +9,7 @@ class Square extends PositionComponent {
   Square(this.palette);
   @override
   void render(Canvas canvas) {
-    canvas.drawRect(Rect.fromCircle(center: Offset(8,8), radius: 7.4), 
+    canvas.drawRect(Rect.fromCircle(center: const Offset(8,8), radius: 7.4), 
     palette.paint()..style = PaintingStyle.stroke..strokeWidth = 1);
   }
 }

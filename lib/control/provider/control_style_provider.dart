@@ -1,5 +1,5 @@
-import 'package:flame_game/control/enum/control_style.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/enum/control_style.dart';
 
 final controlStyleState = StateNotifierProvider<ControlStyleState, ControlStyle>((ref) {
   return ControlStyleState();
@@ -8,7 +8,8 @@ final controlStyleState = StateNotifierProvider<ControlStyleState, ControlStyle>
 class ControlStyleState extends StateNotifier<ControlStyle> {
   ControlStyleState() : super(ControlStyle.directional);
 
-  void set(ControlStyle type) {
+  @override
+  set state(ControlStyle type) {
     state = type;
   }
 }

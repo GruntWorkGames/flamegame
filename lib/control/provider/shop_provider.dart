@@ -1,5 +1,5 @@
-import 'package:flame_game/control/json/shop.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/json/shop.dart';
 
 
 final shopProvider = StateNotifierProvider<ShopState, Shop>((ref) {

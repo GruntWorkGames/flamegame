@@ -1,39 +1,41 @@
-import 'package:flame_game/control/enum/item_type.dart';
+import 'package:karas_quest/control/enum/item_type.dart';
 
 class Item {
-  String name = '';
   ItemType type = ItemType.none;
-  double value = 0;
+  int value = 0;
+  int cost = 0;
+  String name = '';
   String valueName = '';
   String description = '';
-  double cost = 0;
   String inventoryUseText = '';
   bool isEquipped = false;
   bool isSelected = false;
 
   Item();
 
-  Item.fromJson(Map<String, dynamic> json) {
-    name = json['name'] ?? '';
-    type = ItemType.typeFromString(json['type'] ?? '');
-    value = json['value'] ?? 0;
-    valueName = json['valueName'] ?? '';
-    description = json['description'] ?? '';
-    cost = json['cost'] ?? 0;
-    inventoryUseText = json['inventoryUseText'] ?? '';
-    isEquipped = json['isEquipped'] ?? false;
+  Item.fromMap(Map<String, dynamic> json) {
+    name = json['name'] as String? ?? '';
+    final typeString = json['type'] as String? ?? '';
+    type = ItemType.typeFromString(typeString);
+
+    value = json['value'] as int? ?? 0;
+    valueName = json['valueName'] as String? ?? '';
+    description = json['description'] as String? ?? '';
+    cost = json['cost'] as int? ?? 0;
+    inventoryUseText = json['inventoryUseText'] as String? ?? '';
+    isEquipped = json['isEquipped'] as bool? ?? false;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['name'] = this.name;
-    data['type'] = this.type.name;
-    data['value'] = this.value;
-    data['valueName'] = this.valueName;
-    data['description'] = this.description;
-    data['cost'] = this.cost;
-    data['inventoryUseText'] = this.inventoryUseText;
-    data['isEquipped'] = this.isEquipped;
+  Map<String, dynamic> toMap() {
+    final data = <String, dynamic>{};
+    data['name'] = name;
+    data['type'] = type.name;
+    data['value'] = value;
+    data['valueName'] = valueName;
+    data['description'] = description;
+    data['cost'] = cost;
+    data['inventoryUseText'] = inventoryUseText;
+    data['isEquipped'] = isEquipped;
     return data;
   }
 }

@@ -7,7 +7,8 @@ final buttonOpacityProvider = StateNotifierProvider<ButtonOpacityState, double>(
 class ButtonOpacityState extends StateNotifier<double> {
   ButtonOpacityState() : super(0.6);
   
-  void set(double opacity) {
+  @override
+  set state (double opacity) {
     state = opacity;
   }
 }

@@ -1,25 +1,27 @@
-import 'package:flame/game.dart';
-import 'package:flame_game/control/json/item.dart';
+import 'package:karas_quest/control/json/item.dart';
+import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class CharacterData {
-  double _health = 10;
-  double _maxHealth = 30;
-  double gold = 0;
-  double hit = 40;
-  double dodge = 5;
-  double str = 1;
-  double stam = 1;
-  double armor = 1;
-  double experience = 0;
-  Vector2 tilePosition = Vector2(0,0);
+  int _health = 10;
+  int _maxHealth = 30;
+  int gold = 0;
+  int hit = 40;
+  int dodge = 5;
+  int str = 1;
+  int stam = 1;
+  int armor = 1;
+  int experience = 0;
+  int level = 1;
+  k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
+  String animationFile = '';
   List<Item> inventory = [];
-  
-  double get maxHealth {
+
+  int get maxHealth {
     return (stam * 5) + _maxHealth;
   }
 
-  void heal(double hp) {
+  void heal(int hp) {
     final newMax = _health + hp;
     if (newMax > maxHealth) {
       _health = maxHealth;
@@ -28,95 +30,102 @@ class CharacterData {
     }
   }
 
-  void set health(double h) {
+  set health(int h) {
     _health = h;
     if(_health > maxHealth) {
       _health = maxHealth;
     }
   }
 
-  double get health {
+  int get health {
     return _health;
   }
 
-  CharacterData();
+  CharacterData() {
+    addDefaultItems();
+  }
 
   void delete(Item item) {
     inventory.removeWhere((element) => item == element);
   }
 
-  CharacterData.fromJson(Map<String, dynamic> json) {
-    _health = json['health'] ?? 10.0;
-    _maxHealth = json['maxHealth'] ?? 30.0;
-    experience = json['experience'] ?? 0.0;
-    hit = json['hit'] ?? 40.0;
-    dodge = json['dodge'] ?? 5.0;
-    str = json['str'] ?? 1.0;
-    stam = json['stam'] ?? 1.0;
-    gold = json['gold'] ?? 0;
-    tilePosition.x = json['x'] ?? 0;
-    tilePosition.y = json['y'] ?? 0;
-    mapfile = json['mapfile'] ?? 'bigmap.tmx';
-    final inventoryNode = json['inventory'] ?? [];
-    if (inventoryNode != null && inventoryNode.isNotEmpty) {
-      json['inventory'].forEach((v) {
-        inventory.add(Item.fromJson(v));
+  CharacterData.fromMap(Map<String, dynamic> json) {
+    _health = json['health'] as int? ?? 10;
+    _maxHealth = json['maxHealth'] as int? ?? 30;
+    experience = json['experience'] as int? ?? 0;
+    hit = json['hit'] as int? ?? 40;
+    dodge = json['dodge'] as int? ?? 5;
+    str = json['str'] as int? ?? 1;
+    stam = json['stam'] as int? ?? 1;
+    gold = json['gold'] as int? ?? 0;
+    final tileNode = json['tilePosition'] as Map<String, dynamic>? ?? {};
+    tilePosition = k.Tile.fromMap(tileNode);
+    level = json['level'] as int? ?? 1;
+    mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
+    animationFile = json['animationFile'] as String? ?? '';
+    final inventoryNode = json['inventory'] as List<dynamic>? ?? [];
+    if (inventoryNode.isNotEmpty) {
+      final inventoryList = json['inventory'] as List<dynamic>? ?? [];
+      inventoryList.forEach((v) {
+        final item = v as Map<String, dynamic>? ?? {};
+        inventory.add(Item.fromMap(item));
       });
     } else {
       addDefaultItems();
     }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['health'] = this.health;
-    data['maxHealth'] = this._maxHealth;
-    data['gold'] = this.gold;
-    data['x'] = tilePosition.x;
-    data['y'] = tilePosition.y;
+  Map<String, dynamic> toMap() {
+    final data = <String, dynamic>{};
+    data['health'] = health;
+    data['maxHealth'] = _maxHealth;
+    data['gold'] = gold;
+    data['tilePosition'] = tilePosition.toMap();
     data['hit'] = hit;
     data['str'] = str;
     data['stam'] = stam;
     data['dodge'] = dodge;
     data['mapfile'] = mapfile;
+    data['level'] = level;
     data['experience'] = experience;
-    data['inventory'] = this.inventory.map((v) => v.toJson()).toList();
+    data['animationFile'] = animationFile;
+    data['inventory'] = inventory.map((v) => v.toMap()).toList();
     return data;
   }
   
   void addDefaultItems() {
     final hPotion = {
-      "name" : "Health Potion",
-      "type" : "potion",
-      "value" : 10.0,
-      "valueName": "health",
-      "description": "The thick red liquid reminds you of cough syrup.", 
-      "cost" : 10.0,
-      "inventoryUseText" : "Drink"
+      'name' : 'Health Potion',
+      'type' : 'potion',
+      'value' : 10,
+      'valueName': 'health',
+      'description': 'The thick red liquid reminds you of cough syrup.', 
+      'cost' : 10,
+      'inventoryUseText' : 'Drink'
     };
     final sword = {
-      "name" : "Dull Short Sword",
-      "type" : "weapon",
-      "value" : 4.0,
-      "valueName": "damage",
-      "description": "A nearly useless weapon. A kids toy.",
-      "cost" : 30.0,
-      "inventoryUseText" : "Equip",
-      "isEquipped": true
+      'name' : 'Dull Short Sword',
+      'type' : 'weapon',
+      'value' : 4,
+      'valueName': 'damage',
+      'description': 'A nearly useless weapon. A kids toy.',
+      'cost' : 30,
+      'inventoryUseText' : 'Equip',
+      'isEquipped': true
     };
     final helmet = {
-      "name" : "Armor Helm",
-      "type" : "armor",
-      "value" : 2.0,
-      "valueName": "mitigation",
-      "description": "Tarnished and flimsy.",
-      "cost" : 20.0,
-      "inventoryUseText" : "Equip",
-      "isEquipped": true
+      'name' : 'Armor Helm',
+      'type' : 'armor',
+      'value' : 2,
+      'valueName': 'mitigation',
+      'description': 'Tarnished and flimsy.',
+      'cost' : 20,
+      'inventoryUseText' : 'Equip',
+      'isEquipped': true
     };
 
-    inventory.add(Item.fromJson(hPotion));
-    inventory.add(Item.fromJson(sword));
-    inventory.add(Item.fromJson(helmet));
+    inventory.add(Item.fromMap(hPotion));
+    inventory.add(Item.fromMap(sword));
+    inventory.add(Item.fromMap(helmet));
   }
 }

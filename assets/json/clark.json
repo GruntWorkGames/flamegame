@@ -1,11 +1,9 @@
 {
     "name": "Clark",
-    "conversations": [
-        {
-            "message": "This is the first message"
-        },
-        {
-            "message": "This is the second message"
-        }
-    ]
+    "questsAvailable" : [
+        "quest2",
+        "quest3"
+    ],
+    "speech" : "Check you Quest Log & make sure to talk to everyone!",
+    "animationFile" : "json/FarmerRed.json"
 }

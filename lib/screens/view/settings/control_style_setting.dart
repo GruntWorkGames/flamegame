@@ -1,7 +1,7 @@
-import 'package:flame_game/control/enum/control_style.dart';
-import 'package:flame_game/control/provider/control_style_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/control/enum/control_style.dart';
+import 'package:karas_quest/control/provider/control_style_provider.dart';
 
 
 class ControlStyleSetting extends ConsumerWidget {
@@ -14,6 +14,8 @@ class ControlStyleSetting extends ConsumerWidget {
       }
     }),
   );
+
+  ControlStyleSetting({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,7 +32,7 @@ class ControlStyleSetting extends ConsumerWidget {
       ],
       selected: <ControlStyle>{state},
       onSelectionChanged: (Set<ControlStyle> newSelection) {
-        ref.read(controlStyleState.notifier).set(newSelection.first);
+        ref.read(controlStyleState.notifier).state = newSelection.first;
       },
     );
   }

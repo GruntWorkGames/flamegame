@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="16">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="18">
  <tileset firstgid="1" source="walls.tsx"/>
  <tileset firstgid="41" source="Carpets.tsx"/>
  <tileset firstgid="185" source="Furniture.tsx"/>
@@ -16,6 +16,20 @@
 9,10,10,10,49,51,10,10,10,11,
 9,10,10,10,57,59,10,10,10,11,
 17,18,18,18,35,35,18,18,18,19
+</data>
+ </layer>
+ <layer id="13" name="anim" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,217,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <layer id="8" name="rocks" width="10" height="10">
@@ -49,25 +63,21 @@
  <objectgroup color="#ffff00" id="11" name="npc">
   <object id="14" name="Merchant" x="80" y="48" width="16" height="16">
    <properties>
-    <property name="shop" value="json/merchant1.json"/>
-   </properties>
-  </object>
-  <object id="15" name="Merchant" x="80" y="32" width="16" height="16">
-   <properties>
-    <property name="animationFile" value="json/FarmerRed.json"/>
+    <property name="shopFile" value="json/merchant1.json"/>
    </properties>
   </object>
  </objectgroup>
  <objectgroup color="#ff0000" id="2" name="spawn">
   <object id="2" x="80" y="128" width="16" height="16"/>
  </objectgroup>
- <objectgroup color="#55007f" id="9" name="portal">
-  <object id="7" x="64" y="144" width="16" height="16">
+ <objectgroup color="#55007f" id="9" name="portal"/>
+ <objectgroup color="#5500ff" id="12" name="exit">
+  <object id="16" x="64" y="144" width="16" height="16">
    <properties>
     <property name="map" value="town1.tmx"/>
    </properties>
   </object>
-  <object id="8" x="80" y="144" width="16" height="16">
+  <object id="17" x="80" y="144" width="16" height="16">
    <properties>
     <property name="map" value="town1.tmx"/>
    </properties>

@@ -2,10 +2,11 @@
     "name": "Popo",
     "shop": {
         "message": "I can heal you to full hp for 10 gold pieces.",
+        "errorMessage" : "Sorry poor fella, you ain't got enough gold!",
         "items" : [
             {
                 "name": "Heal",
-                "cost": 10.0,
+                "cost": 10,
                 "description": "Heal to full health."
             }   
         ]

@@ -1,0 +1,26 @@
+{
+    "title" : "Welcome to Snifaria",
+    "text" : "You wake up in a strange place. You feel as if you have been here before... In a dream, maybe.",
+    "id" : "quest1",
+    "completer" : "self",
+    "isComplete" : false,
+    "isActive" : true,
+    "requiredIds" : [
+        
+    ],
+    "requiredLevel" : 1,
+    "requiredItemId" : [
+    ],
+    "reward" : {
+        "xp" : 100
+    }, 
+    "objectives" : [
+        {
+            "listenEvent" : "talk_to",
+            "target" : "Clark",
+            "title" : "talk to Clark in town",
+            "countNeeded" : 1,
+            "currentCount" : 0
+        }
+    ]
+}

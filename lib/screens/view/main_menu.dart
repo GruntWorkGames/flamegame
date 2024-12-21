@@ -1,20 +1,21 @@
 import 'dart:async';
+
 import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
-import 'package:flame_game/components/game.dart';
-import 'package:flame_game/screens/view/ui_layer.dart';
 import 'package:flame_tiled/flame_tiled.dart' as flame;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/screens/view/ui_layer.dart';
 
 class MainMenuFlutter extends ConsumerWidget {
-  MainMenuFlutter();
+  const MainMenuFlutter({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final game = GameWidget(game: _MapBackground());
-    final titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: "Times New Roman", shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: const Offset(2, 2))]);
-    final buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
+    const titleStyle = TextStyle(fontSize: 50, color: Colors.black, fontFamily: "Times New Roman", shadows: [Shadow(blurRadius: 2, color: Colors.white, offset: const Offset(2, 2))]);
+    const buttonStyle = TextStyle(fontSize: 32, color: Colors.black);
     final buttonColors = ButtonStyle(backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
       if(states.contains(WidgetState.pressed)) {
         return Colors.grey[700]!;
@@ -22,18 +23,29 @@ class MainMenuFlutter extends ConsumerWidget {
         return Colors.grey[400]!;
       }
     }));
-    final text = Text('Kara\'s Quest', style: titleStyle);
-    final spacer = SizedBox(height: 50);
-    final playButton = ElevatedButton(onPressed: (){
+    const text = Text("Kara's Quest", style: titleStyle);
+    const spacer = SizedBox(height: 50);
+    final continueButton = ElevatedButton(onPressed: (){
       Navigator.push(context, MaterialPageRoute(builder: (context) { 
-        final game = MainGame();
+        final game = MainGame(isNewGame: false);
         final gameWidget = GameWidget(game: game);
         final stack = Stack(children: [gameWidget, UILayer(game)]);
         final scaffold = Scaffold(body: stack);
         return scaffold;
       }));
-    }, child: Text('Play', style: buttonStyle), style: buttonColors);
-    final centeredCol = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [text, spacer, playButton]));
+    }, style: buttonColors, child: const Text('Continue', style: buttonStyle));
+
+    final newGameButton = ElevatedButton(onPressed: (){
+      Navigator.push(context, MaterialPageRoute(builder: (context) { 
+        final game = MainGame(isNewGame: true);
+        final gameWidget = GameWidget(game: game);
+        final stack = Stack(children: [gameWidget, UILayer(game)]);
+        final scaffold = Scaffold(body: stack);
+        return scaffold;
+      }));
+    }, style: buttonColors, child: const Text('New Game', style: buttonStyle));
+    
+    final centeredCol = Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [text, spacer, continueButton, spacer, newGameButton]));
     final stack = Stack(children:[game, centeredCol]);
     return stack;
   }

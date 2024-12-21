@@ -1,4 +1,4 @@
-import 'package:flame_game/control/json/item.dart';
+import 'package:karas_quest/control/json/item.dart';
 
 class Shop {
   String message = '';
@@ -8,12 +8,15 @@ class Shop {
   Shop();
 
   Shop.fromJson(Map<String, dynamic> json) {
-    owner = json['name'] ?? '';
-    final shop = json['shop'] ?? {};
-    message = shop['message'] ?? '';
-    final itemsJson = shop['items'] ?? [];
+    owner = json['name'] as String? ?? '';
+
+    final shop = json['shop']  as Map<String, dynamic>? ?? {};
+    message = shop['message'] as String? ?? '';
+    
+    final itemsJson = shop['items'] as List<dynamic>? ?? [];
     for (final item in itemsJson) {
-      items.add(Item.fromJson(item));
+      final itemMap = item as Map<String,dynamic>? ?? {};
+      items.add(Item.fromMap(itemMap));
     }
   }
 }

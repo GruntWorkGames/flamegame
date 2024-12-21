@@ -1,0 +1,25 @@
+{
+    "title": "Protecting the fontier",
+    "text": "Kill 5 bad guys",
+    "id": "quest2",
+    "completer": "self",
+    "isComplete": false,
+    "isActive": false,
+    "requiredQuestIds": [
+        "quest1"
+    ],
+    "requiredLevel": 1,
+    "requiredItemId": [],
+    "reward": {
+        "xp": 100
+    },
+    "objectives": [
+        {
+            "listenEvent": "killed",
+            "target": "any",
+            "title": "Kill bad guys",
+            "countNeeded": 5,
+            "currentCount": 0
+        }
+    ]
+}

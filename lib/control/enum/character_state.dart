@@ -12,5 +12,8 @@ enum CharacterAnimationState {
   attackUp,
   attackLeft,
   attackRight,
-  takingDamage
+  takingDamage;
+
+  String toJson() => name;
+  static CharacterAnimationState fromJson(String json) => values.byName(json);
 }

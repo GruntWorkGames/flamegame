@@ -24,8 +24,8 @@ import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/map_data.dart';
+import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';
 import 'package:karas_quest/control/objects/portal.dart';
@@ -522,19 +522,19 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     return Vector2(spawnObject.x, spawnObject.y);
   }
 
-  List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
-    final spawns = <Vector2>[];
-    final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
-    if (objectGroup == null) {
-      return spawns;
-    }
+  // List<Vector2> _readEnemySpawns(RenderableTiledMap tileMap) {
+  //   final spawns = <Vector2>[];
+  //   final objectGroup = tileMap.getLayer<ObjectGroup>('enemy');
+  //   if (objectGroup == null) {
+  //     return spawns;
+  //   }
 
-    for (final object in objectGroup.objects) {
-      spawns.add(Vector2(object.x, object.y));
-    }
+  //   for (final object in objectGroup.objects) {
+  //     spawns.add(Vector2(object.x, object.y));
+  //   }
 
-    return spawns;
-  }
+  //   return spawns;
+  // }
 
   Future<List<NpcData>> _createNpcData(RenderableTiledMap tilemap) async {
     final spawnData = <NpcData>[];

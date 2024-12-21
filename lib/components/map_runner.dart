@@ -69,15 +69,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   MapRunner();
   MapRunner.fromMapFile(this.mapfile);
 
-  Map<String, dynamic> toMap() {
-    final tile = posToTile(_playerPos);
-    return {
-      'enemies' : enemies.map((e) => e.toMap()).toList(),
-      'mapFile' : mapfile,
-      'playerTile' : tile.toMap()
-    };
-  }
-
   MapRunner.fromMapData(MapData map) {
     mapData = map;
     mapfile = mapData.mapFile;

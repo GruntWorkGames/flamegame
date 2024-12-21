@@ -60,10 +60,6 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     game.world = world;
   }
 
-  List<dynamic> toMap() {
-    return stack.map((mapRunner) => mapRunner.toMap()).toList();
-  }
-
   void save(SaveFile savefile) {
     stack.forEach((map){
       map.save();

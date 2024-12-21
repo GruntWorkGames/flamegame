@@ -4,8 +4,6 @@
         "health": 10,
         "maxHealth": 30,
         "gold": 0,
-        "x": 64,
-        "y": 49,
         "hit": 40,
         "str": 1,
         "stam": 1,
@@ -13,6 +11,10 @@
         "mapfile": "bigmap.tmx",
         "level": 1,
         "experience": 0,
+        "tilePosition": {
+            "x": 0,
+            "y": 0
+        },
         "inventory": [
             {
                 "name": "Health Potion",

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -21,6 +22,7 @@ import 'package:karas_quest/control/provider/inventory_item_provider.dart';
 import 'package:karas_quest/control/provider/inventory_provider.dart';
 import 'package:karas_quest/control/provider/quest_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
@@ -75,17 +77,21 @@ class MainGame extends FlameGame with TapDetector {
     final jsonString = jsonEncode(saveMap);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('save_file', jsonString);
-    // final directory = await getDownloadsDirectory();
-    // final filepath = '${directory?.path}/game.json';
-    // final file = File(filepath);
-    // await file.writeAsString(jsonString);
+
+    // debug - save file to downloads for inspection
+    if(Platform.isMacOS || Platform.isWindows) {
+      final directory = await getDownloadsDirectory();
+      final filepath = '${directory?.path}/game.json';
+      final file = File(filepath);
+      await file.writeAsString(jsonString);
+    }
   }
 
   Future<void> loadNewGame() async {
     final defaultJson = await rootBundle.loadString('assets/json/savefile.json');
 
-    final map = jsonDecode(defaultJson) as Map<String, dynamic>? ?? {};
-    saveFile = SaveFile.fromMap(map);
+    final saveMap = jsonDecode(defaultJson) as Map<String, dynamic>? ?? {};
+    saveFile = SaveFile.fromMap(saveMap);
 
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
@@ -95,17 +101,16 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
+    player.equipWeapon(player.weapon);
+    player.equipArmor(player.armor);
 
     mapLoader.initFromSaveFile(saveFile);
 
-    // mapRunner?.equipWeapon(player.weapon);
-    // mapRunner?.equipArmor(player.armor);
-    // if(ref != null && ref!.context.mounted) {
-    //   ref?.read(inventoryProvider.notifier).set(player.data);
-    //   ref?.read(inventoryItemProvider.notifier).set(firstItem);
-    //   ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
-    // }
-    // mapRunner?.initFromMap(map);
+    if(ref != null && ref!.context.mounted) {
+      ref?.read(inventoryProvider.notifier).set(player.data);
+      ref?.read(inventoryItemProvider.notifier).set(firstItem);
+      ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+    }
   }
 
   Future<void> loadSavedGame() async {
@@ -117,6 +122,7 @@ class MainGame extends FlameGame with TapDetector {
       loadNewGame();
       return;
     }
+
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
@@ -125,25 +131,16 @@ class MainGame extends FlameGame with TapDetector {
     if (weapon != null) {
       player.weapon = weapon;
     }
+    player.equipWeapon(player.weapon);
+    player.equipArmor(player.armor);
 
     mapLoader.initFromSaveFile(saveFile);
 
-    // questManager = QuestManager(this);
-    // player.data = saveFile.playerData;
-    // final firstItem = player.data.inventory.first;
-    // firstItem.isSelected = true;
-    // final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
-    // if (weapon != null) {
-    //   player.weapon = weapon;
-    // }
-    // mapRunner?.equipWeapon(player.weapon);
-    // mapRunner?.equipArmor(player.armor);
-    // if(ref != null && ref!.context.mounted) {
-    //   ref?.read(inventoryProvider.notifier).set(player.data);
-    //   ref?.read(inventoryItemProvider.notifier).set(firstItem);
-    //   ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
-    // }
-    // mapRunner?.initFromMap(map);
+    if(ref != null && ref!.context.mounted) {
+      ref?.read(inventoryProvider.notifier).set(player.data);
+      ref?.read(inventoryItemProvider.notifier).set(firstItem);
+      ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
+    }
   }
 
   void directionDown(Direction direction) {

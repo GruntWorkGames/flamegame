@@ -14,6 +14,7 @@ class CharacterData {
   int level = 1;
   k.Tile tilePosition = k.Tile(0, 0);
   String mapfile = 'bigmap.tmx';
+  String animationFile = '';
   List<Item> inventory = [];
 
   int get maxHealth {
@@ -61,6 +62,7 @@ class CharacterData {
     tilePosition.y = json['y'] as int? ?? 0;
     level = json['level'] as int? ?? 1;
     mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
+    animationFile = json['animationFile'] as String? ?? '';
     final inventoryNode = json['inventory'] as List<dynamic>? ?? [];
     if (inventoryNode.isNotEmpty) {
       final inventoryList = json['inventory'] as List<dynamic>? ?? [];
@@ -87,6 +89,7 @@ class CharacterData {
     data['mapfile'] = mapfile;
     data['level'] = level;
     data['experience'] = experience;
+    data['animationFile'] = animationFile;
     data['inventory'] = inventory.map((v) => v.toMap()).toList();
     return data;
   }

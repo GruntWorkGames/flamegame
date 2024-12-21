@@ -2,18 +2,29 @@ import 'package:karas_quest/components/melee_character.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/character_state.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
+import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 
 class Enemy extends MeleeCharacter {
   int experienceYield = 10;
-  String animationFile;
-  Enemy(this.animationFile);
+
+  Enemy(String animationFile) {
+    data.animationFile = animationFile;
+  }
+
+  Enemy.fromCharacterData(CharacterData character) {
+    data = character;
+    position = tileToPos(data.tilePosition);
+  }
 
   @override
   Map<String, dynamic> toMap() {
     final map = super.toMap();
-    map['animationFile'] = animationFile;
+    map['animationFile'] = data.animationFile;
+    final tilePos = posToTile(position);
+    map['x'] = tilePos.x;
+    map['y'] = tilePos.y; 
     return map;
   }
 
@@ -33,7 +44,7 @@ class Enemy extends MeleeCharacter {
 
   @override
   Future<void> buildAnimations() async {
-    final json = await game.assets.readJson(animationFile);
+    final json = await game.assets.readJson(data.animationFile);
     final imageFilename = json['imageFile'] as String? ?? '';
     final image = await game.images.load(imageFilename);
 

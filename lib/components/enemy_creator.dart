@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/control/json/character_data.dart';
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();
@@ -33,6 +34,14 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     if(r <= spawnChance) {
       _createEnemy();
     }
+  }
+
+  void createEnemyFromCharacterData(CharacterData character) {
+    // final enemy = Enemy(enemyJsonFile);
+    final enemy = Enemy.fromCharacterData(character);
+    enemy.position = tileToPos(character.tilePosition);
+    game.mapRunner?.enemies.add(enemy);
+    game.mapRunner?.add(enemy);
   }
 
   void _createEnemy() {

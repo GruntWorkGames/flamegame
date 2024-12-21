@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
@@ -80,6 +81,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   MapRunner.fromMapData(MapData map) {
     mapData = map;
     mapfile = mapData.mapFile;
+    _playerPos = tileToPos(map.playerTile);
   }
 
   MapData toMapData() {
@@ -118,6 +120,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
     await _createNpcs();
+    await _createEnemies();
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
     game.camera.viewfinder.zoom = zoomFactor;
@@ -613,6 +616,12 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
   }
 
+  Future<void> _createEnemies() async {
+    for(final enemyData in mapData.enemies) {
+        enemyCreator.createEnemyFromCharacterData(enemyData);
+    }
+  }
+
   NPC? _isTileBlockedNpc(k.Tile nextTile) {
     try {
       return _npcTiles[nextTile.x][nextTile.y];
@@ -776,18 +785,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     }
   }
 
-  void equipArmor(Item item) {
-    game.player.armor.isEquipped = false;
-    game.player.armor = item;
-    item.isEquipped = true;
-  }
-
-  void equipWeapon(Item item) {
-    game.player.weapon.isEquipped = false;
-    game.player.weapon = item;
-    item.isEquipped = true;
-  }
-
   void useItem(Item item) {
     switch (item.type) {
       case ItemType.heal:
@@ -795,10 +792,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       case ItemType.food:
         break;
       case ItemType.weapon:
-        equipWeapon(item);
+        game.player.equipWeapon(item);
         break;
       case ItemType.armor:
-        equipArmor(item);
+        game.player.equipArmor(item);
         break;
       case ItemType.potion:
         game.player.drinkPotion(item);

@@ -63,8 +63,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   List<Enemy> enemies = [];
   Vector2 _playerPos = Vector2.zero();
 
-  bool isCurrentMap = false;
-
   MapRunner();
   MapRunner.fromMapFile(this.mapfile);
 

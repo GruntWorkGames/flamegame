@@ -4,6 +4,7 @@ import 'package:karas_quest/control/objects/tile.dart' as k;
 class MapData {
   List<CharacterData> enemies = [];
   String mapFile = '';
+  int seed = 0;
   k.Tile playerTile = k.Tile(0, 0);
   MapData();
 

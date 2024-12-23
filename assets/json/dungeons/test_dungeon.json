@@ -2,7 +2,7 @@
     "width" : 12,
     "height" : 12,
     "numOpenTiles" : 100,
-    "enemyStats" : {
+    "enemyParams" : {
         "minLevel" : 1,
         "maxLevel" : 2,
         "maxEnemies" : 5

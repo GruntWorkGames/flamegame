@@ -62,9 +62,9 @@ mixin GameMap {
   }
 }
 
-// class RandomMap with GameMap {
+class RandomMap with GameMap {
 
-// }
+}
 
 class CraftedMap with GameMap {
 

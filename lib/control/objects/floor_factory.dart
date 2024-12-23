@@ -1,25 +1,23 @@
 import 'dart:math';
 
 class FloorData {
-  List<List<Rect>> grid;
   List<List<bool>> bools;
-
-  FloorData({required this.grid, required this.bools});
+  FloorData({required this.bools});
 }
 
-class Rect {
-  double x;
-  double y;
-  double width;
-  double height;
+// class Rect {
+//   double x;
+//   double y;
+//   double width;
+//   double height;
 
-  Rect({required this.x, required this.y, required this.width, required this.height});
-}
+//   Rect({required this.x, required this.y, required this.width, required this.height});
+// }
 
 class FloorFactory {
   static FloorData generate(int w, int h, int tilesize, int numOpenTiles) {
     // init grid
-    final grid = getRectGrid(w, h, tilesize);
+    // final grid = getRectGrid(w, h, tilesize);
     final bools = getBooleanGrid(w, h);
 
     // set controller in the center
@@ -60,28 +58,28 @@ class FloorFactory {
       cy = clamp(cy, 1, h - 2);
     }
 
-    return FloorData(grid: grid, bools: bools);
+    return FloorData(bools: bools);
   }
 
-  static List<List<Rect>> getRectGrid(int w, int h, int tilesize) {
-    final grid = <List<Rect>>[];
+  // static List<List<Rect>> getRectGrid(int w, int h, int tilesize) {
+  //   final grid = <List<Rect>>[];
 
-    for (var x = 0; x < w; x++) {
-      final row = <Rect>[];
-      grid.add(row);
+  //   for (var x = 0; x < w; x++) {
+  //     final row = <Rect>[];
+  //     grid.add(row);
 
-      for (var y = 0; y < h; y++) {
-        row.add(Rect(
-          x: x * tilesize.toDouble(),
-          y: y * tilesize.toDouble(),
-          width: tilesize.toDouble(),
-          height: tilesize.toDouble(),
-        ));
-      }
-    }
+  //     for (int y = 0; y < h; y++) {
+  //       row.add(Rect(
+  //         x: x * tilesize.toDouble(),
+  //         y: y * tilesize.toDouble(),
+  //         width: tilesize.toDouble(),
+  //         height: tilesize.toDouble(),
+  //       ));
+  //     }
+  //   }
 
-    return grid;
-  }
+  //   return grid;
+  // }
 
   static List<List<bool>> getBooleanGrid(int w, int h) {
     final grid = <List<bool>>[];

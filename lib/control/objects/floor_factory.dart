@@ -1,0 +1,112 @@
+import 'dart:math';
+
+class FloorData {
+  List<List<Rect>> grid;
+  List<List<bool>> bools;
+
+  FloorData({required this.grid, required this.bools});
+}
+
+class Rect {
+  double x;
+  double y;
+  double width;
+  double height;
+
+  Rect({required this.x, required this.y, required this.width, required this.height});
+}
+
+class FloorFactory {
+  static FloorData generate(int w, int h, int tilesize, int numOpenTiles) {
+    // init grid
+    final grid = getRectGrid(w, h, tilesize);
+    final bools = getBooleanGrid(w, h);
+
+    // set controller in the center
+    var cx = w ~/ 2;
+    var cy = h ~/ 2;
+
+    // give controller random direction
+    // cdir == direction
+    var cdir = Random().nextInt(4);
+
+    // odds for changing direction
+    const odds = 2;
+
+    // create using x steps
+    var numTiles = 0;
+    while (numTiles < numOpenTiles) {
+      // place a floor tile at controller pos
+      // if we havent already been in this tile, count it as placing a new one.
+      if (!bools[cx][cy]) {
+        numTiles++;
+      }
+
+      bools[cx][cy] = true;
+
+      // randomize direction
+      if (Random().nextInt(odds) == odds - 1) {
+        cdir = Random().nextInt(4);
+      }
+
+      // move the controller
+      final xdir = _lengthdirX(1, cdir * 90).toInt();
+      final ydir = _lengthdirY(1, cdir * 90).toInt();
+      cx += xdir;
+      cy += ydir;
+
+      // dont move outside of the grid
+      cx = clamp(cx, 1, w - 2);
+      cy = clamp(cy, 1, h - 2);
+    }
+
+    return FloorData(grid: grid, bools: bools);
+  }
+
+  static List<List<Rect>> getRectGrid(int w, int h, int tilesize) {
+    final grid = <List<Rect>>[];
+
+    for (var x = 0; x < w; x++) {
+      final row = <Rect>[];
+      grid.add(row);
+
+      for (var y = 0; y < h; y++) {
+        row.add(Rect(
+          x: x * tilesize.toDouble(),
+          y: y * tilesize.toDouble(),
+          width: tilesize.toDouble(),
+          height: tilesize.toDouble(),
+        ));
+      }
+    }
+
+    return grid;
+  }
+
+  static List<List<bool>> getBooleanGrid(int w, int h) {
+    final grid = <List<bool>>[];
+
+    for (var x = 0; x < w; x++) {
+      final row = <bool>[];
+      grid.add(row);
+
+      for (var y = 0; y < h; y++) {
+        row.add(false);
+      }
+    }
+
+    return grid;
+  }
+
+  static double _lengthdirX(double length, double angle) {
+    return length * cos(angle * (pi / 180));
+  }
+
+  static double _lengthdirY(double length, double angle) {
+    return length * sin(angle * (pi / 180));
+  }
+
+  static int clamp(int value, int min, int max) {
+    return value.clamp(min, max);
+  }
+}

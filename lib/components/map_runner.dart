@@ -59,16 +59,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Direction lastDirection = Direction.none;
 
   // serializable properties
-  String mapfile = '';
   List<Enemy> enemies = [];
   Vector2 _playerPos = Vector2.zero();
 
   MapRunner();
-  MapRunner.fromMapFile(this.mapfile);
 
   MapRunner.fromMapData(MapData map) {
     mapData = map;
-    mapfile = mapData.mapFile;
     _playerPos = tileToPos(map.playerTile);
   }
 
@@ -86,7 +83,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       }).toList();
     }
     mapData.playerTile = posToTile(_playerPos);
-    mapData.mapFile = mapfile;
   }
 
   @override
@@ -101,7 +97,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final playerTile = mapData.playerTile;
     _playerPos = tileToPos(playerTile);
     await enemyCreator.loadEnemyFile();
-    tiledmap = await TiledComponent.load(mapfile, Vector2.all(kTileSize.toDouble()));
+    tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
@@ -118,15 +114,15 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     game.camera.viewfinder.zoom = zoomFactor;
     final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
     final isPlayerAtZero = game.player.position.isZero();
-    final isMapMatch = game.player.data.mapfile == mapfile;
+    // final isMapMatch = game.player.data.mapfile == mapData.mapFile;
     // new game?
-    if (!isSavedTileZero && isPlayerAtZero && isMapMatch) {
+    if (!isSavedTileZero && isPlayerAtZero) {
       game.player.position = tileToPos(game.player.data.tilePosition);
     } else {
       game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
 
-    game.player.data.mapfile = mapfile;
+    // game.player.data.mapfile = mapData.mapFile;
     game.player.data.tilePosition = posToTile(game.player.position);
     updateQuestIcons();
     updateUI();
@@ -690,6 +686,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
+    if(tiledmap == null) {
+      return [];
+    }
     final map = tiledmap!.tileMap.map;
     // get left boundary
     final farthestTileXLeftAvailable =

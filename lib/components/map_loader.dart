@@ -18,7 +18,9 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     if(worlds.containsKey(mapfile)) {
       world = worlds[mapfile];
     } else {
-      world = MapRunner.fromMapFile(mapfile);
+      final emptyMapData = MapData();
+      emptyMapData.mapFile = mapfile;
+      world = MapRunner.fromMapData(emptyMapData);
     }
 
     worlds[mapfile] = world!;
@@ -30,7 +32,7 @@ class MapLoader extends Component with HasGameRef<MainGame> {
   // load the maps, but does not call onLoad until they are assigned
   void _loadMapRunner(MapData map) {
     final runner = MapRunner.fromMapData(map);
-    worlds[runner.mapfile] = runner;
+    worlds[map.mapFile] = runner;
     stack.add(runner);
   }
 

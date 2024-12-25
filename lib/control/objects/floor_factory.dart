@@ -5,15 +5,6 @@ class FloorData {
   FloorData({required this.bools});
 }
 
-// class Rect {
-//   double x;
-//   double y;
-//   double width;
-//   double height;
-
-//   Rect({required this.x, required this.y, required this.width, required this.height});
-// }
-
 class FloorFactory {
   static FloorData generate(int w, int h, int tilesize, int numOpenTiles) {
     // init grid
@@ -60,26 +51,6 @@ class FloorFactory {
 
     return FloorData(bools: bools);
   }
-
-  // static List<List<Rect>> getRectGrid(int w, int h, int tilesize) {
-  //   final grid = <List<Rect>>[];
-
-  //   for (var x = 0; x < w; x++) {
-  //     final row = <Rect>[];
-  //     grid.add(row);
-
-  //     for (int y = 0; y < h; y++) {
-  //       row.add(Rect(
-  //         x: x * tilesize.toDouble(),
-  //         y: y * tilesize.toDouble(),
-  //         width: tilesize.toDouble(),
-  //         height: tilesize.toDouble(),
-  //       ));
-  //     }
-  //   }
-
-  //   return grid;
-  // }
 
   static List<List<bool>> getBooleanGrid(int w, int h) {
     final grid = <List<bool>>[];

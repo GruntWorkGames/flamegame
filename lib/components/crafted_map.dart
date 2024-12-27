@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:karas_quest/components/base_map.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
@@ -10,58 +11,33 @@ import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/objects/portal.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 
-class CraftedMap {
-  final MainGame game;
-  final MapData mapData;
-  final EnemyCreator enemyCreator;
-  
-  List<List<bool>> blockedTiles = [];
-  List<List<Function?>> triggerTiles = [];
-  List<List<NPC?>> npcTiles = [];
-  final List<k.Tile> blockedTileList = [];
-
+class CraftedMap extends BaseMap{
   late final TiledComponent tiledmap;
-  
-  CraftedMap(this.game, this.mapData, this.enemyCreator);
+  CraftedMap(super.game, super.mapData, super.enemyCreator);
 
+  @override
   Future<void> init() async {
     tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
     tiledmap.anchor = Anchor.topLeft;
-    generateTiles(tiledmap.tileMap.map);
+    generateTiles(mapWidth, mapHeight);
     await buildBlockedTiles(tiledmap.tileMap);
     buildPortals(tiledmap.tileMap);
     initEnemyCreatorSpecs();
   }
 
-  int get mapWidth => tiledmap.tileMap.map.width;
-  int get mapHeight => tiledmap.tileMap.map.height;
+  @override int get mapWidth => tiledmap.tileMap.map.width;
+  @override int get mapHeight => tiledmap.tileMap.map.height;
+  @override int get mapWidthPixels => mapWidth * kTileSize;
+  @override int get mapHeightPixels => mapHeight * kTileSize;
 
-  int get mapWidthPixels => mapWidth * kTileSize;
-  int get mapHeightPixels => mapHeight * kTileSize;
-
+  @override
   void initEnemyCreatorSpecs() {
     enemyCreator.spawnChance = tiledmap.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
     enemyCreator.maxEnemies = tiledmap.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
     enemyCreator.spawnRadius = tiledmap.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
   }
 
-  void generateTiles(TiledMap map) {
-    blockedTiles = List<List<bool>>.generate(
-        map.width,
-        (index) => List<bool>.generate(map.height, (index) => false, growable: false),
-        growable: false);
-
-    triggerTiles = List<List<Function?>>.generate(
-        map.width,
-        (index) => List<Function?>.generate(map.height, (index) => null, growable: false),
-        growable: false);
-
-    npcTiles = List<List<NPC?>>.generate(
-        map.width,
-        (index) => List<NPC?>.generate(map.height, (index) => null, growable: false),
-        growable: false);
-  }
-
+  @override
   Future<void> buildBlockedTiles(RenderableTiledMap tileMap) async {
     final tileLayers = tileMap.renderableLayers.where((element) {
       return element.layer.type == LayerType.tileLayer;
@@ -87,6 +63,7 @@ class CraftedMap {
     }
   }
 
+  @override
   void buildPortals(RenderableTiledMap tileMap) {
     final portalGroup = tileMap.getLayer<ObjectGroup>('portal');
     final exitGroup = tileMap.getLayer<ObjectGroup>('exit');
@@ -108,24 +85,7 @@ class CraftedMap {
     }
   }
 
-  void addBlockedCell(Vector2 position) {
-    final tile = posToTile(position);
-    blockedTiles[tile.x][tile.y] = true;
-    blockedTileList.add(tile);
-  }
-
-  void addPortal(Portal portal) {
-    final tilePos = posToTile(portal.position);
-    triggerTiles[tilePos.x][tilePos.y] = () {
-      game.mapRunner?.portalEntered(portal);
-    };
-  }
-
-  void addExit(Vector2 exit) {
-    final tilePos = posToTile(exit);
-    triggerTiles[tilePos.x][tilePos.y] = game.mapLoader.popWorld;
-  }
-
+  @override
   Vector2 readPlayerSpawnPoint() {
     final objectGroup = tiledmap.tileMap.getLayer<ObjectGroup>('spawn');
     final spawnObject = objectGroup!.objects.first;

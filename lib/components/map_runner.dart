@@ -13,7 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
-import 'package:karas_quest/components/map_types.dart';
+import 'package:karas_quest/components/crafted_map.dart';
 import 'package:karas_quest/components/melee_attack_result.dart';
 import 'package:karas_quest/components/melee_character.dart';
 import 'package:karas_quest/components/npc.dart';

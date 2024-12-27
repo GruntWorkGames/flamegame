@@ -114,7 +114,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     game.camera.viewfinder.zoom = zoomFactor;
     final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
     final isPlayerAtZero = game.player.position.isZero();
-    // final isMapMatch = game.player.data.mapfile == mapData.mapFile;
     // new game?
     if (!isSavedTileZero && isPlayerAtZero) {
       game.player.position = tileToPos(game.player.data.tilePosition);
@@ -122,7 +121,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
 
-    // game.player.data.mapfile = mapData.mapFile;
     game.player.data.tilePosition = posToTile(game.player.position);
     updateQuestIcons();
     updateUI();

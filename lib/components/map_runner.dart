@@ -42,8 +42,6 @@ import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   MapData mapData = MapData();
   late CraftedMap map;
-  final List<NPC> _npcs = [];
-  final enemyCreator = EnemyCreator();
   final List<Square> _squares = [];
   double zoomFactor = 2.4;
   final _aggroDistance = 6;
@@ -53,8 +51,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   bool shouldContinue = false; // player continuoue movement
   Direction lastDirection = Direction.none;
 
-  // serializable properties
-  List<Enemy> enemies = [];
   Vector2 _playerPos = Vector2.zero();
 
   MapRunner();
@@ -72,8 +68,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   void save() {
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
-    if (enemies.isNotEmpty) {
-      mapData.enemies = enemies.map((enemy) {
+    if (map.enemies.isNotEmpty) {
+      mapData.enemies = map.enemies.map((enemy) {
         return enemy.data;
       }).toList();
     }
@@ -89,18 +85,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   @override
   FutureOr<void> onLoad() async {
-    await enemyCreator.loadEnemyFile();
-    add(enemyCreator);
-
-    map = CraftedMap(game, mapData, enemyCreator);
+    map = CraftedMap(mapData);
     await map.init();
-    add(map.tiledmap);
+    add(map);
 
     final playerTile = mapData.playerTile;
     _playerPos = tileToPos(playerTile);
 
-    await _createNpcs();
-    await _createEnemies();
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
     game.camera.viewfinder.zoom = zoomFactor;
@@ -286,7 +277,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
         game.player.data.experience += enemy.experienceYield;
         updateUI();
         enemy.removeFromParent();
-        enemies.removeWhere((other) => other == enemy);
+        map.enemies.removeWhere((other) => other == enemy);
         game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
       });
         final damageString = damageDone.value == 0 ? '' : '-${damageDone.value}';
@@ -326,7 +317,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   Enemy? getEnemyInDirection(Direction direction) {
     final playerTile = posToTile(game.player.position);
     final nextTile = getNextTile(direction, playerTile);
-    for (final enemy in enemies) {
+    for (final enemy in map.enemies) {
       final npcTile = posToTile(enemy.position);
       if (nextTile == npcTile) {
         return enemy;
@@ -421,51 +412,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     await game.mapLoader.pushWorld(map);
   }
 
-  Future<List<NpcData>> _createNpcData(RenderableTiledMap tilemap) async {
-    final spawnData = <NpcData>[];
-    final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
-    if (objectGroup == null) {
-      return spawnData;
-    }
-
-    for (final object in objectGroup.objects) {
-      var data =  NpcData();
-      final npcFile = object.properties.getProperty<StringProperty>('npcDataFile');
-      if(npcFile != null) {
-        final jsonFile = npcFile.value;
-        final jsonString = await rootBundle.loadString(jsonFile);
-        final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
-        data = NpcData.fromMap(map);
-      }
-
-      final speech = object.properties.getProperty<StringProperty>('speech');
-      if (speech != null) {
-        data.speech = speech.value;
-      }
-
-      final jsonFile = object.properties.getProperty<StringProperty>('shopFile');
-      if (jsonFile != null) {
-        data.shopJsonFile = jsonFile.value;
-      }
-
-      final animationFile =
-          object.properties.getProperty<StringProperty>('animationFile');
-      if (animationFile != null) {
-        data.animationJsonFile = animationFile.value;
-      }
-
-      if(object.name.isNotEmpty) {
-        data.name = object.name;
-      }
-      
-      data.position = Vector2(object.x, object.y);
-      spawnData.add(data);
-    }
-    return spawnData;
-  }
-
   void playerEntered() {
-    game.save();
+    // game.save();
     if (game.player.parent != null) {
       game.player.removeFromParent();
     }
@@ -476,23 +424,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
       return;
     }
     game.player.position = _playerPos;
-  }
-
-  Future<void> _createNpcs() async {
-    final spawns = await _createNpcData(map.tiledmap.tileMap);
-    for (final spawnData in spawns) {
-      final npc = NPC(spawnData);
-      add(npc);
-      _npcs.add(npc);
-      final tile = posToTile(npc.position);
-      map.npcTiles[tile.x][tile.y] = npc;
-    }
-  }
-
-  Future<void> _createEnemies() async {
-    for(final enemyData in mapData.enemies) {
-        enemyCreator.createEnemyFromCharacterData(enemyData);
-    }
   }
 
   NPC? _isTileBlockedNpc(k.Tile nextTile) {
@@ -521,10 +452,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
     final playerTile = posToTile(game.player.position);
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
-    final npcTiles = _npcs.map((npc) {
+    final npcTiles = map.npcs.map((npc) {
       return posToTile(npc.npc.position);
     }).toSet();
-    final enemys = enemies.where((other) => other != enemy);
+    final enemys = map.enemies.where((other) => other != enemy);
     final enemyTiles = enemys.map((enemy) {
       return posToTile(enemy.position);
     }).toSet();
@@ -628,7 +559,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   List<Enemy> getEnemiesWithinRange(int distance) {
-    final list = enemies.where((npc) {
+    final list = map.enemies.where((npc) {
       final enemyTile = posToTile(npc.position);
       final playerTile = posToTile(game.player.position);
       final dist = enemyTile.distanceTo(playerTile);
@@ -720,7 +651,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
 
   void playerMoved() {
     if(game.ref?.read(enemiesEnabled) ?? true) {
-      enemyCreator.playerMoved();
+      map.enemyCreator.playerMoved();
     }
   }
   
@@ -733,7 +664,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks {
   }
 
   Future<void> updateQuestIcons() async {
-    for(final npc in _npcs) {
+    for(final npc in map.npcs) {
       final quests = await npc.questsAvailable();
       npc.setHasQuestIcon(shouldShow: quests.isNotEmpty);
     }

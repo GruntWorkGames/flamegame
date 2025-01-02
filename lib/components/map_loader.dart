@@ -27,6 +27,7 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     game.mapRunner = world;
     game.world = world;
     stack.add(world);
+    game.save();
   }
 
   // load the maps, but does not call onLoad until they are assigned
@@ -56,6 +57,7 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     final world = stack.last;
     game.mapRunner = world;
     game.world = world;
+    game.save();
   }
 
   void save(SaveFile savefile) {

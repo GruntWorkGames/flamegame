@@ -3,7 +3,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:karas_quest/components/base_map.dart';
 
 class GeneratedMap extends BaseMap{
-  GeneratedMap(super.game, super.mapData, super.enemyCreator);
+  GeneratedMap(super.mapData);
 
   @override
   Future<void> buildBlockedTiles(RenderableTiledMap tileMap) {

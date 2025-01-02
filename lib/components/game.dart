@@ -25,7 +25,7 @@ import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainGame extends FlameGame with TapDetector {
+class MainGame extends FlameGame with TapDetector, SingleGameInstance {
   PlayerComponent player = PlayerComponent();
   MapRunner? mapRunner;
   final mapLoader = MapLoader();

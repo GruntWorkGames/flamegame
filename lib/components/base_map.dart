@@ -1,5 +1,7 @@
 
+import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
@@ -7,27 +9,31 @@ import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/objects/portal.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
-import 'package:vector_math/vector_math_64.dart';
 
-abstract class BaseMap {
+abstract class BaseMap extends Component with HasGameRef<MainGame> {
   int get mapWidth => 0;
   int get mapHeight => 0;
   int get mapWidthPixels => 0;
   int get mapHeightPixels => 0;
 
-  final MainGame game;
   final MapData mapData;
-  final EnemyCreator enemyCreator;
+  final EnemyCreator enemyCreator = EnemyCreator();
   
   List<List<bool>> blockedTiles = [];
   List<List<Function?>> triggerTiles = [];
   List<List<NPC?>> npcTiles = [];
   final List<k.Tile> blockedTileList = [];
+  final List<NPC> npcs = [];
+  List<Enemy> enemies = [];
 
-  BaseMap(this.game, this.mapData, this.enemyCreator);
+  BaseMap(this.mapData);
 
   // abstract methods
-  Future<void> init();
+  Future<void> init() async {
+    await enemyCreator.loadEnemyFile();
+    add(enemyCreator);
+  }
+  
   void initEnemyCreatorSpecs();
   void buildPortals(RenderableTiledMap tileMap);
   Future<void> buildBlockedTiles(RenderableTiledMap tileMap);

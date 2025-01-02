@@ -38,12 +38,12 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
 
   void createEnemyFromCharacterData(CharacterData character) {
     final enemy = Enemy.fromCharacterData(character);
-    game.mapRunner?.enemies.add(enemy);
-    game.mapRunner?.add(enemy);
+    game.mapRunner?.map.enemies.add(enemy);
+    game.mapRunner?.map.add(enemy);
   }
 
   void _createEnemy() {
-    if((game.mapRunner?.enemies.length ?? 0) >= maxEnemies) {
+    if((game.mapRunner?.map.enemies.length ?? 0) >= maxEnemies) {
       return;
     }
 
@@ -52,7 +52,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       throw Exception('Spawn Area is empty');
     }
 
-    final enemyTiles = game.mapRunner?.enemies.map((enemy) {
+    final enemyTiles = game.mapRunner?.map.enemies.map((enemy) {
       return posToTile(enemy.position);
     }).toList() ?? [];
 
@@ -69,7 +69,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     final enemy = Enemy(enemyJsonFile);
     enemy.data.tilePosition = spawnTile;
     enemy.position = tileToPos(spawnTile);
-    game.mapRunner?.enemies.add(enemy);
+    game.mapRunner?.map.enemies.add(enemy);
     game.mapRunner?.add(enemy);
   }
 

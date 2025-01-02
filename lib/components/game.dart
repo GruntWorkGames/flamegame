@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/map_loader.dart';
-import 'package:karas_quest/components/map_runner.dart';
+import 'package:karas_quest/components/crafted_map_runner.dart';
 import 'package:karas_quest/components/player_component.dart';
 import 'package:karas_quest/control/enum/debug_command.dart';
 import 'package:karas_quest/control/enum/direction.dart';
@@ -27,7 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
-  MapRunner? mapRunner;
+  CraftedMapRunner? mapRunner;
   final mapLoader = MapLoader();
   Component? currentSpeechBubble;
   WidgetRef? ref;
@@ -38,8 +38,47 @@ class MainGame extends FlameGame with TapDetector {
   SaveFile saveFile = SaveFile();
   late QuestManager questManager;
   bool isNewGame = true;
+  final zoomFactor = 3.0;
 
   MainGame({required this.isNewGame});
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final minDistanceX = size.x / 2 / zoomFactor;
+    final minDistanceY = size.y / 2 / zoomFactor;
+    final maxDistX = (mapRunner?.tiledmap?.width ?? 0) - size.x / 2 / zoomFactor;
+    final maxDistanceY = (mapRunner?.tiledmap?.height ?? 0) - size.y / 2 / zoomFactor;
+    final camPos = player.position.clone();
+
+    if(camPos.x < minDistanceX 
+    && camPos.x > maxDistX
+    && camPos.y < minDistanceY
+    && camPos.y > maxDistanceY) {
+      camera.viewfinder.position = Vector2(80, 96);
+      return;
+    } else if (maxDistanceY < 0) {
+      camera.viewfinder.position = Vector2(80, 96);
+      return;
+    }
+    
+    if(camPos.x < minDistanceX) {
+      camPos.x = minDistanceX;
+    }
+    if(camPos.x > maxDistX) {
+      camPos.x = maxDistX;
+    }
+
+    if(camPos.y < minDistanceY) {
+      camPos.y = minDistanceY;
+    }
+    if(camPos.y > maxDistanceY) {
+      camPos.y = maxDistanceY;
+    }
+    
+    camera.viewfinder.zoom = zoomFactor;
+    camera.viewfinder.position = camPos;
+  }
 
   @override
   Future<void> onLoad() async {

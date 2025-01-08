@@ -23,14 +23,15 @@ import 'package:karas_quest/components/turn_system.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
+import 'package:karas_quest/control/enum/map_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';
-import 'package:karas_quest/control/objects/portal.dart';
-import 'package:karas_quest/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/json/portal.dart';
+import 'package:karas_quest/control/json/tile.dart' as k;
 import 'package:karas_quest/control/provider/dialog_provider.dart';
 import 'package:karas_quest/control/provider/gold_provider.dart';
 import 'package:karas_quest/control/provider/health_provider.dart';
@@ -437,10 +438,13 @@ class CraftedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, Ma
     if (portalGroup != null) {
       for (final portal in portalGroup.objects) {
         final pos = Vector2(portal.x, portal.y);
-        final mapProperty =
-            portal.properties.getProperty<StringProperty>('map');
+        final mapProperty = portal.properties.getProperty<StringProperty>('map');
+        final dungeonProperty = portal.properties.getProperty<StringProperty>('dungeon');
         final map = (mapProperty != null) ? mapProperty.value : '';
-        _addPortal(Portal(map, pos));
+        final dungeon = dungeonProperty != null ?  dungeonProperty.value : '';
+        final file = dungeon.isEmpty ? map : dungeon;
+        final type = dungeon.isEmpty ? MapType.crafted : MapType.generated;
+        _addPortal(Portal(file, pos, type));
       }
     }
 

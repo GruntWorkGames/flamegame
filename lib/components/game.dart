@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/map_loader.dart';
 import 'package:karas_quest/components/crafted_map_runner.dart';
 import 'package:karas_quest/components/player_component.dart';
+import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/debug_command.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
@@ -45,10 +46,19 @@ class MainGame extends FlameGame with TapDetector {
   @override
   void update(double dt) {
     super.update(dt);
+    double width = 0;
+    double height = 0;
+
+    if(world is CraftedMapRunner) {
+      final map = world as CraftedMapRunner;
+      width = map.tiledmap?.width ?? 0;
+      height = map.tiledmap?.height ?? 0;
+    }
+
     final minDistanceX = size.x / 2 / zoomFactor;
     final minDistanceY = size.y / 2 / zoomFactor;
-    final maxDistX = (mapRunner?.tiledmap?.width ?? 0) - size.x / 2 / zoomFactor;
-    final maxDistanceY = (mapRunner?.tiledmap?.height ?? 0) - size.y / 2 / zoomFactor;
+    final maxDistX = width - size.x / 2 / zoomFactor;
+    final maxDistanceY = height - size.y / 2 / zoomFactor;
     final camPos = player.position.clone();
 
     if(camPos.x < minDistanceX 

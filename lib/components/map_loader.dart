@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
-import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/crafted_map_runner.dart';
+import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 

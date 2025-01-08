@@ -1,4 +1,7 @@
+import 'package:karas_quest/control/objects/tile.dart';
+
 class GeneratedMap {
+    Tile playerTile = Tile(0, 0);
     int width = 0;
     int height = 0;
     int numOpenTiles = 0;
@@ -12,6 +15,8 @@ class GeneratedMap {
       height = json['height'] as int? ?? 0;
       seed = json['seed'] as int? ?? 0;
       numOpenTiles =  json['numOpenTiles'] as int? ?? 0;
+      final tileNode = json['playerTile'] as Map<String, dynamic>? ?? {};
+      playerTile = Tile.fromMap(tileNode);
       enemyStats = GeneratedDungeonEnemyParams.fromMap(json['enemyParams'] as Map<String, dynamic>? ?? {});
     }
   
@@ -21,6 +26,7 @@ class GeneratedMap {
         'height': height,
         'seed' : seed,
         'numOpenTiles': numOpenTiles,
+        'playerTile': playerTile.toMap(),
         'enemyParams': enemyStats.toMap(),
       };
     }

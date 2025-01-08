@@ -24,11 +24,13 @@ import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
+import 'package:karas_quest/control/json/generated_map.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';
+import 'package:karas_quest/control/objects/floor_factory.dart';
 import 'package:karas_quest/control/objects/portal.dart';
 import 'package:karas_quest/control/objects/tile.dart' as k;
 import 'package:karas_quest/control/provider/dialog_provider.dart';
@@ -41,13 +43,13 @@ import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 
 class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, MapRunner {
-  MapData mapData = MapData();
+  GeneratedMap mapData = GeneratedMap();
+  FloorData floorData = FloorData([], 0, 0);
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
   List<List<Function?>> _triggerTiles = [];
   List<List<NPC?>> _npcTiles = [];
   final List<NPC> _npcs = [];
-  TiledComponent? tiledmap;
   final enemyCreator = EnemyCreator();
   final List<Square> _squares = [];
   final List<k.Tile> _blockedTileList = [];
@@ -64,12 +66,12 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
 
   GeneratedMapRunner();
 
-  GeneratedMapRunner.fromMapData(MapData map) {
+  GeneratedMapRunner.fromMapData(GeneratedMap map) {
     mapData = map;
     _playerPos = tileToPos(map.playerTile);
   }
 
-  MapData toMapData() {
+  GeneratedMap toMapData() {
     save();
     return mapData;
   }
@@ -77,11 +79,11 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
   void save() {
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
-    if (enemies.isNotEmpty) {
-      mapData.enemies = enemies.map((enemy) {
-        return enemy.data;
-      }).toList();
-    }
+    // if (enemies.isNotEmpty) {
+    //   mapData.enemies = enemies.map((enemy) {
+    //     return enemy.data;
+    //   }).toList();
+    // }
     mapData.playerTile = posToTile(_playerPos);
   }
 
@@ -97,28 +99,28 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
     final playerTile = mapData.playerTile;
     _playerPos = tileToPos(playerTile);
     await enemyCreator.loadEnemyFile();
-    tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
-    tiledmap?.anchor = Anchor.topLeft;
-    enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
-    enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
-    enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
+    // tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
+    // tiledmap?.anchor = Anchor.topLeft;
+    // enemyCreator.spawnChance = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnChance')?.value ?? 0;
+    // enemyCreator.maxEnemies = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('maxEnemies')?.value ?? 0;
+    // enemyCreator.spawnRadius = tiledmap?.tileMap.map.properties.getProperty<IntProperty>('spawnRadius')?.value ?? 0;
     add(enemyCreator);
-    add(tiledmap!);
+    // add(tiledmap!);
 
-    _generateTiles(tiledmap!.tileMap.map.width, tiledmap!.tileMap.map.height);
-    _buildBlockedTilesCrafted(tiledmap!.tileMap);
-    _buildPortals(tiledmap!.tileMap);
-    await _createNpcs();
-    await _createEnemies();
+    _generateTiles(mapData.width, mapData.height);
+    _buildBlockedTilesFromFloor(floorData);
+    // _buildPortals(tiledmap!.tileMap);
+    // await _createNpcs();
+    // await _createEnemies();
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
     final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
     final isPlayerAtZero = game.player.position.isZero();
     // new game?
     if (!isSavedTileZero && isPlayerAtZero) {
-      game.player.position = tileToPos(game.player.data.tilePosition);
+      // game.player.position = tileToPos(game.player.data.tilePosition);
     } else {
-      game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
+      // game.player.position = _readPlayerSpawnPoint(tiledmap!.tileMap);
     }
 
     game.player.data.tilePosition = posToTile(game.player.position);
@@ -405,29 +407,29 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
         growable: false);
   }
 
-  Future<void> _buildBlockedTilesCrafted(RenderableTiledMap tileMap) async {
-    final tileLayers = tileMap.renderableLayers.where((element) {
-      return element.layer.type == LayerType.tileLayer;
-    });
+  Future<void> _buildBlockedTilesFromFloor(FloorData floor) async {
+    // final tileLayers = tileMap.renderableLayers.where((element) {
+    //   return element.layer.type == LayerType.tileLayer;
+    // });
 
-    final layerNames = tileLayers.map((element) {
-      return element.layer.name;
-    },).toList();
+    // final layerNames = tileLayers.map((element) {
+    //   return element.layer.name;
+    // },).toList();
     
-    try{
-      await TileProcessor.processTileType(
-        tileMap: tileMap,
-        processorByType: <String, TileProcessorFunc> {
-          'blocked': (tile, position, size) async {
-            _addBlockedCell(position);
-          },
-        },
-        layersToLoad: layerNames,
-        clear: false);
-    } on Exception catch(e, st) {
-      debugPrint(e.toString());
-      debugPrint(st.toString());
-    }
+    // try{
+    //   await TileProcessor.processTileType(
+    //     tileMap: tileMap,
+    //     processorByType: <String, TileProcessorFunc> {
+    //       'blocked': (tile, position, size) async {
+    //         _addBlockedCell(position);
+    //       },
+    //     },
+    //     layersToLoad: layerNames,
+    //     clear: false);
+    // } on Exception catch(e, st) {
+    //   debugPrint(e.toString());
+    //   debugPrint(st.toString());
+    // }
   }
 
   void _buildPortals(RenderableTiledMap tileMap) {
@@ -493,48 +495,48 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
   //   return spawns;
   // }
 
-  Future<List<NpcData>> _createNpcData(RenderableTiledMap tilemap) async {
-    final spawnData = <NpcData>[];
-    final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
-    if (objectGroup == null) {
-      return spawnData;
-    }
+  // Future<List<NpcData>> _createNpcData(RenderableTiledMap tilemap) async {
+  //   final spawnData = <NpcData>[];
+  //   final objectGroup = tilemap.getLayer<ObjectGroup>('npc');
+  //   if (objectGroup == null) {
+  //     return spawnData;
+  //   }
 
-    for (final object in objectGroup.objects) {
-      var data =  NpcData();
-      final npcFile = object.properties.getProperty<StringProperty>('npcDataFile');
-      if(npcFile != null) {
-        final jsonFile = npcFile.value;
-        final jsonString = await rootBundle.loadString(jsonFile);
-        final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
-        data = NpcData.fromMap(map);
-      }
+  //   for (final object in objectGroup.objects) {
+  //     var data =  NpcData();
+  //     final npcFile = object.properties.getProperty<StringProperty>('npcDataFile');
+  //     if(npcFile != null) {
+  //       final jsonFile = npcFile.value;
+  //       final jsonString = await rootBundle.loadString(jsonFile);
+  //       final map = jsonDecode(jsonString) as Map<String, dynamic>? ?? {};
+  //       data = NpcData.fromMap(map);
+  //     }
 
-      final speech = object.properties.getProperty<StringProperty>('speech');
-      if (speech != null) {
-        data.speech = speech.value;
-      }
+  //     final speech = object.properties.getProperty<StringProperty>('speech');
+  //     if (speech != null) {
+  //       data.speech = speech.value;
+  //     }
 
-      final jsonFile = object.properties.getProperty<StringProperty>('shopFile');
-      if (jsonFile != null) {
-        data.shopJsonFile = jsonFile.value;
-      }
+  //     final jsonFile = object.properties.getProperty<StringProperty>('shopFile');
+  //     if (jsonFile != null) {
+  //       data.shopJsonFile = jsonFile.value;
+  //     }
 
-      final animationFile =
-          object.properties.getProperty<StringProperty>('animationFile');
-      if (animationFile != null) {
-        data.animationJsonFile = animationFile.value;
-      }
+  //     final animationFile =
+  //         object.properties.getProperty<StringProperty>('animationFile');
+  //     if (animationFile != null) {
+  //       data.animationJsonFile = animationFile.value;
+  //     }
 
-      if(object.name.isNotEmpty) {
-        data.name = object.name;
-      }
+  //     if(object.name.isNotEmpty) {
+  //       data.name = object.name;
+  //     }
       
-      data.position = Vector2(object.x, object.y);
-      spawnData.add(data);
-    }
-    return spawnData;
-  }
+  //     data.position = Vector2(object.x, object.y);
+  //     spawnData.add(data);
+  //   }
+  //   return spawnData;
+  // }
 
   void _addBlockedCell(Vector2 position) {
     final tile = posToTile(position);
@@ -548,7 +550,8 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
       game.player.removeFromParent();
     }
 
-    tiledmap?.add(game.player);
+    // tiledmap?.add(game.player);
+    add(game.player);
 
     if (_playerPos.isZero()) {
       return;
@@ -556,22 +559,22 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
     game.player.position = _playerPos;
   }
 
-  Future<void> _createNpcs() async {
-    final spawns = await _createNpcData(tiledmap!.tileMap);
-    for (final spawnData in spawns) {
-      final npc = NPC(spawnData);
-      add(npc);
-      _npcs.add(npc);
-      final tile = posToTile(npc.position);
-      _npcTiles[tile.x][tile.y] = npc;
-    }
-  }
+  // Future<void> _createNpcs() async {
+  //   final spawns = await _createNpcData(tiledmap!.tileMap);
+  //   for (final spawnData in spawns) {
+  //     final npc = NPC(spawnData);
+  //     add(npc);
+  //     _npcs.add(npc);
+  //     final tile = posToTile(npc.position);
+  //     _npcTiles[tile.x][tile.y] = npc;
+  //   }
+  // }
 
-  Future<void> _createEnemies() async {
-    for(final enemyData in mapData.enemies) {
-        enemyCreator.createEnemyFromCharacterData(enemyData);
-    }
-  }
+  // Future<void> _createEnemies() async {
+  //   for(final enemyData in mapData.enemies) {
+  //       enemyCreator.createEnemyFromCharacterData(enemyData);
+  //   }
+  // }
 
   NPC? _isTileBlockedNpc(k.Tile nextTile) {
     try {
@@ -593,7 +596,9 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
   }
 
   Direction findPath(Enemy enemy) {
-    final map = tiledmap!.tileMap.map;
+    // final map = tiledmap!.tileMap.map;
+    const width = 0;
+    const height = 0;
     final end = posToTile(game.player.position);
     final start = posToTile(enemy.position);
     final playerTile = posToTile(game.player.position);
@@ -612,8 +617,8 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
     }).toList();
     try {
       final result = a_star.AStar(
-              rows: map.width,
-              columns: map.height,
+              rows: width,
+              columns: height,
               start: start.toPoint(),
               end: end.toPoint(),
               withDiagonal: false,
@@ -649,21 +654,20 @@ class GeneratedMapRunner extends World with HasGameRef<MainGame>, TapCallbacks, 
   }
 
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
-    if(tiledmap == null) {
-      return [];
-    }
-    final map = tiledmap!.tileMap.map;
+    final width = floorData.width;
+    final height = floorData.height;
+    // final map = tiledmap!.tileMap.map;
     // get left boundary
     final farthestTileXLeftAvailable =
         playerTile.x > distance ? playerTile.x - distance : 0;
     // get right boundary
-    final farthestTileXRightAvailable = playerTile.x + distance < map.width
+    final farthestTileXRightAvailable = playerTile.x + distance < width
         ? playerTile.x + distance
-        : playerTile.x + (map.width - playerTile.x);
+        : playerTile.x + (width - playerTile.x);
     // get bottom boundary
-    final farthestTileYDownAvailable = playerTile.y + distance < map.height
+    final farthestTileYDownAvailable = playerTile.y + distance < height
         ? playerTile.y + distance
-        : playerTile.y + (map.height - playerTile.y);
+        : playerTile.y + (height - playerTile.y);
     // get top boundary
     final farthestTileYUpAvailable =
         playerTile.y > distance ? playerTile.y - distance : 0;

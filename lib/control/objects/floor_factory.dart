@@ -1,8 +1,11 @@
 import 'dart:math';
 
 class FloorData {
+  int width = 0;
+  int height = 0;
+  int numOpenTiles = 0;
   List<List<bool>> bools;
-  FloorData({required this.bools});
+  FloorData(this.bools, this.width, this.height);
 }
 
 class FloorFactory {
@@ -49,7 +52,7 @@ class FloorFactory {
       cy = clamp(cy, 1, h - 2);
     }
 
-    return FloorData(bools: bools);
+    return FloorData(bools, w, h);
   }
 
   static List<List<bool>> getBooleanGrid(int w, int h) {

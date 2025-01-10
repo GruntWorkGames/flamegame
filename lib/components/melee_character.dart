@@ -12,7 +12,7 @@ import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/json/tile.dart' as k;
 
 class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> {
   double moveDuration = 0.24;

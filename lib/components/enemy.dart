@@ -4,7 +4,7 @@ import 'package:karas_quest/control/enum/character_state.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/json/tile.dart' as k;
 
 class Enemy extends MeleeCharacter {
   int experienceYield = 10;

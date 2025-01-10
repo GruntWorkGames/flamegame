@@ -4,14 +4,10 @@ import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/control/json/portal.dart';
-import 'package:karas_quest/control/json/tile.dart';
 
-class DungeonMap extends Component with HasGameRef<MainGame>, BaseMap {
+class DungeonMap extends BaseMap with HasGameRef<MainGame> {
   @override
   List<Enemy> get enemies => throw UnimplementedError();
-
-  @override
-  int get height => throw UnimplementedError();
 
   @override
   List<NPC> get npcs => throw UnimplementedError();
@@ -20,8 +16,15 @@ class DungeonMap extends Component with HasGameRef<MainGame>, BaseMap {
   List<Portal> get portals => throw UnimplementedError();
 
   @override
-  List<List<Tile>> get tiles => throw UnimplementedError();
-
+  double get pixelsHigh => throw UnimplementedError();
+  
   @override
-  int get width => throw UnimplementedError(); 
+  double get pixelsWide => throw UnimplementedError();
+  
+  @override
+  void playerEntered() {
+  }
+  
+  @override
+  Vector2 get spawnPoint => throw UnimplementedError(); 
 }

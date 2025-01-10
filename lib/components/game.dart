@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:karas_quest/components/map_loader.dart';
-import 'package:karas_quest/components/crafted_map_runner.dart';
+import 'package:karas_quest/components/map_runner.dart';
 import 'package:karas_quest/components/player_component.dart';
-import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/debug_command.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
@@ -28,7 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
-  CraftedMapRunner? mapRunner;
+  MapRunner? mapRunner;
   final mapLoader = MapLoader();
   Component? currentSpeechBubble;
   WidgetRef? ref;
@@ -46,15 +45,10 @@ class MainGame extends FlameGame with TapDetector {
   @override
   void update(double dt) {
     super.update(dt);
-    double width = 0;
-    double height = 0;
-
-    if(world is CraftedMapRunner) {
-      final map = world as CraftedMapRunner;
-      width = map.tiledmap?.width ?? 0;
-      height = map.tiledmap?.height ?? 0;
-    }
-
+    final width = mapRunner?.map?.pixelsWide ?? 0;
+    final height = mapRunner?.map?.pixelsWide ?? 0;
+    // width = mapRunner?.tiledmap?.width ?? 0;
+    // height = mapRunner?.tiledmap?.height ?? 0;
     final minDistanceX = size.x / 2 / zoomFactor;
     final minDistanceY = size.y / 2 / zoomFactor;
     final maxDistX = width - size.x / 2 / zoomFactor;

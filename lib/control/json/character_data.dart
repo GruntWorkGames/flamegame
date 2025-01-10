@@ -1,5 +1,5 @@
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/json/tile.dart' as k;
 
 class CharacterData {
   int _health = 10;

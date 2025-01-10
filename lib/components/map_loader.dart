@@ -2,25 +2,25 @@ import 'dart:io';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
-import 'package:karas_quest/components/crafted_map_runner.dart';
+import 'package:karas_quest/components/map_runner.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 
 class MapLoader extends Component with HasGameRef<MainGame> {
-  final Map<String, CraftedMapRunner> worlds = {};
-  List<CraftedMapRunner> stack = [];
+  final Map<String, MapRunner> worlds = {};
+  List<MapRunner> stack = [];
   final viewport = FixedResolutionViewport(resolution: Vector2(480*2, 320*2));
 
   Future<void> pushWorld(String mapfile) async {
-    late CraftedMapRunner? world;
+    late MapRunner? world;
 
     if(worlds.containsKey(mapfile)) {
       world = worlds[mapfile];
     } else {
       final emptyMapData = MapData();
       emptyMapData.mapFile = mapfile;
-      world = CraftedMapRunner.fromMapData(emptyMapData);
+      world = MapRunner.fromMapData(emptyMapData);
     }
 
     worlds[mapfile] = world!;
@@ -31,7 +31,7 @@ class MapLoader extends Component with HasGameRef<MainGame> {
 
   // load the maps, but does not call onLoad until they are assigned
   void _loadMapRunner(MapData map) {
-    final runner = CraftedMapRunner.fromMapData(map);
+    final runner = MapRunner.fromMapData(map);
     worlds[map.mapFile] = runner;
     stack.add(runner);
   }

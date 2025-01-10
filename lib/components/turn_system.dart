@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/map_runner.dart';
+import 'package:karas_quest/components/game.dart';
 
 enum TurnSystemState {
   initial, player, playerFinished, enemy, enemyFinished

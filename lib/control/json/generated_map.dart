@@ -1,4 +1,4 @@
-import 'package:karas_quest/control/objects/tile.dart';
+import 'package:karas_quest/control/json/tile.dart';
 
 class GeneratedMap {
     Tile playerTile = Tile(0, 0);

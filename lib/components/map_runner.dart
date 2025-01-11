@@ -67,7 +67,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   MapRunner.fromMapData(MapData map) {
     mapData = map;
-    _playerPos = tileToPos(map.playerTile);
   }
 
   MapData toMapData() {
@@ -75,6 +74,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     return mapData;
   }
 
+  // TODO(Kris): update this method
   void save() {
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
@@ -95,6 +95,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   @override
   FutureOr<void> onLoad() async {
+    _playerPos = tileToPos(mapData.playerTile);
     if(mapData.isGenerated) {
       map = WorldMap.fromMapData(mapData);
     } else {
@@ -105,14 +106,15 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     enemyCreator.spawnChance = mapData.spawnChance;
     enemyCreator.maxEnemies = mapData.maxEnemies;
     enemyCreator.spawnRadius = mapData.spawnRadius;
-    final playerTile = mapData.playerTile;
-    _playerPos = tileToPos(playerTile);
-    game.player.position = _playerPos;
+
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
 
     updateQuestIcons();
     updateUI();
+  }
+
+  Future<void> onLoadFinished() async {
   }
 
   // TODO(Kris): change tilemap.height to a map bounds, so that generated maps work too.

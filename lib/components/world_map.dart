@@ -21,6 +21,10 @@ mixin PortalDelegate {
   Future<void> portalEntered(Portal portal);
 }
 
+mixin OnLoadFinishedDelegate {
+  Future<void> onLoadFinished();
+}
+
 class WorldMap extends BaseMap with HasGameRef<MainGame> {
   MapData mapData = MapData();
   PortalDelegate? _portalDelegate;

@@ -5,8 +5,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:karas_quest/components/base_map.dart';
-import 'package:karas_quest/components/enemy.dart';
-import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/control/constants.dart';
@@ -26,28 +24,20 @@ mixin OnLoadFinishedDelegate {
 }
 
 class WorldMap extends BaseMap with HasGameRef<MainGame> {
-  MapData mapData = MapData();
-  PortalDelegate? _portalDelegate;
-  List<List<bool>> tiles = [];
-  List<Vector2> openTiles = [];
-  List<List<Function?>> _triggerTiles = [];
+  OnLoadFinishedDelegate? _onLoadFinishedDelegate;
+  final List<Vector2> openTiles = [];
   final List<NPC> _npcs = [];
-  TiledComponent? tiledmap;
   final List<k.Tile> blockedTileList = [];
-  final _aggroDistance = 6;
-  bool listenToInput = true;
-  final List<Enemy> _enemiesToMove = [];
-  bool shouldContinue = false; // player continuoue movement
-  Direction lastDirection = Direction.none;
+  MapData mapData = MapData();  
+  TiledComponent? tiledmap;
   Vector2 playerPos = Vector2.zero();
-
+  Direction lastDirection = Direction.none;
+  bool listenToInput = true;
+  bool shouldContinue = false; // player continuoue movement
+  
   WorldMap.fromMapData(MapData map) {
     mapData = map;
     playerPos = tileToPos(map.playerTile);
-  }
-
-  set portalDelegate(PortalDelegate delegate) {
-    _portalDelegate = delegate;
   }
 
   @override
@@ -56,22 +46,21 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     tiledmap = await TiledComponent.load(mapData.mapFile, Vector2.all(kTileSize.toDouble()));
     tiledmap?.anchor = Anchor.topLeft;
     add(tiledmap!);
+
     generateTiles(tiledmap!.tileMap.map.width, tiledmap!.tileMap.map.height);
     _buildBlockedTiles(tiledmap!.tileMap);
+    _buildPortals(tiledmap!.tileMap);
 
-    final isSavedTileZero = game.player.data.tilePosition.x == 0 && game.player.data.tilePosition.y == 0;
-    final isPlayerAtZero = game.player.position.isZero();
+    tiledmap?.add(game.player);
+    game.player.position = spawnPoint;
 
-    if (!isSavedTileZero && isPlayerAtZero) {
-      game.player.position = tileToPos(game.player.data.tilePosition);
-    } else {
-      game.player.position = spawnPoint;
-    }
+    enemyCreator.spawnChance = mapData.spawnChance;
+    enemyCreator.maxEnemies = mapData.maxEnemies;
+    enemyCreator.spawnRadius = mapData.spawnRadius;
+    add(enemyCreator);
 
-    game.player.data.tilePosition = posToTile(game.player.position);
-
-    playerEntered();
     await _createNpcs();
+    _onLoadFinishedDelegate?.onLoadFinished();
   }
 
   void _addBlockedCell(Vector2 position) {
@@ -196,13 +185,13 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
       game.mapLoader.popWorld();
     }
     final tilePos = posToTile(Vector2(exit.x, exit.y));
-    _triggerTiles[tilePos.x][tilePos.y] = func;
+    triggerTiles[tilePos.x][tilePos.y] = func;
   }
 
   void _addPortal(Portal portal) {
     final tilePos = posToTile(portal.position);
-    _triggerTiles[tilePos.x][tilePos.y] = () {
-      _portalDelegate?.portalEntered(portal);
+    triggerTiles[tilePos.x][tilePos.y] = () {
+      portalDelegate?.portalEntered(portal);
     };
   }
   

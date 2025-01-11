@@ -26,5 +26,9 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
   }
   
   @override
-  Vector2 get spawnPoint => throw UnimplementedError(); 
+  Vector2 get spawnPoint => throw UnimplementedError();
+  
+  @override
+  Future<void> portalEntered(Object portal) async {
+  } 
 }

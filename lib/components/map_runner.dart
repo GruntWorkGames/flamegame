@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
@@ -42,14 +44,12 @@ import 'package:karas_quest/control/provider/shop_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 
-class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDelegate {
+class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDelegate, OnLoadFinishedDelegate {
   MapData mapData = MapData();
   BaseMap? map;
   
   List<List<bool>> blockedTiles = [];
   List<Vector2> openTiles = [];
-  final enemyCreator = EnemyCreator();
-  final List<NPC> _npcs = [];
   final List<Square> _squares = [];
   final List<k.Tile> _blockedTileList = [];
   final _aggroDistance = 6;
@@ -70,12 +70,12 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   }
 
   MapData toMapData() {
-    save();
+    sync();
     return mapData;
   }
 
   // TODO(Kris): update this method
-  void save() {
+  void sync() {
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
     if (enemies.isNotEmpty) {
@@ -95,17 +95,13 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   @override
   FutureOr<void> onLoad() async {
-    _playerPos = tileToPos(mapData.playerTile);
     if(mapData.isGenerated) {
       map = WorldMap.fromMapData(mapData);
     } else {
       map = WorldMap.fromMapData(mapData);
     }
     add(map!);
-
-    enemyCreator.spawnChance = mapData.spawnChance;
-    enemyCreator.maxEnemies = mapData.maxEnemies;
-    enemyCreator.spawnRadius = mapData.spawnRadius;
+    map?.portalDelegate = this;
 
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
@@ -115,6 +111,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   }
 
   Future<void> onLoadFinished() async {
+
   }
 
   // TODO(Kris): change tilemap.height to a map bounds, so that generated maps work too.
@@ -414,7 +411,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   }
 
   Direction findPath(Enemy enemy) {
-    // final map = tiledmap!.tileMap.map;
     final end = posToTile(game.player.position);
     final start = posToTile(enemy.position);
     final playerTile = posToTile(game.player.position);
@@ -422,7 +418,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     final height = mapData.height;
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
-    final npcTiles = _npcs.map((npc) {
+    final npcTiles = map!.npcs.map((npc) {
       return posToTile(npc.npc.position);
     }).toSet();
     final enemys = enemies.where((other) => other != enemy);
@@ -472,10 +468,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   }
 
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
-    // if(tiledmap == null) {
-    //   return [];
-    // }
-    // final map = tiledmap!.tileMap.map;
     // get left boundary
     final width = game.mapRunner?.mapData.width ?? 0;
     final height = game.mapRunner?.mapData.height ?? 0;
@@ -625,7 +617,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   void playerMoved() {
     if(game.ref?.read(enemiesEnabled) ?? true) {
-      enemyCreator.playerMoved();
+      map?.enemyCreator.playerMoved();
     }
   }
   

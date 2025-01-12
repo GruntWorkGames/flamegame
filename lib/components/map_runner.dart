@@ -1,7 +1,4 @@
-// ignore_for_file: lines_longer_than_80_chars
-
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' as math;
 import 'package:a_star_algorithm/a_star_algorithm.dart' as a_star;
 import 'package:flame/components.dart';
@@ -9,13 +6,9 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
-import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:karas_quest/components/base_map.dart';
 import 'package:karas_quest/components/enemy.dart';
-import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/melee_attack_result.dart';
 import 'package:karas_quest/components/melee_character.dart';
@@ -26,11 +19,9 @@ import 'package:karas_quest/components/world_map.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
-import 'package:karas_quest/control/enum/map_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
 import 'package:karas_quest/control/json/item.dart';
 import 'package:karas_quest/control/json/map_data.dart';
-import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/shop.dart';

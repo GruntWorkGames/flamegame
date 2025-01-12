@@ -6,13 +6,11 @@ import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:karas_quest/components/base_map.dart';
-import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
-import 'package:karas_quest/control/enum/map_type.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
@@ -92,7 +90,7 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
         },
         layersToLoad: layerNames,
         clear: false);
-    } on Exception catch(e, st) {
+    } on Exception catch(e) {
       debugPrint('Error processing blocked tiles: $e');
     }
   }

@@ -20,6 +20,8 @@ abstract class BaseMap extends Component {
 
   double get pixelsWide;
   double get pixelsHigh;
+  int get tilesWide;
+  int get tilesHigh;
   Vector2 get spawnPoint;
   List<Portal> get portals;
 

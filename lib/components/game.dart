@@ -139,13 +139,13 @@ class MainGame extends FlameGame with TapDetector {
     questManager = QuestManager(this);
     player.data = saveFile.playerData;
     final firstItem = player.data.inventory.first;
-    firstItem.isSelected = true;
-    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
-    if (weapon != null) {
-      player.weapon = weapon;
-    }
-    player.equipWeapon(player.weapon);
-    player.equipArmor(player.armor);
+    // firstItem.isSelected = true;
+    // final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    // if (weapon != null) {
+    //   player.weapon = weapon;
+    // }
+    // player.equipWeapon(player.weapon);
+    // player.equipArmor(player.armor);
 
     mapLoader.initFromSaveFile(saveFile);
 
@@ -263,11 +263,12 @@ class MainGame extends FlameGame with TapDetector {
     save();
   }
 
+  // TODO(Kris): this doesnt end the game
   Future<void> onPlayerDied() async {
     final map = <String, dynamic>{};
     saveFile = SaveFile.fromMap(map);
-    // player.data = saveFile.playerData;
-    final firstItem = saveFile.playerData.inventory.first;
+    player.data = saveFile.playerData;
+    final firstItem = player.data.inventory.first;
     firstItem.isSelected = true;
     ref?.read(inventoryProvider.notifier).set(saveFile.playerData);
     ref?.read(inventoryItemProvider.notifier).set(firstItem);

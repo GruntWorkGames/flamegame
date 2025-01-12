@@ -2,9 +2,9 @@
     "name" : "dungeon1",
     "width" : 20,
     "height" : 20,
-    "openTiles" : 200,
-    "spawnChance" : 10,
-    "maxEnemies" : 0,
+    "openTiles" : 750,
+    "spawnChance" : 4,
+    "maxEnemies" : 5,
     "spawnRadius" : 6,
     "isGenerated" : true
 }

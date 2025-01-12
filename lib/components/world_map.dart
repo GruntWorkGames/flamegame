@@ -12,6 +12,7 @@ import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/components/player_component.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
+import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/npc_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
@@ -60,10 +61,20 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     add(player!);
     game.player.position = spawnPoint;
 
-    enemyCreator = EnemyCreator(tiledmap!);
+    final firstItem = player!.data.inventory.first;
+    firstItem.isSelected = true;
+    final weapon = player!.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    if (weapon != null) {
+      player!.weapon = weapon;
+    }
+    player?.equipWeapon(player!.weapon);
+    player?.equipArmor(player!.armor);
+
+    enemyCreator = EnemyCreator(this);
     enemyCreator?.spawnChance = mapData.spawnChance;
     enemyCreator?.maxEnemies = mapData.maxEnemies;
     enemyCreator?.spawnRadius = mapData.spawnRadius;
+    await enemyCreator!.loadEnemyFile();
     add(enemyCreator!);
 
     await _createNpcs();
@@ -223,4 +234,12 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
       return Vector2.zero();
     }
   }
+  
+  @override
+  int get tilesHigh => tiledmap!.tileMap.map.height;
+  
+  @override
+  int get tilesWide => tiledmap!.tileMap.map.width;
+
+  
 }

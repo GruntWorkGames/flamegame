@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:karas_quest/control/json/tile.dart';
 
 class FloorData {
@@ -8,7 +7,8 @@ class FloorData {
   int numOpenTiles = 0;
   Tile spawnTile = Tile(0, 0);
   List<List<bool>> bools;
-  FloorData(this.bools, this.width, this.height, this.spawnTile);
+  List<Tile> openTiles = [];
+  FloorData(this.bools, this.width, this.height, this.spawnTile, this.openTiles);
 }
 
 class FloorFactory {
@@ -62,7 +62,7 @@ class FloorFactory {
     
     final r = Random().nextInt(tiles.length);
     final spawnTile = tiles[r];
-    return FloorData(bools, w, h, spawnTile);
+    return FloorData(bools, w, h, spawnTile, tiles);
   }
 
   static List<List<bool>> getBooleanGrid(int w, int h) {

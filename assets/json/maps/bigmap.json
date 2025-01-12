@@ -1,7 +1,7 @@
 {
     "name": "bigmap",
     "mapFile" : "bigmap.tmx",
-    "spawnChance" : 10,
-    "maxEnemies" : 10,
+    "spawnChance" : 4,
+    "maxEnemies" : 5,
     "spawnRadius" : 6
 }

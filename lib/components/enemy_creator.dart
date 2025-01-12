@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/json/character_data.dart';
+
+mixin EnemyCreatedDelegate {
+  void enemyCreated(Enemy enemy);
+}
 
 class EnemyCreator extends Component with HasGameRef<MainGame> {
   final Random random = Random();
@@ -17,6 +22,8 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   List<String> enemyFileNames = [];
   final Component _enemyParent;
 
+  EnemyCreatedDelegate? enemyCreatedDelegate;
+
   EnemyCreator(this._enemyParent);
 
   Future<void> loadEnemyFile() async {
@@ -27,7 +34,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
       if(enemyFileName is String) {
         enemyFileNames.add(enemyFileName);
       }
-    }
+    } 
   }
 
   void createEnemyFromCharacterData(CharacterData character) {
@@ -48,7 +55,8 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
 
     final spawnArea = game.mapRunner?.tilesArroundPosition(posToTile(game.player.position), spawnRadius) ?? [];
     if(spawnArea.isEmpty) {
-      throw Exception('Spawn Area is empty');
+      debugPrint('spawn area is empty');
+      return null;
     }
 
     final enemyTiles = game.mapRunner?.enemies.map((enemy) {
@@ -68,6 +76,7 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     final enemy = Enemy(enemyJsonFile);
     enemy.data.tilePosition = spawnTile;
     enemy.position = tileToPos(spawnTile);
+    game.mapRunner?.enemies.add(enemy);
     _enemyParent.add(enemy);
 
     return enemy;

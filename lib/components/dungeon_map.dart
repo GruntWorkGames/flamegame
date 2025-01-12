@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:karas_quest/components/base_map.dart';
+import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/player_component.dart';
 import 'package:karas_quest/control/constants.dart';
+import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
 import 'package:karas_quest/control/objects/floor_factory.dart';
@@ -33,6 +35,22 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
     player!.position = spawnPoint;
     game.player = player!;
     add(player!);
+
+    final firstItem = player!.data.inventory.first;
+    firstItem.isSelected = true;
+    final weapon = player!.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    if (weapon != null) {
+      player!.weapon = weapon;
+    }
+    player?.equipWeapon(player!.weapon);
+    player?.equipArmor(player!.armor);
+
+    enemyCreator = EnemyCreator(this);
+    enemyCreator?.spawnChance = mapData.spawnChance;
+    enemyCreator?.maxEnemies = mapData.maxEnemies;
+    enemyCreator?.spawnRadius = mapData.spawnRadius;
+    await enemyCreator!.loadEnemyFile();
+    add(enemyCreator!);
   }
 
   @override
@@ -87,4 +105,10 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
   
   @override
   Vector2 get spawnPoint => tileToPos(_floorData.spawnTile);
+
+  @override
+  int get tilesHigh => mapData.height;
+
+  @override
+  int get tilesWide => mapData.width;
 }

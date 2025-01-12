@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:karas_quest/components/base_map.dart';
 import 'package:karas_quest/components/dungeon_map.dart';
 import 'package:karas_quest/components/enemy.dart';
+import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/melee_attack_result.dart';
 import 'package:karas_quest/components/melee_character.dart';
@@ -36,7 +37,7 @@ import 'package:karas_quest/control/provider/shop_provider.dart';
 import 'package:karas_quest/control/provider/ui_provider.dart';
 import 'package:karas_quest/screens/view/debug/enemies_enabled_provider.dart';
 
-class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDelegate, OnLoadFinishedDelegate {
+class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDelegate, OnLoadFinishedDelegate, EnemyCreatedDelegate {
   MapData mapData = MapData();
   BaseMap? map;
   
@@ -398,8 +399,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     final end = posToTile(game.player.position);
     final start = posToTile(enemy.position);
     final playerTile = posToTile(game.player.position);
-    final width = map!.mapData.width;
-    final height = map!.mapData.height;
+    final width = map!.tilesWide;
+    final height = map!.tilesHigh;
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
     final npcTiles = map!.npcs.map((npc) {
@@ -453,8 +454,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
     // get left boundary
-    final width = game.mapRunner?.map!.mapData.width ?? 0;
-    final height = game.mapRunner?.map!.mapData.height ?? 0;
+    final width = game.mapRunner?.map!.tilesWide ?? 0;
+    final height = game.mapRunner?.map!.tilesHigh ?? 0;
     final farthestTileXLeftAvailable =
         playerTile.x > distance ? playerTile.x - distance : 0;
     // get right boundary
@@ -618,5 +619,10 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     //   final quests = await npc.questsAvailable();
     //   npc.setHasQuestIcon(shouldShow: quests.isNotEmpty);
     // }
+  }
+  
+  @override
+  void enemyCreated(Enemy enemy) {
+    enemies.add(enemy);
   }
 }

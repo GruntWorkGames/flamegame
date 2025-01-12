@@ -1,10 +1,5 @@
 {
     "isFreshGame": true,
-    "name": "bigmap",
-    "mapFile" : "bigmap.tmx",
-    "spawnChance" : 10,
-    "maxEnemies" : 10,
-    "spawnRadius" : 6,
     "player": {
         "health": 10,
         "maxHealth": 30,
@@ -56,12 +51,11 @@
     "completedQuests": [],
     "mapStack": [
         {
-            "enemies": [],
-            "mapFile": "bigmap.tmx",
-            "playerTile": {
-                "x": 0,
-                "y": 0
-            }
+            "name": "bigmap",
+            "spawnChance" : 10,
+            "maxEnemies" : 5,
+            "spawnRadius" : 6,
+            "mapFile": "bigmap.tmx"
         }
     ]
 }

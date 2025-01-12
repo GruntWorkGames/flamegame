@@ -370,9 +370,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   void playerEntered() {
     game.save();
-    if (game.player.parent != null) {
-      game.player.removeFromParent();
-    }
+    // if (game.player.parent != null) {
+    //   game.player.removeFromParent();
+    // }
 
     if (_playerPos.isZero()) {
       return;

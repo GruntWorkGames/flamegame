@@ -22,7 +22,10 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
     await _buildTiles();
 
     // game.player.removeFromParent();
-    game.player.position = Vector2(4*16, 4*16);
+    final x = 4.0 * kTileSize.toDouble();
+    final y = (mapData.width - 1) * kTileSize.toDouble();
+    game.player.position = Vector2(x, y);
+    game.player.removeFromParent();
     add(game.player);
 
     return super.onLoad();

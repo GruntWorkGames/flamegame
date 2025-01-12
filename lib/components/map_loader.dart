@@ -25,12 +25,6 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     game.mapRunner = mapRunner;
     game.world = mapRunner;
     stack.add(mapRunner);
-
-    final cameraComponent = CameraComponent(
-      world: mapRunner,
-      viewport: viewport
-    );
-    game.camera = cameraComponent;
   }
 
   // load the maps, but does not call onLoad until they are assigned
@@ -45,6 +39,11 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     final runner = stack.last;
     game.mapRunner = runner;
     game.world = runner;
+    _adjustCamera(runner);
+    add(runner);
+  }
+  
+  void _adjustCamera(MapRunner runner) {
     if(Platform.isMacOS || Platform.isWindows) {
       final cameraComponent = CameraComponent(
         world: runner,
@@ -52,7 +51,6 @@ class MapLoader extends Component with HasGameRef<MainGame> {
       );
       game.camera = cameraComponent;
     }
-    add(runner);
   }
 
   void popWorld() {
@@ -60,12 +58,6 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     final mapRunner = stack.last;
     game.mapRunner = mapRunner;
     game.world = mapRunner;
-
-    final cameraComponent = CameraComponent(
-      world: mapRunner,
-      viewport: viewport
-    );
-    game.camera = cameraComponent;
   }
 
   void save(SaveFile savefile) {

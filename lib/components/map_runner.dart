@@ -63,7 +63,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     return map!.mapData;
   }
 
-  // TODO(Kris): update this method
   void sync() {
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
@@ -99,11 +98,11 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     updateUI();
   }
 
+  @override
   Future<void> onLoadFinished() async {
 
   }
 
-  // TODO(Kris): change tilemap.height to a map bounds, so that generated maps work too.
   void enemyTurn() {
     _enemiesToMove.addAll(getEnemiesWithinRange(_aggroDistance));
     moveNextEnemy();

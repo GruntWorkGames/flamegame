@@ -13,7 +13,6 @@
         "str": 1,
         "stam": 1,
         "dodge": 5,
-        "mapfile": "bigmap.tmx",
         "level": 1,
         "experience": 0,
         "tilePosition": {

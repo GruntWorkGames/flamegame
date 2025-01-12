@@ -6,6 +6,7 @@ import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:karas_quest/components/base_map.dart';
+import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';

@@ -60,7 +60,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   MapData toMapData() {
     sync();
-    return mapData;
+    return map!.mapData;
   }
 
   // TODO(Kris): update this method
@@ -68,17 +68,18 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     // if this level hasnt been loaded yet, enemies will be empty. 
     // if mapData has enemies, dont override them
     if (enemies.isNotEmpty) {
-      mapData.enemies = enemies.map((enemy) {
+      map!.mapData.enemies = enemies.map((enemy) {
         return enemy.data;
       }).toList();
     }
-    mapData.playerTile = posToTile(_playerPos);
+    map!.mapData.playerTile = posToTile(_playerPos);
   }
 
   @override
   void onMount() {
     super.onMount();
     playerEntered();
+    
     game.uiFinishedLoading();
   }
 
@@ -94,7 +95,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
     turnSystem = TurnSystem(mapRunner: this, playerFinishedCallback: () {});
     turnSystem.updateState(TurnSystemState.player);
-
     updateQuestIcons();
     updateUI();
   }
@@ -294,7 +294,6 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     }
     _playerPos = Vector2(game.player.position.x, game.player.position.y);
     if(portal != null) {
-      // _playerPos = Vector2(game.player.position.x, game.player.position.y);
       shouldContinue = false;
       portal();
     }
@@ -368,11 +367,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     await game.mapLoader.pushWorld(portal.mapData);
   }
 
-  void playerEntered() {
-    game.save();
-    // if (game.player.parent != null) {
-    //   game.player.removeFromParent();
-    // }
+  Future<void> playerEntered() async {
+    map?.playerEntered();
+    // game.save();
 
     if (_playerPos.isZero()) {
       return;
@@ -402,8 +399,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
     final end = posToTile(game.player.position);
     final start = posToTile(enemy.position);
     final playerTile = posToTile(game.player.position);
-    final width = mapData.width;
-    final height = mapData.height;
+    final width = map!.mapData.width;
+    final height = map!.mapData.height;
     final tiles = tilesArroundPosition(playerTile, 6);
     final wallTiles = getBlockedTilesInList(tiles);
     final npcTiles = map!.npcs.map((npc) {
@@ -457,8 +454,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   List<k.Tile> tilesArroundPosition(k.Tile playerTile, int distance) {
     // get left boundary
-    final width = game.mapRunner?.mapData.width ?? 0;
-    final height = game.mapRunner?.mapData.height ?? 0;
+    final width = game.mapRunner?.map!.mapData.width ?? 0;
+    final height = game.mapRunner?.map!.mapData.height ?? 0;
     final farthestTileXLeftAvailable =
         playerTile.x > distance ? playerTile.x - distance : 0;
     // get right boundary

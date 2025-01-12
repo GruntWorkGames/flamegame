@@ -9,6 +9,7 @@ import 'package:karas_quest/components/base_map.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
+import 'package:karas_quest/components/player_component.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/json/map_data.dart';
@@ -29,12 +30,12 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
   final List<Vector2> openTiles = [];
   final List<NPC> _npcs = [];
   final List<k.Tile> blockedTileList = [];
-  MapData mapData = MapData();  
   TiledComponent? tiledmap;
   Vector2 playerPos = Vector2.zero();
   Direction lastDirection = Direction.none;
   bool listenToInput = true;
   bool shouldContinue = false; // player continuoue movement
+  PlayerComponent? player;
   
   WorldMap.fromMapData(MapData map) {
     mapData = map;
@@ -52,8 +53,11 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
 
-    game.player.removeFromParent();
-    tiledmap?.add(game.player);
+    player = PlayerComponent();
+    player!.data = game.saveFile.playerData;
+    player!.position = spawnPoint;
+    game.player = player!;
+    add(player!);
     game.player.position = spawnPoint;
 
     enemyCreator = EnemyCreator(tiledmap!);
@@ -64,6 +68,13 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
 
     await _createNpcs();
     _onLoadFinishedDelegate?.onLoadFinished();
+  }
+
+  @override
+  Future<void> playerEntered() async {
+    if(player != null) {
+      game.player = player!;
+    }
   }
 
   void _addBlockedCell(Vector2 position) {
@@ -211,10 +222,5 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     } else {
       return Vector2.zero();
     }
-  }
-  
-  @override
-  void playerEntered() {
-    tiledmap?.add(game.player);
   }
 }

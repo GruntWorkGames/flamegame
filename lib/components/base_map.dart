@@ -3,11 +3,12 @@ import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/components/world_map.dart';
+import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
 
 abstract class BaseMap extends Component {
   PortalDelegate? portalDelegate;
-
+  MapData mapData = MapData();
   List<List<bool>> tiles = List<List<bool>>.empty();  
   List<List<Function?>> triggerTiles = List<List<Function?>>.empty();
   List<List<NPC?>> npcTiles = List<List<NPC?>>.empty();

@@ -1,11 +1,14 @@
 import 'dart:math';
 
+import 'package:karas_quest/control/json/tile.dart';
+
 class FloorData {
   int width = 0;
   int height = 0;
   int numOpenTiles = 0;
+  Tile spawnTile = Tile(0, 0);
   List<List<bool>> bools;
-  FloorData(this.bools, this.width, this.height);
+  FloorData(this.bools, this.width, this.height, this.spawnTile);
 }
 
 class FloorFactory {
@@ -26,6 +29,9 @@ class FloorFactory {
     // odds for changing direction
     const odds = 2;
 
+    // array to hold all open tiles
+    final tiles = <Tile>[];
+
     // create using x steps
     var numTiles = 0;
     while (numTiles < numOpenTiles) {
@@ -33,6 +39,7 @@ class FloorFactory {
       // if we havent already been in this tile, count it as placing a new one.
       if (!bools[cx][cy]) {
         numTiles++;
+        tiles.add(Tile(cx, cy));
       }
 
       bools[cx][cy] = false;
@@ -52,23 +59,27 @@ class FloorFactory {
       cx = clamp(cx, 1, w - 2);
       cy = clamp(cy, 1, h - 2);
     }
-
-    return FloorData(bools, w, h);
+    
+    final r = Random().nextInt(tiles.length);
+    final spawnTile = tiles[r];
+    return FloorData(bools, w, h, spawnTile);
   }
 
   static List<List<bool>> getBooleanGrid(int w, int h) {
-    final grid = <List<bool>>[];
+    // final grid = <List<bool>>[];
 
-    for (var x = 0; x < w; x++) {
-      final row = <bool>[];
-      grid.add(row);
+    // for (var x = 0; x < w; x++) {
+    //   final row = <bool>[];
+    //   grid.add(row);
 
-      for (var y = 0; y < h; y++) {
-        row.add(true);
-      }
-    }
+    //   for (var y = 0; y < h; y++) {
+    //     row.add(true);
+    //   }
+    // }
 
-    return grid;
+
+    final tiles = List<List<bool>>.generate(w, (index) => List<bool>.generate(h, (index) => true, growable: false), growable: false);
+    return tiles;
   }
 
   static double _lengthdirX(double length, double angle) {

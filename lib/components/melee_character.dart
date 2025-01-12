@@ -34,7 +34,8 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   MeleeCharacter() : super(size: Vector2(kTileSize.toDouble(), kTileSize.toDouble()));
 
   Map<String, dynamic> toMap() {
-    final dataMap = data.toMap();
+    // final dataMap = data.toMap();
+    final dataMap = <String, dynamic>{};
     dataMap['armor'] = armor.toMap();
     dataMap['weapon'] = weapon.toMap();
     dataMap['animationState'] = animationState.toJson();
@@ -47,7 +48,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     data = CharacterData.fromMap(map);
     armor = Item.fromMap(map['armor'] as Map<String, dynamic>? ?? {});
     weapon = Item.fromMap(map['weapon'] as Map<String, dynamic>? ?? {});
-    position = tileToPos(data.tilePosition);
+    position = tileToPos(game.saveFile.playerData.tilePosition);
     animationState = CharacterAnimationState.idleDown;
     // animationState = CharacterAnimationState.fromJson(map['animationState'] as String? ?? '');
   }
@@ -139,7 +140,7 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     isMoving = false;
     actionFinished(CharacterAnimationState.beginIdle);
     game.mapRunner!.turnSystem.updateState(TurnSystemState.playerFinished);
-    data.tilePosition = posToTile(position);
+    game.saveFile.playerData.tilePosition = posToTile(position);
   }
 
   void move(Direction direction) {
@@ -256,16 +257,16 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
 
   bool attemptAttack() {
     final random = (Random().nextDouble() * 100) + 1;
-    return random <= data.hit;
+    return random <= game.saveFile.playerData.hit;
   }
 
   bool dodge() {
     final random = (Random().nextDouble() * 100) + 1;
-    return random <= data.dodge;
+    return random <= game.saveFile.playerData.dodge;
   }
 
   int mitigatedDamage(int rawDamage) {
-    final items = game.player.data.inventory;
+    final items = game.saveFile.playerData.inventory;
     final armor = items.where((item) => item.type == ItemType.armor).toList().firstOrNull ?? Item();
     return max(0, rawDamage - armor.value);
   }
@@ -278,12 +279,12 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
     }
 
     final damage = mitigatedDamage(incomingDamage);
-    data.health -= damage;
+    game.saveFile.playerData.health -= damage;
     if(damage > 0) {
       final flicker = OpacityEffect.fadeOut(
           EffectController(repeatCount: 2, duration: 0.1, alternate: true),
           onComplete: () {
-        if (data.health <= 0) {
+        if (game.saveFile.playerData.health <= 0) {
           onKilled();
           game.onGameEvent('killed', 'a enemy');
         } else {
@@ -297,18 +298,18 @@ class MeleeCharacter extends SpriteAnimationComponent with HasGameRef<MainGame> 
   }
 
   void drinkPotion(Item item) {
-    final newMax = data.health + item.value;
-    if (newMax > data.maxHealth) {
-      data.health = data.maxHealth;
+    final newMax = game.saveFile.playerData.health + item.value;
+    if (newMax > game.saveFile.playerData.maxHealth) {
+      game.saveFile.playerData.health = game.saveFile.playerData.maxHealth;
     } else {
-      data.health = newMax;
+      game.saveFile.playerData.health = newMax;
     }
   }
 
   // get a randomized damage calculated with stats and weapon
   double getDamage() {
     final r = Random().nextDouble() + 1;
-    final str = data.str;
+    final str = game.saveFile.playerData.str;
     final wepDmg = weapon.value;
 
     return ((wepDmg + str) * r).ceilToDouble();

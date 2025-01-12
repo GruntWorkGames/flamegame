@@ -1,5 +1,5 @@
 {
-    "name" : "small_easy_dungeon",
+    "name" : "dungeon1",
     "width" : 20,
     "height" : 20,
     "openTiles" : 200,

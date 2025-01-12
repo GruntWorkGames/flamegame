@@ -4,31 +4,42 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:karas_quest/components/base_map.dart';
 import 'package:karas_quest/components/game.dart';
+import 'package:karas_quest/components/player_component.dart';
 import 'package:karas_quest/control/constants.dart';
 import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/portal.dart';
 import 'package:karas_quest/control/objects/floor_factory.dart';
 
 class DungeonMap extends BaseMap with HasGameRef<MainGame> {
-  final MapData mapData;
   late FloorData _floorData;
-  DungeonMap.fromMapData(this.mapData);
+  PlayerComponent? player;
+
+  final scene = PositionComponent();
+  DungeonMap.fromMapData(MapData map) {
+    mapData = map;
+  }
 
   @override
   FutureOr<void> onLoad() async {
+    await super.onLoad();
+    add(scene);
     _floorData = FloorFactory.generate(mapData.width, mapData.height, kTileSize, mapData.openTiles);
     generateTiles(mapData.width, mapData.height);
+
     tiles = _floorData.bools;
     await _buildTiles();
+    player = PlayerComponent();
+    player!.data = game.saveFile.playerData;
+    player!.position = spawnPoint;
+    game.player = player!;
+    add(player!);
+  }
 
-    // game.player.removeFromParent();
-    final x = 4.0 * kTileSize.toDouble();
-    final y = (mapData.width - 1) * kTileSize.toDouble();
-    game.player.position = Vector2(x, y);
-    game.player.removeFromParent();
-    add(game.player);
-
-    return super.onLoad();
+  @override
+  Future<void> playerEntered() async {
+    if(player != null) {
+      game.player = player!;
+    }
   }
 
   Future<void> _buildTiles() async {
@@ -49,7 +60,7 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
     final sprite = spriteSheet.getSprite(0, 0);
     final tile = SpriteComponent(sprite: sprite);
     tile.position = pos;
-    add(tile);
+    scene.add(tile);
   }
 
   Future<void> _addFloorSprite(Vector2 pos) async {
@@ -58,7 +69,7 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
     final sprite = spriteSheet.getSprite(7, 0);
     final tile = SpriteComponent(sprite: sprite);
     tile.position = pos;
-    add(tile);
+    scene.add(tile);
   }
 
   @override
@@ -75,9 +86,5 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
   }
   
   @override
-  void playerEntered() {
-  }
-  
-  @override
-  Vector2 get spawnPoint => Vector2(0, 0);
+  Vector2 get spawnPoint => tileToPos(_floorData.spawnTile);
 }

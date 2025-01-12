@@ -13,23 +13,30 @@ class MapLoader extends Component with HasGameRef<MainGame> {
 
   Future<void> pushWorld(MapData mapData) async {
     late MapRunner? mapRunner;
+    final mapName = mapData.name;
 
-    if(mapRunners.containsKey(mapData.name)) {
-      mapRunner = mapRunners[mapData.name];
+    if(mapRunners.containsKey(mapName)) {
+      mapRunner = mapRunners[mapName];
     } else {
       mapRunner = MapRunner.fromMapData(mapData);
     }
 
-    mapRunners[mapData.name] = mapRunner!;
+    mapRunners[mapName] = mapRunner!;
     game.mapRunner = mapRunner;
     game.world = mapRunner;
     stack.add(mapRunner);
+
+    final cameraComponent = CameraComponent(
+      world: mapRunner,
+      viewport: viewport
+    );
+    game.camera = cameraComponent;
   }
 
   // load the maps, but does not call onLoad until they are assigned
   void _loadMapRunner(MapData map) {
     final runner = MapRunner.fromMapData(map);
-    mapRunners[map.mapFile] = runner;
+    mapRunners[map.name] = runner;
     stack.add(runner);
   }
 
@@ -50,9 +57,15 @@ class MapLoader extends Component with HasGameRef<MainGame> {
 
   void popWorld() {
     stack.removeLast();
-    final world = stack.last;
-    game.mapRunner = world;
-    game.world = world;
+    final mapRunner = stack.last;
+    game.mapRunner = mapRunner;
+    game.world = mapRunner;
+
+    final cameraComponent = CameraComponent(
+      world: mapRunner,
+      viewport: viewport
+    );
+    game.camera = cameraComponent;
   }
 
   void save(SaveFile savefile) {

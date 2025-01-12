@@ -7,16 +7,20 @@ import 'package:karas_quest/control/json/portal.dart';
 
 abstract class BaseMap extends Component {
   PortalDelegate? portalDelegate;
+
+  List<List<bool>> tiles = List<List<bool>>.empty();  
+  List<List<Function?>> triggerTiles = List<List<Function?>>.empty();
+  List<List<NPC?>> npcTiles = List<List<NPC?>>.empty();
+  
+  List<NPC> npcs = [];
+  List<Enemy> enemies = [];
+  
+  EnemyCreator? enemyCreator;
+
   double get pixelsWide;
   double get pixelsHigh;
-  List<List<bool>> tiles = List<List<bool>>.empty(growable: false);  
-  List<List<Function?>> triggerTiles = List<List<Function?>>.empty(growable: false);
-  List<List<NPC?>> npcTiles = List<List<NPC?>>.empty(growable: false);
-  List<Portal> get portals;
-  List<NPC> get npcs;
-  List<Enemy> enemies = [];
   Vector2 get spawnPoint;
-  EnemyCreator? enemyCreator;
+  List<Portal> get portals;
 
   void generateTiles(int width, int height) {
     tiles = List<List<bool>>.generate(

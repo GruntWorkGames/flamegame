@@ -9,6 +9,7 @@ class MapData {
   int seed = 0;
   int width = 0;
   int height = 0;
+  int openTiles = 0;
   int spawnChance = 0;
   int maxEnemies = 0;
   int spawnRadius = 0;
@@ -32,6 +33,9 @@ class MapData {
     spawnRadius = mapData['spawnRadius'] as int? ?? 0;
     maxEnemies = mapData['maxEnemies'] as int? ?? 0;
     name = mapData['name'] as String? ?? '';
+    openTiles = mapData['openTiles'] as int? ?? 0;
+    width = mapData['width'] as int? ?? 0;
+    height = mapData['height'] as int? ?? 0;
   }
 
   Map<String, dynamic> toMap() {
@@ -41,6 +45,7 @@ class MapData {
       'spawnChance' : spawnChance,
       'maxEnemies' : maxEnemies,
       'spawnRadius' : spawnRadius,
+      'openTiles' : openTiles,
       'width' : width,
       'height' : height,
       'enemies' : enemies.map((enemy) => enemy.toMap()).toList(),

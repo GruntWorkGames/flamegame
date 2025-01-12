@@ -47,8 +47,6 @@ class MainGame extends FlameGame with TapDetector {
     super.update(dt);
     final width = mapRunner?.map?.pixelsWide ?? 0;
     final height = mapRunner?.map?.pixelsWide ?? 0;
-    // width = mapRunner?.tiledmap?.width ?? 0;
-    // height = mapRunner?.tiledmap?.height ?? 0;
     final minDistanceX = size.x / 2 / zoomFactor;
     final minDistanceY = size.y / 2 / zoomFactor;
     final maxDistX = width - size.x / 2 / zoomFactor;

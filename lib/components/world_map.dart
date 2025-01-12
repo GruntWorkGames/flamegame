@@ -52,6 +52,7 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     _buildBlockedTiles(tiledmap!.tileMap);
     _buildPortals(tiledmap!.tileMap);
 
+    game.player.removeFromParent();
     tiledmap?.add(game.player);
     game.player.position = spawnPoint;
 
@@ -94,10 +95,6 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
       debugPrint('Error processing blocked tiles: $e');
     }
   }
-
-
-  @override
-  List<NPC> get npcs => _npcs;
 
   @override
   List<Portal> get portals => throw UnimplementedError();

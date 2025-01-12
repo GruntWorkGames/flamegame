@@ -2,8 +2,9 @@
     "name" : "small_easy_dungeon",
     "width" : 12,
     "height" : 12,
-    "numOpenTiles" : 100,
+    "openTiles" : 60,
     "spawnChance" : 10,
     "maxEnemies" : 0,
-    "spawnRadius" : 6
+    "spawnRadius" : 6,
+    "isGenerated" : true
 }

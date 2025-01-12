@@ -9,6 +9,7 @@ class FloorData {
 }
 
 class FloorFactory {
+  /// generate a grid of bools. True means floor, false means wall.
   static FloorData generate(int w, int h, int tilesize, int numOpenTiles) {
     // init grid
     // final grid = getRectGrid(w, h, tilesize);

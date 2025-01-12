@@ -8,6 +8,7 @@ import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flutter/material.dart';
 import 'package:karas_quest/components/base_map.dart';
+import 'package:karas_quest/components/dungeon_map.dart';
 import 'package:karas_quest/components/enemy.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/melee_attack_result.dart';
@@ -84,7 +85,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   @override
   FutureOr<void> onLoad() async {
     if(mapData.isGenerated) {
-      map = WorldMap.fromMapData(mapData);
+      map = DungeonMap.fromMapData(mapData);
     } else {
       map = WorldMap.fromMapData(mapData);
     }
@@ -283,8 +284,8 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   }
 
   bool canMoveDirection(Direction direction) {
-    final playerPos = posToTile(game.player.position);
-    final nextTile = getNextTile(direction, playerPos);
+    final playerTile = posToTile(game.player.position);
+    final nextTile = getNextTile(direction, playerTile);
     final npc = _isTileBlockedNpc(nextTile);
     final portal = _getTilePortal(nextTile);
     if (npc != null) {

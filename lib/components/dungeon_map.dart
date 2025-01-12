@@ -21,9 +21,9 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
     tiles = _floorData.bools;
     await _buildTiles();
 
-    game.player.removeFromParent();
+    // game.player.removeFromParent();
+    game.player.position = Vector2(4*16, 4*16);
     add(game.player);
-    game.player.position = Vector2(4, 4);
 
     return super.onLoad();
   }
@@ -33,7 +33,7 @@ class DungeonMap extends BaseMap with HasGameRef<MainGame> {
       for(var y=0; y<_floorData.height; y++) {
         final pos = Vector2(x.toDouble() * kTileSize, y.toDouble() * kTileSize);
         await _addFloorSprite(pos);
-        if(!_floorData.bools[x][y]) {
+        if(_floorData.bools[x][y]) {
           await _addWallSprite(pos);
         }
       }

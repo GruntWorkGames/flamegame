@@ -9,7 +9,7 @@ class FloorData {
 }
 
 class FloorFactory {
-  /// generate a grid of bools. True means floor, false means wall.
+  /// generate a grid of bools. True means blocked, false means floor.
   static FloorData generate(int w, int h, int tilesize, int numOpenTiles) {
     // init grid
     // final grid = getRectGrid(w, h, tilesize);
@@ -35,7 +35,7 @@ class FloorFactory {
         numTiles++;
       }
 
-      bools[cx][cy] = true;
+      bools[cx][cy] = false;
 
       // randomize direction
       if (Random().nextInt(odds) == odds - 1) {
@@ -64,7 +64,7 @@ class FloorFactory {
       grid.add(row);
 
       for (var y = 0; y < h; y++) {
-        row.add(false);
+        row.add(true);
       }
     }
 

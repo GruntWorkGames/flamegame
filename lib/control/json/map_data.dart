@@ -4,6 +4,7 @@ import 'package:karas_quest/control/json/tile.dart' as k;
 class MapData {
   List<CharacterData> enemies = [];
   String mapFile = '';
+  String name = '';
   bool isGenerated = false;
   int seed = 0;
   int width = 0;
@@ -30,10 +31,12 @@ class MapData {
     seed = mapData['seed'] as int? ?? 0;
     spawnRadius = mapData['spawnRadius'] as int? ?? 0;
     maxEnemies = mapData['maxEnemies'] as int? ?? 0;
+    name = mapData['name'] as String? ?? '';
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'name' : name,
       'seed' : seed,
       'spawnChance' : spawnChance,
       'maxEnemies' : maxEnemies,

@@ -772,32 +772,32 @@
  <objectgroup color="#55007f" id="8" name="portal">
   <object id="5" x="1120" y="800" width="16" height="16">
    <properties>
-    <property name="map" value="town1.tmx"/>
+    <property name="mapData" value="town1.json"/>
    </properties>
   </object>
   <object id="6" x="1120" y="816" width="16" height="16">
    <properties>
-    <property name="map" value="town1.tmx"/>
+    <property name="mapData" value="town1.json"/>
    </properties>
   </object>
   <object id="7" x="1136" y="800" width="16" height="16">
    <properties>
-    <property name="map" value="town1.tmx"/>
+    <property name="mapData" value="town1.json"/>
    </properties>
   </object>
   <object id="8" x="1136" y="816" width="16" height="16">
    <properties>
-    <property name="map" value="town1.tmx"/>
+    <property name="mapData" value="town1.json"/>
    </properties>
   </object>
   <object id="19" x="1024" y="768" width="16" height="16">
    <properties>
-    <property name="map" value="house1.tmx"/>
+    <property name="mapData" value="house1.json"/>
    </properties>
   </object>
   <object id="24" x="1056" y="704" width="16" height="16">
    <properties>
-    <property name="dungeon" value="test_dungeon.json"/>
+    <property name="mapData" value="test_dungeon.json"/>
    </properties>
   </object>
  </objectgroup>

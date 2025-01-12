@@ -1,0 +1,7 @@
+{
+    "name": "Town 1",
+    "mapFile" : "town1.tmx",
+    "spawnChance" : 0,
+    "maxEnemies" : 0,
+    "spawnRadius" : 0
+}

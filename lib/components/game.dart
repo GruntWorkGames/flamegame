@@ -230,9 +230,6 @@ class MainGame extends FlameGame with TapDetector {
         player.data.str = int.parse(command.argument);
         save();
         return;
-      case DebugCommand.map:
-        mapLoader.pushWorld(command.argument);
-        return;
       case DebugCommand.save:
       // toMap
         save();

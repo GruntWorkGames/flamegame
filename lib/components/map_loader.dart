@@ -12,18 +12,16 @@ class MapLoader extends Component with HasGameRef<MainGame> {
   List<MapRunner> stack = [];
   final viewport = FixedResolutionViewport(resolution: Vector2(480*2, 320*2));
 
-  Future<void> pushWorld(String mapfile) async {
+  Future<void> pushWorld(MapData mapData) async {
     late MapRunner? world;
 
-    if(worlds.containsKey(mapfile)) {
-      world = worlds[mapfile];
+    if(worlds.containsKey(mapData.name)) {
+      world = worlds[mapData.name];
     } else {
-      final emptyMapData = MapData();
-      emptyMapData.mapFile = mapfile;
-      world = MapRunner.fromMapData(emptyMapData);
+      world = MapRunner.fromMapData(mapData);
     }
 
-    worlds[mapfile] = world!;
+    worlds[mapData.name] = world!;
     game.mapRunner = world;
     game.world = world;
     stack.add(world);

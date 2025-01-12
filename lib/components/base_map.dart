@@ -17,7 +17,7 @@ abstract class BaseMap extends Component {
   List<Portal> get portals;
   List<NPC> get npcs;
   Vector2 get spawnPoint;
-  EnemyCreator enemyCreator = EnemyCreator();
+  EnemyCreator? enemyCreator;
 
   void generateTiles(int width, int height) {
     tiles = List<List<bool>>.generate(

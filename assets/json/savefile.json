@@ -1,5 +1,10 @@
 {
     "isFreshGame": true,
+    "name": "bigmap",
+    "mapFile" : "bigmap.tmx",
+    "spawnChance" : 10,
+    "maxEnemies" : 10,
+    "spawnRadius" : 6,
     "player": {
         "health": 10,
         "maxHealth": 30,

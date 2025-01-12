@@ -15,8 +15,9 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
   int maxEnemies = 0;
   int spawnRadius = 0;
   List<String> enemyFileNames = [];
+  final Component _enemyParent;
 
-  EnemyCreator() : super();
+  EnemyCreator(this._enemyParent);
 
   Future<void> loadEnemyFile() async {
     final json = await rootBundle.loadString('assets/json/enemies.json');
@@ -29,22 +30,20 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     }
   }
 
-  void playerMoved() {
-    final r = random.nextInt(100) + 1;
-    if(r <= spawnChance) {
-      _createEnemy();
-    }
-  }
-
   void createEnemyFromCharacterData(CharacterData character) {
     final enemy = Enemy.fromCharacterData(character);
     game.mapRunner?.enemies.add(enemy);
     game.mapRunner?.add(enemy);
   }
 
-  void _createEnemy() {
+  Enemy? createEnemy() {
+    final r = random.nextInt(100) + 1;
+    if(r >= spawnChance) {
+      return null;
+    }
+
     if((game.mapRunner?.enemies.length ?? 0) >= maxEnemies) {
-      return;
+      return null;
     }
 
     final spawnArea = game.mapRunner?.tilesArroundPosition(posToTile(game.player.position), spawnRadius) ?? [];
@@ -69,8 +68,9 @@ class EnemyCreator extends Component with HasGameRef<MainGame> {
     final enemy = Enemy(enemyJsonFile);
     enemy.data.tilePosition = spawnTile;
     enemy.position = tileToPos(spawnTile);
-    game.mapRunner?.enemies.add(enemy);
-    game.mapRunner?.add(enemy);
+    _enemyParent.add(enemy);
+
+    return enemy;
   }
 
   String randomEnemyFile() {

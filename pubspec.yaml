@@ -31,3 +31,4 @@ flutter:
     - assets/images/
     - assets/json/
     - assets/json/quests/
+    - assets/json/maps/

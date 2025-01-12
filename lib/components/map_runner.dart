@@ -48,10 +48,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   MapData mapData = MapData();
   BaseMap? map;
   
-  List<List<bool>> blockedTiles = [];
-  List<Vector2> openTiles = [];
   final List<Square> _squares = [];
-  final List<k.Tile> _blockedTileList = [];
   final _aggroDistance = 6;
   bool listenToInput = true;
   late final TurnSystem turnSystem;
@@ -376,8 +373,7 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
   @override
   Future<void> portalEntered(Portal portal) async {
     shouldContinue = false;
-    final map = portal.map;
-    await game.mapLoader.pushWorld(map);
+    await game.mapLoader.pushWorld(portal.mapData);
   }
 
   void playerEntered() {
@@ -617,15 +613,9 @@ class MapRunner extends World with HasGameRef<MainGame>, TapCallbacks, PortalDel
 
   void playerMoved() {
     if(game.ref?.read(enemiesEnabled) ?? true) {
-      map?.enemyCreator.playerMoved();
+      map?.enemyCreator?.createEnemy();
     }
   }
-  
-  // Future<void> _createEnemies() async {
-  //   for(final enemyData in mapData.enemies) {
-  //       enemyCreator.createEnemyFromCharacterData(enemyData);
-  //   }
-  // }
 
   void postGameEvent(String event, String value) {
     game.onGameEvent(event, value);

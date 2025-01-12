@@ -4,7 +4,9 @@ import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flame_tiled_utils/flame_tiled_utils.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:karas_quest/components/base_map.dart';
+import 'package:karas_quest/components/enemy_creator.dart';
 import 'package:karas_quest/components/game.dart';
 import 'package:karas_quest/components/npc.dart';
 import 'package:karas_quest/control/constants.dart';
@@ -54,10 +56,11 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     tiledmap?.add(game.player);
     game.player.position = spawnPoint;
 
-    enemyCreator.spawnChance = mapData.spawnChance;
-    enemyCreator.maxEnemies = mapData.maxEnemies;
-    enemyCreator.spawnRadius = mapData.spawnRadius;
-    add(enemyCreator);
+    enemyCreator = EnemyCreator(tiledmap!);
+    enemyCreator?.spawnChance = mapData.spawnChance;
+    enemyCreator?.maxEnemies = mapData.maxEnemies;
+    enemyCreator?.spawnRadius = mapData.spawnRadius;
+    add(enemyCreator!);
 
     await _createNpcs();
     _onLoadFinishedDelegate?.onLoadFinished();
@@ -66,7 +69,7 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
   void _addBlockedCell(Vector2 position) {
     final tile = posToTile(position);
     tiles[tile.x][tile.y] = true;
-    // _blockedTileList.add(tile);
+    blockedTileList.add(tile);
   }
 
   Future<void> _buildBlockedTiles(RenderableTiledMap tileMap) async {
@@ -89,8 +92,7 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
         layersToLoad: layerNames,
         clear: false);
     } on Exception catch(e, st) {
-      print('Error processing blocked tiles: $e');
-      print(st);
+      debugPrint('Error processing blocked tiles: $e');
     }
   }
 
@@ -155,20 +157,19 @@ class WorldMap extends BaseMap with HasGameRef<MainGame> {
     return spawnData;
   }
 
-  void _buildPortals(RenderableTiledMap tileMap) {
+  Future<void> _buildPortals(RenderableTiledMap tileMap) async {
     final portalGroup = tileMap.getLayer<ObjectGroup>('portal');
     final exitGroup = tileMap.getLayer<ObjectGroup>('exit');
 
     if (portalGroup != null) {
       for (final portal in portalGroup.objects) {
         final pos = Vector2(portal.x, portal.y);
-        final mapProperty = portal.properties.getProperty<StringProperty>('map');
-        final dungeonProperty = portal.properties.getProperty<StringProperty>('dungeon');
-        final map = (mapProperty != null) ? mapProperty.value : '';
-        final dungeon = dungeonProperty != null ?  dungeonProperty.value : '';
-        final file = dungeon.isEmpty ? map : dungeon;
-        final type = dungeon.isEmpty ? MapType.crafted : MapType.generated;
-        _addPortal(Portal(file, pos, type));
+        final mapDataProperty = portal.properties.getProperty<StringProperty>('mapData');
+        assert(mapDataProperty != null);
+        final mapDataFilename = 'json/maps/${mapDataProperty!.value}';
+        final json = await game.assets.readJson(mapDataFilename);
+        final mapData = MapData.fromJson(json);
+        _addPortal(Portal(mapData, pos));
       }
     }
 

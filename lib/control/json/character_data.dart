@@ -1,5 +1,5 @@
 import 'package:karas_quest/control/json/item.dart';
-import 'package:karas_quest/control/objects/tile.dart' as k;
+import 'package:karas_quest/control/json/tile.dart' as k;
 
 class CharacterData {
   int _health = 10;
@@ -13,7 +13,6 @@ class CharacterData {
   int experience = 0;
   int level = 1;
   k.Tile tilePosition = k.Tile(0, 0);
-  String mapfile = 'bigmap.tmx';
   String animationFile = '';
   List<Item> inventory = [];
 
@@ -42,7 +41,7 @@ class CharacterData {
   }
 
   CharacterData() {
-    addDefaultItems();
+    // addDefaultItems();
   }
 
   void delete(Item item) {
@@ -61,7 +60,6 @@ class CharacterData {
     final tileNode = json['tilePosition'] as Map<String, dynamic>? ?? {};
     tilePosition = k.Tile.fromMap(tileNode);
     level = json['level'] as int? ?? 1;
-    mapfile = json['mapfile'] as String? ?? 'bigmap.tmx';
     animationFile = json['animationFile'] as String? ?? '';
     final inventoryNode = json['inventory'] as List<dynamic>? ?? [];
     if (inventoryNode.isNotEmpty) {
@@ -70,8 +68,6 @@ class CharacterData {
         final item = v as Map<String, dynamic>? ?? {};
         inventory.add(Item.fromMap(item));
       });
-    } else {
-      addDefaultItems();
     }
   }
 
@@ -85,7 +81,6 @@ class CharacterData {
     data['str'] = str;
     data['stam'] = stam;
     data['dodge'] = dodge;
-    data['mapfile'] = mapfile;
     data['level'] = level;
     data['experience'] = experience;
     data['animationFile'] = animationFile;
@@ -93,39 +88,39 @@ class CharacterData {
     return data;
   }
   
-  void addDefaultItems() {
-    final hPotion = {
-      'name' : 'Health Potion',
-      'type' : 'potion',
-      'value' : 10,
-      'valueName': 'health',
-      'description': 'The thick red liquid reminds you of cough syrup.', 
-      'cost' : 10,
-      'inventoryUseText' : 'Drink'
-    };
-    final sword = {
-      'name' : 'Dull Short Sword',
-      'type' : 'weapon',
-      'value' : 4,
-      'valueName': 'damage',
-      'description': 'A nearly useless weapon. A kids toy.',
-      'cost' : 30,
-      'inventoryUseText' : 'Equip',
-      'isEquipped': true
-    };
-    final helmet = {
-      'name' : 'Armor Helm',
-      'type' : 'armor',
-      'value' : 2,
-      'valueName': 'mitigation',
-      'description': 'Tarnished and flimsy.',
-      'cost' : 20,
-      'inventoryUseText' : 'Equip',
-      'isEquipped': true
-    };
+  // void addDefaultItems() {
+  //   final hPotion = {
+  //     'name' : 'Health Potion',
+  //     'type' : 'potion',
+  //     'value' : 10,
+  //     'valueName': 'health',
+  //     'description': 'The thick red liquid reminds you of cough syrup.', 
+  //     'cost' : 10,
+  //     'inventoryUseText' : 'Drink'
+  //   };
+  //   final sword = {
+  //     'name' : 'Dull Short Sword',
+  //     'type' : 'weapon',
+  //     'value' : 4,
+  //     'valueName': 'damage',
+  //     'description': 'A nearly useless weapon. A kids toy.',
+  //     'cost' : 30,
+  //     'inventoryUseText' : 'Equip',
+  //     'isEquipped': true
+  //   };
+  //   final helmet = {
+  //     'name' : 'Armor Helm',
+  //     'type' : 'armor',
+  //     'value' : 2,
+  //     'valueName': 'mitigation',
+  //     'description': 'Tarnished and flimsy.',
+  //     'cost' : 20,
+  //     'inventoryUseText' : 'Equip',
+  //     'isEquipped': true
+  //   };
 
-    inventory.add(Item.fromMap(hPotion));
-    inventory.add(Item.fromMap(sword));
-    inventory.add(Item.fromMap(helmet));
-  }
+  //   inventory.add(Item.fromMap(hPotion));
+  //   inventory.add(Item.fromMap(sword));
+  //   inventory.add(Item.fromMap(helmet));
+  // }
 }

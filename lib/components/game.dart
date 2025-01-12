@@ -14,6 +14,7 @@ import 'package:karas_quest/control/enum/debug_command.dart';
 import 'package:karas_quest/control/enum/direction.dart';
 import 'package:karas_quest/control/enum/item_type.dart';
 import 'package:karas_quest/control/enum/ui_view_type.dart';
+import 'package:karas_quest/control/json/character_data.dart';
 import 'package:karas_quest/control/json/quest.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 import 'package:karas_quest/control/objects/game_event_listener.dart';
@@ -27,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class MainGame extends FlameGame with TapDetector {
   PlayerComponent player = PlayerComponent();
+  late CharacterData playerData;
   MapRunner? mapRunner;
   final mapLoader = MapLoader();
   Component? currentSpeechBubble;
@@ -38,8 +40,49 @@ class MainGame extends FlameGame with TapDetector {
   SaveFile saveFile = SaveFile();
   late QuestManager questManager;
   bool isNewGame = true;
+  final zoomFactor = 3.0;
 
   MainGame({required this.isNewGame});
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    final width = mapRunner?.map?.pixelsWide ?? 0;
+    final height = mapRunner?.map?.pixelsWide ?? 0;
+    final minDistanceX = size.x / 2 / zoomFactor;
+    final minDistanceY = size.y / 2 / zoomFactor;
+    final maxDistX = width - size.x / 2 / zoomFactor;
+    final maxDistanceY = height - size.y / 2 / zoomFactor;
+    final camPos = player.position.clone();
+
+    if(camPos.x < minDistanceX 
+    && camPos.x > maxDistX
+    && camPos.y < minDistanceY
+    && camPos.y > maxDistanceY) {
+      camera.viewfinder.position = Vector2(80, 96);
+      return;
+    } else if (maxDistanceY < 0) {
+      camera.viewfinder.position = Vector2(80, 96);
+      return;
+    }
+    
+    if(camPos.x < minDistanceX) {
+      camPos.x = minDistanceX;
+    }
+    if(camPos.x > maxDistX) {
+      camPos.x = maxDistX;
+    }
+
+    if(camPos.y < minDistanceY) {
+      camPos.y = minDistanceY;
+    }
+    if(camPos.y > maxDistanceY) {
+      camPos.y = maxDistanceY;
+    }
+    
+    camera.viewfinder.zoom = zoomFactor;
+    camera.viewfinder.position = camPos;
+  }
 
   @override
   Future<void> onLoad() async {
@@ -124,10 +167,10 @@ class MainGame extends FlameGame with TapDetector {
     }
 
     questManager = QuestManager(this);
-    player.data = saveFile.playerData;
-    final firstItem = player.data.inventory.first;
+    // player.data = saveFile.playerData;
+    final firstItem = saveFile.playerData.inventory.first;
     firstItem.isSelected = true;
-    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    final weapon = saveFile.playerData.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
     }
@@ -137,7 +180,7 @@ class MainGame extends FlameGame with TapDetector {
     mapLoader.initFromSaveFile(saveFile);
 
     if(ref != null && ref!.context.mounted) {
-      ref?.read(inventoryProvider.notifier).set(player.data);
+      ref?.read(inventoryProvider.notifier).set(saveFile.playerData);
       ref?.read(inventoryItemProvider.notifier).set(firstItem);
       ref?.read(questListProvider.notifier).set(saveFile.activeQuests);
     }
@@ -187,9 +230,6 @@ class MainGame extends FlameGame with TapDetector {
         player.data.str = int.parse(command.argument);
         save();
         return;
-      case DebugCommand.map:
-        mapLoader.pushWorld(command.argument);
-        return;
       case DebugCommand.save:
       // toMap
         save();
@@ -226,13 +266,13 @@ class MainGame extends FlameGame with TapDetector {
   Future<void> onPlayerDied() async {
     final map = <String, dynamic>{};
     saveFile = SaveFile.fromMap(map);
-    player.data = saveFile.playerData;
-    final firstItem = player.data.inventory.first;
+    // player.data = saveFile.playerData;
+    final firstItem = saveFile.playerData.inventory.first;
     firstItem.isSelected = true;
-    ref?.read(inventoryProvider.notifier).set(player.data);
+    ref?.read(inventoryProvider.notifier).set(saveFile.playerData);
     ref?.read(inventoryItemProvider.notifier).set(firstItem);
 
-    final weapon = player.data.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
+    final weapon = saveFile.playerData.inventory.where((item) => item.isEquipped && item.type == ItemType.weapon).firstOrNull;
     if (weapon != null) {
       player.weapon = weapon;
     }

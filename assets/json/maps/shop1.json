@@ -1,0 +1,7 @@
+{
+    "name": "Shop",
+    "mapFile" : "house2.tmx",
+    "spawnChance" : 0,
+    "maxEnemies" : 0,
+    "spawnRadius" : 0
+}

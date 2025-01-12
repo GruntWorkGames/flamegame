@@ -1,0 +1,3 @@
+enum MapType {
+  generated, crafted
+}

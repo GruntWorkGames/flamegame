@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:karas_quest/components/game.dart';
@@ -8,29 +7,30 @@ import 'package:karas_quest/control/json/map_data.dart';
 import 'package:karas_quest/control/json/save_file.dart';
 
 class MapLoader extends Component with HasGameRef<MainGame> {
-  final Map<String, MapRunner> worlds = {};
+  final Map<String, MapRunner> mapRunners = {};
   List<MapRunner> stack = [];
   final viewport = FixedResolutionViewport(resolution: Vector2(480*2, 320*2));
 
-  Future<void> pushWorld(String mapfile) async {
-    late MapRunner? world;
+  Future<void> pushWorld(MapData mapData) async {
+    late MapRunner? mapRunner;
+    final mapName = mapData.name;
 
-    if(worlds.containsKey(mapfile)) {
-      world = worlds[mapfile];
+    if(mapRunners.containsKey(mapName)) {
+      mapRunner = mapRunners[mapName];
     } else {
-      world = MapRunner.fromMapFile(mapfile);
+      mapRunner = MapRunner.fromMapData(mapData);
     }
 
-    worlds[mapfile] = world!;
-    game.mapRunner = world;
-    game.world = world;
-    stack.add(world);
+    mapRunners[mapName] = mapRunner!;
+    game.mapRunner = mapRunner;
+    game.world = mapRunner;
+    stack.add(mapRunner);
   }
 
   // load the maps, but does not call onLoad until they are assigned
   void _loadMapRunner(MapData map) {
     final runner = MapRunner.fromMapData(map);
-    worlds[runner.mapfile] = runner;
+    mapRunners[map.name] = runner;
     stack.add(runner);
   }
 
@@ -39,6 +39,11 @@ class MapLoader extends Component with HasGameRef<MainGame> {
     final runner = stack.last;
     game.mapRunner = runner;
     game.world = runner;
+    _adjustCamera(runner);
+    add(runner);
+  }
+  
+  void _adjustCamera(MapRunner runner) {
     if(Platform.isMacOS || Platform.isWindows) {
       final cameraComponent = CameraComponent(
         world: runner,
@@ -46,14 +51,13 @@ class MapLoader extends Component with HasGameRef<MainGame> {
       );
       game.camera = cameraComponent;
     }
-    add(runner);
   }
 
   void popWorld() {
     stack.removeLast();
-    final world = stack.last;
-    game.mapRunner = world;
-    game.world = world;
+    final mapRunner = stack.last;
+    game.mapRunner = mapRunner;
+    game.world = mapRunner;
   }
 
   void save(SaveFile savefile) {

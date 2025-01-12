@@ -1,0 +1,10 @@
+{
+    "name" : "dungeon1",
+    "width" : 20,
+    "height" : 20,
+    "openTiles" : 200,
+    "spawnChance" : 10,
+    "maxEnemies" : 0,
+    "spawnRadius" : 6,
+    "isGenerated" : true
+}
